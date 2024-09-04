@@ -134,6 +134,8 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    ndkVersion "25.2.9519653"
+    
     defaultConfig {
         applicationId "com.crosswordmega"
         minSdkVersion rootProject.ext.minSdkVersion
