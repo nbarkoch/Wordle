@@ -2,18 +2,16 @@ import Database from './Database';
 
 export const initializeDatabase = async () => {
   try {
-    const db = await Database.getInstance();
-    await db.executeSql('PRAGMA foreign_keys = ON;'); // Enable foreign keys
+    await Database.executeSql('PRAGMA foreign_keys = ON;');
 
-    // Create tables if they don't exist
-    await db.executeSql(`
+    await Database.executeSql(`
       CREATE TABLE IF NOT EXISTS Categories (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT NOT NULL
       );
     `);
 
-    await db.executeSql(`
+    await Database.executeSql(`
       CREATE TABLE IF NOT EXISTS Words (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         word TEXT NOT NULL,
@@ -24,7 +22,7 @@ export const initializeDatabase = async () => {
       );
     `);
 
-    await db.executeSql(`
+    await Database.executeSql(`
       CREATE TABLE IF NOT EXISTS Descriptors (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         description TEXT NOT NULL,
@@ -33,7 +31,7 @@ export const initializeDatabase = async () => {
       );
     `);
 
-    await db.executeSql(`
+    await Database.executeSql(`
       CREATE TABLE IF NOT EXISTS Hints (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         hint TEXT NOT NULL,
@@ -42,8 +40,8 @@ export const initializeDatabase = async () => {
       );
     `);
 
-    // console.log('Tables created successfully');
+    console.log('Tables created successfully');
   } catch (error) {
-    // console.error('Error initializing database', error);
+    console.error('Error initializing database', error);
   }
 };

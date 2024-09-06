@@ -5,6 +5,9 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
     /* Completeness */
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,                               /* Skip type checking all .d.ts files. */
+    
+    "resolveJsonModule": true,  // Enable JSON imports
+    "esModuleInterop": true     // Ensure compatibility for default exports
   }
 }

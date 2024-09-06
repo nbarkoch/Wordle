@@ -26,6 +26,13 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {
+  // getAllWordsFromCategoryOfLength,
+  // getAllWordsWithName,
+  initDatabaseAndFillData,
+} from './source/middlewares/utils';
+
+initDatabaseAndFillData();
 
 const Section: React.FC<
   PropsWithChildren<{
@@ -33,6 +40,12 @@ const Section: React.FC<
   }>
 > = ({children, title}) => {
   const isDarkMode = useColorScheme() === 'dark';
+  // const stam = async () => {
+  // const words = await getAllWordsFromCategoryOfLength('גאוגרפיה', 4);
+  // const words = await getAllWordsWithName('להבה');
+  // console.log('words', words);
+  // };
+
   return (
     <View style={styles.sectionContainer}>
       <Text

@@ -1,38 +1,38 @@
 import Database from './Database';
 
-type WordSeeder = {
+export type WordSeeder = {
   word: string;
   length: number;
   num_words: number;
 };
 
-type CategorySeeder = Record<string, WordSeeder[]>;
+export type CategorySeeder = Record<string, WordSeeder[]>[];
 
-type CrosswordSeedData = Record<string, CategorySeeder>;
+export type CrosswordSeedData = Record<string, CategorySeeder>;
 
 export async function insertData(jsonData: CrosswordSeedData) {
-  const db = await Database.getInstance();
   for (const [categoryName, articles] of Object.entries(jsonData)) {
     // Insert the category and get the generated ID
-    const [categoryResult] = await db.executeSql(
+    const categoryResult = await Database.executeSql(
       `INSERT INTO Categories (name) VALUES (?)`,
       [categoryName],
     );
     const categoryId = categoryResult.insertId;
+    for (const article of articles) {
+      for (const [articleName, wordsArray] of Object.entries(article)) {
+        for (const wordObj of wordsArray) {
+          // Insert the word and get the generated ID
+          const wordResult = await Database.executeSql(
+            `INSERT INTO Words (word, length, numWords, categoryId) VALUES (?, ?, ?, ?)`,
+            [wordObj.word, wordObj.length, wordObj.num_words, categoryId],
+          );
 
-    for (const [articleName, wordsArray] of Object.entries(articles)) {
-      for (const wordObj of wordsArray) {
-        // Insert the word and get the generated ID
-        const [wordResult] = await db.executeSql(
-          `INSERT INTO Words (word, length, numWords, categoryId) VALUES (?, ?, ?, ?)`,
-          [wordObj.word, wordObj.length, wordObj.num_words, categoryId],
-        );
-        const wordId = wordResult.insertId;
-
-        await db.executeSql(
-          `INSERT INTO Descriptors (description, wordId) VALUES (?, ?)`,
-          [articleName, wordId],
-        );
+          const wordId = wordResult.insertId;
+          await Database.executeSql(
+            `INSERT INTO Descriptors (description, wordId) VALUES (?, ?)`,
+            [articleName, wordId],
+          );
+        }
       }
     }
   }
