@@ -2,39 +2,32 @@ import {initializeDatabase} from '../database/define';
 import {CrosswordSeedData, insertData, WordSeeder} from '../database/seed';
 import mockData from '../database/mockData.json'; // TypeScript will understand this as a module
 import Database from '../database/Database';
-
-export const tableExists = async (tableName: string): Promise<boolean> => {
-  try {
-    const result = await Database.executeSql(`
-        SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}';
-      `);
-    console.log('result', result);
-    return result.rows.length > 0;
-  } catch (error) {
-    console.error('Error checking table existence:', error);
-    return false;
-  }
-};
+import {dropTables} from '../database/destruct';
+import {tableExists} from '../database/checks';
 
 export async function initDatabaseAndFillData() {
-  //   await dropTables();
-  const categoriesTableExists = await tableExists('Categories');
-  const wordsTableExists = await tableExists('Words');
-  const descriptorsTableExists = await tableExists('Descriptors');
-  const hintsTableExists = await tableExists('Hints');
+  try {
+    const categoriesTableExists = await tableExists('Categories');
+    const wordsTableExists = await tableExists('Words');
+    const descriptorsTableExists = await tableExists('Descriptors');
+    const hintsTableExists = await tableExists('Hints');
 
-  if (
-    !categoriesTableExists ||
-    !wordsTableExists ||
-    !descriptorsTableExists ||
-    !hintsTableExists
-  ) {
-    console.log('One or more tables do not exist. Creating tables...');
-    await initializeDatabase();
-    const data = mockData as CrosswordSeedData;
-    await insertData(data);
-  } else {
-    console.log('All tables already exist.');
+    if (
+      !categoriesTableExists ||
+      !wordsTableExists ||
+      !descriptorsTableExists ||
+      !hintsTableExists
+    ) {
+      console.log('One or more tables do not exist. Creating tables...');
+      await dropTables();
+      await initializeDatabase();
+      const data = mockData as CrosswordSeedData;
+      insertData(data)
+        .then(() => console.log('Data insertion successful'))
+        .catch(error => console.error('Error during data insertion:', error));
+    }
+  } catch (error) {
+    console.log('Error during data clear');
   }
 }
 
