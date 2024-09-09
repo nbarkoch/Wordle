@@ -11,15 +11,21 @@
 import React from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StatusBar,
   // StyleSheet,
   useColorScheme,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
+import mobileAds from 'react-native-google-mobile-ads';
 import WordGame from './source/screens/grid';
+
+mobileAds()
+  .initialize()
+  .then(_ => {
+    // Initialization complete
+    console.log('Mobile Ads SDK initialized');
+  });
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';

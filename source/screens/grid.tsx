@@ -24,6 +24,7 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 import HebrewFont from '~/assets/fonts/VarelaRound-Regular.ttf';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
@@ -68,9 +69,19 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({letter, onPress, style}) => {
   );
 };
 
-const AddsBlock = () => {
+const GameBannerAd = () => {
+  const adUnitId = __DEV__
+    ? TestIds.BANNER
+    : 'YOUR_PRODUCTION_BANNER_AD_UNIT_ID';
+
   return (
-    <View style={{height: 100, width: '100%', backgroundColor: 'gray'}}></View>
+    <BannerAd
+      unitId={adUnitId}
+      size={BannerAdSize.BANNER}
+      requestOptions={{
+        requestNonPersonalizedAdsOnly: true,
+      }}
+    />
   );
 };
 
@@ -203,7 +214,7 @@ const WordleGame: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <AddsBlock />
+      <GameBannerAd />
       <Animated.View
         style={[
           styles.gridContainer,
