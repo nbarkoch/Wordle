@@ -23,6 +23,7 @@ import Animated, {
   withSequence,
   interpolateColor,
 } from 'react-native-reanimated';
+import HebrewFont from '~/assets/fonts/VarelaRound-Regular.ttf';
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
@@ -67,6 +68,12 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({letter, onPress, style}) => {
   );
 };
 
+const AddsBlock = () => {
+  return (
+    <View style={{height: 100, width: '100%', backgroundColor: 'gray'}}></View>
+  );
+};
+
 const WordleGame: React.FC = () => {
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [guesses, setGuesses] = useState<string[]>(
@@ -79,7 +86,7 @@ const WordleGame: React.FC = () => {
   const submitScaleAnimation = useSharedValue(1);
   const submitColorAnimation = useSharedValue(0);
 
-  const font = useFont(require('../fonts/VarelaRound-Regular.ttf'), 24);
+  const font = useFont(HebrewFont, 24);
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -196,6 +203,7 @@ const WordleGame: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <AddsBlock />
       <Animated.View
         style={[
           styles.gridContainer,

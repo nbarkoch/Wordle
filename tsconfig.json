@@ -8,6 +8,10 @@
     "skipLibCheck": true,                               /* Skip type checking all .d.ts files. */
     
     "resolveJsonModule": true,  // Enable JSON imports
-    "esModuleInterop": true     // Ensure compatibility for default exports
+    "esModuleInterop": true,     // Ensure compatibility for default exports
+    "baseUrl": ".",
+    "paths": {
+    "~/*": ["source/*"]
+    }
   }
 }
