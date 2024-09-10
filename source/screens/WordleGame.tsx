@@ -10,11 +10,10 @@ import Animated, {
   withSequence,
   interpolateColor,
 } from 'react-native-reanimated';
-
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
 import WordleGrid from './wordleGrid';
-import KeyboardKey from '~/components/KeyboardKey';
+import useWordValidator from '~/database/useWordValidator';
+import Keyboard from '~/components/Keyboard';
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
@@ -134,47 +133,37 @@ const WordleGame: React.FC = () => {
     }
   }, [currentGuess, currentAttempt, shakeAnimation]);
 
-  const renderKeyboard = () => {
-    return (
-      <View style={[styles.keyboard]}>
-        {Object.entries(keyboardLetters).map(([key, correctness]) => (
-          <KeyboardKey
-            disabled={currentGuess.length >= WORD_LENGTH}
-            key={key}
-            letter={key}
-            onPress={handleKeyPress}
-            correctness={correctness}
-          />
-        ))}
-        <KeyboardKey
-          disabled={currentGuess.length === 0}
-          onPress={handleDelete}
-          style={styles.wideKey}>
-          <DeleteKeyIcon width={40} height={50} />
-        </KeyboardKey>
-      </View>
-    );
-  };
+  const {isValidWord} = useWordValidator();
+
+  const [isValidGuess, setIsValidGuess] = useState<boolean | null>(null);
 
   useEffect(() => {
+    if (currentGuess.length === WORD_LENGTH) {
+      setIsValidGuess(isValidWord(currentGuess));
+    }
     submitColorAnimation.value = withTiming(
-      currentGuess.length === WORD_LENGTH ? 1 : 0,
-      {duration: 300, easing: Easing.inOut(Easing.quad)},
+      currentGuess.length < WORD_LENGTH ? 0 : 1,
+      {
+        duration: 300,
+        easing: Easing.inOut(Easing.quad),
+      },
     );
-  }, [currentGuess.length, submitColorAnimation]);
+  }, [submitColorAnimation, isValidWord, currentGuess]);
 
   const submitButtonStyle = useAnimatedStyle(() => {
+    const finalColor =
+      isValidGuess === null ? '#A0A0A0' : isValidGuess ? '#4CAF50' : '#ce1616';
     const backgroundColor = interpolateColor(
       submitColorAnimation.value,
-      [0, 1],
-      ['#A0A0A0', '#4CAF50'], // Grey when disabled, Green when enabled
+      [0, 1, 2],
+      ['#A0A0A0', finalColor],
     );
 
     return {
       backgroundColor,
       transform: [{scale: submitScaleAnimation.value}],
     };
-  });
+  }, [isValidGuess]);
 
   return (
     <View style={styles.container}>
@@ -195,7 +184,12 @@ const WordleGame: React.FC = () => {
         />
       </Animated.View>
       <View style={styles.bottomContainer}>
-        {renderKeyboard()}
+        <Keyboard
+          handleKeyPress={handleKeyPress}
+          handleDelete={handleDelete}
+          keyboardLetters={keyboardLetters}
+          currentGuessLength={currentGuess.length}
+        />
         <AnimatedPressable
           disabled={currentGuess.length < WORD_LENGTH}
           style={[styles.submitButton, submitButtonStyle]}
