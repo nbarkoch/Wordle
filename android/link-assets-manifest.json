@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "source/assets/fonts/GveretLevin-Regular.otf",
+      "sha1": "f58d3b750cb788876b40f464ee3dc67c7c2840c9"
+    },
+    {
+      "path": "source/assets/fonts/VarelaRound-Regular.ttf",
+      "sha1": "9f44418b78583832a55d04964384f2d50689e009"
+    }
+  ]
+}

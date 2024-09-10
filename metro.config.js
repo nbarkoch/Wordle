@@ -1,9 +1,3 @@
-/**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
- *
- * @format
- */
 const {getDefaultConfig} = require('metro-config');
 const path = require('path');
 
@@ -22,7 +16,7 @@ module.exports = (async () => {
       }),
     },
     resolver: {
-      assetExts: [...assetExts, 'ttf', 'otf'],
+      assetExts: assetExts.filter(ext => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg'],
       extraNodeModules: {
         '~': path.resolve(__dirname, 'source'),

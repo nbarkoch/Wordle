@@ -1,18 +1,5 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Text,
-  I18nManager,
-  ViewStyle,
-} from 'react-native';
-import {
-  Canvas,
-  RoundedRect,
-  Text as SkiaText,
-  useFont,
-} from '@shopify/react-native-skia';
+import React, {useState, useCallback, useEffect, ReactNode} from 'react';
+import {View, StyleSheet, Pressable, Text, ViewStyle} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -23,8 +10,10 @@ import Animated, {
   withSequence,
   interpolateColor,
 } from 'react-native-reanimated';
-import HebrewFont from '~/assets/fonts/VarelaRound-Regular.ttf';
+
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
+import WordleGrid from './wordleGrid';
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
@@ -32,12 +21,20 @@ const MAX_ATTEMPTS = 6;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface KeyboardKeyProps {
-  letter: string;
+  letter?: string;
   onPress: (key: string) => void;
   style?: ViewStyle;
+  disabled?: boolean;
+  children?: ReactNode;
 }
 
-const KeyboardKey: React.FC<KeyboardKeyProps> = ({letter, onPress, style}) => {
+const KeyboardKey: React.FC<KeyboardKeyProps> = ({
+  letter,
+  onPress,
+  style,
+  disabled = false,
+  children,
+}) => {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -60,11 +57,12 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({letter, onPress, style}) => {
 
   return (
     <AnimatedPressable
+      disabled={disabled}
       style={[styles.key, style ?? {}, animatedStyle]}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={() => runOnJS(onPress)(letter)}>
-      <Text style={styles.keyText}>{letter}</Text>
+      onPress={() => runOnJS(onPress)(letter ?? '')}>
+      {children ?? <Text style={styles.keyText}>{letter}</Text>}
     </AnimatedPressable>
   );
 };
@@ -85,10 +83,33 @@ const GameBannerAd = () => {
   );
 };
 
+export type Correctness = 'correct' | 'exists' | 'notInUse' | null;
+
+export type WordGuess = {
+  letters: string[];
+  correctness: Correctness[];
+};
+
+function generateRandomWordState(): Correctness[] {
+  const options: Correctness[] = ['correct', 'exists', 'notInUse'];
+
+  return Array(5)
+    .fill(null)
+    .map(() => {
+      const randomIndex = Math.floor(Math.random() * options.length);
+      return options[randomIndex];
+    });
+}
+
 const WordleGame: React.FC = () => {
   const [currentAttempt, setCurrentAttempt] = useState(0);
-  const [guesses, setGuesses] = useState<string[]>(
-    Array(MAX_ATTEMPTS).fill(''),
+  const [guesses, setGuesses] = useState<WordGuess[]>(
+    Array(MAX_ATTEMPTS)
+      .fill(null)
+      .map(() => ({
+        letters: Array(WORD_LENGTH).fill(''),
+        correctness: Array(WORD_LENGTH).fill(null),
+      })),
   );
   const [currentGuess, setCurrentGuess] = useState('');
 
@@ -96,8 +117,6 @@ const WordleGame: React.FC = () => {
 
   const submitScaleAnimation = useSharedValue(1);
   const submitColorAnimation = useSharedValue(0);
-
-  const font = useFont(HebrewFont, 24);
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -116,9 +135,15 @@ const WordleGame: React.FC = () => {
     // if not legal word?
     if (currentGuess.length === WORD_LENGTH) {
       setGuesses(prev => {
-        const newGuesses = [...prev];
-        newGuesses[currentAttempt] = currentGuess;
-        return newGuesses;
+        return prev.map((guess, index) => {
+          if (index === currentAttempt) {
+            return {
+              letters: currentGuess.split(''),
+              correctness: generateRandomWordState(),
+            };
+          }
+          return guess;
+        });
       });
       setCurrentAttempt(prev => prev + 1);
       setCurrentGuess('');
@@ -134,60 +159,24 @@ const WordleGame: React.FC = () => {
     }
   }, [currentGuess, currentAttempt, shakeAnimation]);
 
-  const renderGrid = () => {
-    return (
-      <Canvas style={[styles.grid]}>
-        {Array(MAX_ATTEMPTS)
-          .fill(0)
-          .map((_, rowIndex) =>
-            Array(WORD_LENGTH)
-              .fill(0)
-              .map((__, colIndex) => {
-                const letter =
-                  guesses[rowIndex][colIndex] ||
-                  (rowIndex === currentAttempt ? currentGuess[colIndex] : '');
-                const xPos = I18nManager.isRTL
-                  ? (WORD_LENGTH - 1 - colIndex) * 50 + 5
-                  : colIndex * 50 + 5;
-                return (
-                  <React.Fragment key={`${rowIndex}-${colIndex}`}>
-                    <RoundedRect
-                      x={xPos}
-                      y={rowIndex * 50 + 5}
-                      width={40}
-                      height={40}
-                      r={5}
-                      color={letter ? '#4CAF50' : '#e0e0e0'}
-                    />
-                    {font && (
-                      <SkiaText
-                        x={xPos + 13}
-                        y={rowIndex * 50 + 32}
-                        text={letter || ' '}
-                        font={font}
-                        color="white"
-                      />
-                    )}
-                  </React.Fragment>
-                );
-              }),
-          )}
-      </Canvas>
-    );
-  };
-
   const renderKeyboard = () => {
-    const keys = 'אבגדהוזחטיכלמנסעפצקרשת'.split('');
+    const keys = 'קראטופשדגכעיחלזסבהנמצת'.split('');
     return (
       <View style={[styles.keyboard]}>
         {keys.map(key => (
-          <KeyboardKey key={key} letter={key} onPress={handleKeyPress} />
+          <KeyboardKey
+            disabled={currentGuess.length >= WORD_LENGTH}
+            key={key}
+            letter={key}
+            onPress={handleKeyPress}
+          />
         ))}
         <KeyboardKey
-          letter="DELETE"
+          disabled={currentGuess.length === 0}
           onPress={handleDelete}
-          style={styles.wideKey}
-        />
+          style={styles.wideKey}>
+          <DeleteKeyIcon width={40} height={50} />
+        </KeyboardKey>
       </View>
     );
   };
@@ -222,7 +211,13 @@ const WordleGame: React.FC = () => {
             transform: [{translateX: shakeAnimation.value}],
           })),
         ]}>
-        {renderGrid()}
+        <WordleGrid
+          guesses={guesses}
+          currentAttempt={currentAttempt}
+          currentGuess={currentGuess}
+          maxAttempts={MAX_ATTEMPTS}
+          wordLength={WORD_LENGTH}
+        />
       </Animated.View>
       <View style={styles.bottomContainer}>
         {renderKeyboard()}
@@ -235,7 +230,7 @@ const WordleGame: React.FC = () => {
             });
             runOnJS(handleSubmit)();
           }}>
-          <Text style={styles.submitButtonText}>SUBMIT</Text>
+          <Text style={styles.submitButtonText}>אישור</Text>
         </AnimatedPressable>
       </View>
     </View>
@@ -263,25 +258,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   keyboard: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     justifyContent: 'center',
     marginBottom: 20,
+    marginHorizontal: 5,
   },
   key: {
-    width: 30,
-    height: 40,
+    width: 32,
+    height: 42,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 2,
+    marginHorizontal: 3,
+    marginVertical: 5,
     backgroundColor: '#e0e0e0',
     borderRadius: 5,
   },
   wideKey: {
-    width: 70,
+    width: 65,
   },
   keyText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   submitButton: {
