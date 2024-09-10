@@ -1,5 +1,5 @@
-import React, {useState, useCallback, useEffect, ReactNode} from 'react';
-import {View, StyleSheet, Pressable, Text, ViewStyle} from 'react-native';
+import React, {useState, useCallback, useEffect} from 'react';
+import {View, StyleSheet, Pressable, Text} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -14,58 +14,12 @@ import Animated, {
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
 import WordleGrid from './wordleGrid';
+import KeyboardKey from '~/components/KeyboardKey';
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-interface KeyboardKeyProps {
-  letter?: string;
-  onPress: (key: string) => void;
-  style?: ViewStyle;
-  disabled?: boolean;
-  children?: ReactNode;
-}
-
-const KeyboardKey: React.FC<KeyboardKeyProps> = ({
-  letter,
-  onPress,
-  style,
-  disabled = false,
-  children,
-}) => {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{scale: scale.value}],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withTiming(0.8, {
-      duration: 100,
-      easing: Easing.inOut(Easing.quad),
-    });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withTiming(1, {
-      duration: 100,
-      easing: Easing.inOut(Easing.quad),
-    });
-  };
-
-  return (
-    <AnimatedPressable
-      disabled={disabled}
-      style={[styles.key, style ?? {}, animatedStyle]}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={() => runOnJS(onPress)(letter ?? '')}>
-      {children ?? <Text style={styles.keyText}>{letter}</Text>}
-    </AnimatedPressable>
-  );
-};
 
 const GameBannerAd = () => {
   const adUnitId = __DEV__
@@ -111,6 +65,15 @@ const WordleGame: React.FC = () => {
         correctness: Array(WORD_LENGTH).fill(null),
       })),
   );
+  const [keyboardLetters, setKeyboardLetters] = useState(
+    'קראטופשדגכעיחלזסבהנמצת'
+      .split('')
+      .reduce<Record<string, Correctness>>((acc, letter) => {
+        acc[letter] = null;
+        return acc;
+      }, {}),
+  );
+
   const [currentGuess, setCurrentGuess] = useState('');
 
   const shakeAnimation = useSharedValue(0);
@@ -134,16 +97,28 @@ const WordleGame: React.FC = () => {
   const handleSubmit = useCallback(() => {
     // if not legal word?
     if (currentGuess.length === WORD_LENGTH) {
-      setGuesses(prev => {
-        return prev.map((guess, index) => {
-          if (index === currentAttempt) {
-            return {
-              letters: currentGuess.split(''),
-              correctness: generateRandomWordState(),
-            };
+      const correctness = generateRandomWordState();
+      setGuesses(prev =>
+        prev.map((guess, index) =>
+          index === currentAttempt
+            ? {letters: currentGuess.split(''), correctness}
+            : guess,
+        ),
+      );
+      setKeyboardLetters(prev => {
+        const newState = {...prev};
+        currentGuess.split('').forEach((letter, index) => {
+          const letterCorrectness = correctness[index];
+          if (
+            letterCorrectness === 'correct' ||
+            (letterCorrectness === 'exists' &&
+              newState[letter] !== 'correct') ||
+            (letterCorrectness === 'notInUse' && !newState[letter])
+          ) {
+            newState[letter] = letterCorrectness;
           }
-          return guess;
         });
+        return newState;
       });
       setCurrentAttempt(prev => prev + 1);
       setCurrentGuess('');
@@ -160,15 +135,15 @@ const WordleGame: React.FC = () => {
   }, [currentGuess, currentAttempt, shakeAnimation]);
 
   const renderKeyboard = () => {
-    const keys = 'קראטופשדגכעיחלזסבהנמצת'.split('');
     return (
       <View style={[styles.keyboard]}>
-        {keys.map(key => (
+        {Object.entries(keyboardLetters).map(([key, correctness]) => (
           <KeyboardKey
             disabled={currentGuess.length >= WORD_LENGTH}
             key={key}
             letter={key}
             onPress={handleKeyPress}
+            correctness={correctness}
           />
         ))}
         <KeyboardKey

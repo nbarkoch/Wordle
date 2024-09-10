@@ -5,6 +5,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
+  withDelay,
   interpolateColor,
 } from 'react-native-reanimated';
 import {WordGuess} from './WordleGame';
@@ -20,8 +21,10 @@ interface WordleGridProps {
 interface LetterCellProps {
   letter: string;
   viewed?: 'correct' | 'exists' | 'notInUse' | null;
+  delay: number;
 }
-function LetterCell({letter, viewed}: LetterCellProps) {
+
+function LetterCell({letter, viewed, delay}: LetterCellProps) {
   const letterCellStyle = letter
     ? {
         backgroundColor: '#e5e5e5',
@@ -46,11 +49,11 @@ function LetterCell({letter, viewed}: LetterCellProps) {
 
   useEffect(() => {
     if (viewed) {
-      flipValue.value = withTiming(180, {duration: 1000});
+      flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
     } else {
-      flipValue.value = withTiming(0, {duration: 1000});
+      flipValue.value = withTiming(0, {duration: 500});
     }
-  }, [flipValue, viewed]);
+  }, [flipValue, viewed, delay]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -130,6 +133,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
                     key={`${rowIndex}-${colIndex}`}
                     letter={letter}
                     viewed={guesses[rowIndex]?.correctness[colIndex]}
+                    delay={colIndex * 100} // 100ms delay between each cell
                   />
                 );
               })}
