@@ -1,3 +1,12 @@
+export const WORD_LENGTH = 5;
+export const MAX_ATTEMPTS = 6;
+export type Correctness = 'correct' | 'exists' | 'notInUse' | null;
+
+export type WordGuess = {
+  letters: string[];
+  correctness: Correctness[];
+};
+
 // Helper function to darken a hex color
 export const darkenColor = (color: string, percent: number) => {
   const num = parseInt(color.replace('#', ''), 16),
@@ -17,3 +26,17 @@ export const darkenColor = (color: string, percent: number) => {
       .slice(1)
   );
 };
+
+export const keyboardInitialKeysState = 'קראטופשדגכעיחלזסבהנמצת'
+  .split('')
+  .reduce<Record<string, Correctness>>((acc, letter) => {
+    acc[letter] = null;
+    return acc;
+  }, {});
+
+export const guessesInitialGridState = Array(MAX_ATTEMPTS)
+  .fill(null)
+  .map(() => ({
+    letters: Array(WORD_LENGTH).fill(''),
+    correctness: Array(WORD_LENGTH).fill(null),
+  }));

@@ -14,9 +14,14 @@ import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import WordleGrid from './wordleGrid';
 import useWordValidator from '~/database/useWordValidator';
 import Keyboard from '~/components/Keyboard';
-
-const WORD_LENGTH = 5;
-const MAX_ATTEMPTS = 6;
+import useSecretWord from '~/database/useSecretWord';
+import {
+  guessesInitialGridState,
+  keyboardInitialKeysState,
+  MAX_ATTEMPTS,
+  WORD_LENGTH,
+  WordGuess,
+} from '~/utils/ui';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -36,44 +41,18 @@ const GameBannerAd = () => {
   );
 };
 
-export type Correctness = 'correct' | 'exists' | 'notInUse' | null;
-
-export type WordGuess = {
-  letters: string[];
-  correctness: Correctness[];
-};
-
-function generateRandomWordState(): Correctness[] {
-  const options: Correctness[] = ['correct', 'exists', 'notInUse'];
-
-  return Array(5)
-    .fill(null)
-    .map(() => {
-      const randomIndex = Math.floor(Math.random() * options.length);
-      return options[randomIndex];
-    });
-}
-
 const WordleGame: React.FC = () => {
+  const {evaluateGuess, secretWord} = useSecretWord();
+  console.log('secretWord', secretWord);
   const [currentAttempt, setCurrentAttempt] = useState(0);
-  const [guesses, setGuesses] = useState<WordGuess[]>(
-    Array(MAX_ATTEMPTS)
-      .fill(null)
-      .map(() => ({
-        letters: Array(WORD_LENGTH).fill(''),
-        correctness: Array(WORD_LENGTH).fill(null),
-      })),
-  );
+  const [guesses, setGuesses] = useState<WordGuess[]>(guessesInitialGridState);
   const [keyboardLetters, setKeyboardLetters] = useState(
-    'קראטופשדגכעיחלזסבהנמצת'
-      .split('')
-      .reduce<Record<string, Correctness>>((acc, letter) => {
-        acc[letter] = null;
-        return acc;
-      }, {}),
+    keyboardInitialKeysState,
   );
 
   const [currentGuess, setCurrentGuess] = useState('');
+  const {isValidWord} = useWordValidator();
+  const [isValidGuess, setIsValidGuess] = useState<boolean | null>(null);
 
   const shakeAnimation = useSharedValue(0);
 
@@ -94,9 +73,8 @@ const WordleGame: React.FC = () => {
   }, []);
 
   const handleSubmit = useCallback(() => {
-    // if not legal word?
-    if (currentGuess.length === WORD_LENGTH) {
-      const correctness = generateRandomWordState();
+    if (isValidGuess) {
+      const correctness = evaluateGuess(currentGuess);
       setGuesses(prev =>
         prev.map((guess, index) =>
           index === currentAttempt
@@ -131,11 +109,13 @@ const WordleGame: React.FC = () => {
         withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
       );
     }
-  }, [currentGuess, currentAttempt, shakeAnimation]);
-
-  const {isValidWord} = useWordValidator();
-
-  const [isValidGuess, setIsValidGuess] = useState<boolean | null>(null);
+  }, [
+    isValidGuess,
+    evaluateGuess,
+    currentGuess,
+    currentAttempt,
+    shakeAnimation,
+  ]);
 
   useEffect(() => {
     if (currentGuess.length === WORD_LENGTH) {

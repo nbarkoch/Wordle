@@ -1,7 +1,7 @@
 import React, {useState, useMemo} from 'react';
 import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
-import {Correctness} from '~/screens/WordleGame';
-import {darkenColor} from '~/utils/ui';
+
+import {Correctness, darkenColor} from '~/utils/ui';
 
 interface KeyboardKeyProps {
   letter?: string;

@@ -1,7 +1,7 @@
 import React, {StyleSheet, View} from 'react-native';
-import {Correctness} from '~/screens/WordleGame';
 import KeyboardKey from './KeyboardKey';
 import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
+import {Correctness} from '~/utils/ui';
 
 const WORD_LENGTH = 5;
 
