@@ -22,6 +22,7 @@ import {
   WORD_LENGTH,
   WordGuess,
 } from '~/utils/ui';
+import GameResultDialog from '~/components/GameResultDialog';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -42,9 +43,33 @@ const GameBannerAd = () => {
 };
 
 const WordleGame: React.FC = () => {
-  const {evaluateGuess, secretWord} = useSecretWord();
+  const {evaluateGuess, secretWord, generateSecretWord} = useSecretWord();
   console.log('secretWord', secretWord);
   const [currentAttempt, setCurrentAttempt] = useState(0);
+  const [gameStatus, setGameStatus] = useState<
+    'PLAYING' | 'SUCCESS' | 'FAILURE'
+  >('PLAYING');
+
+  function endGame(status: 'SUCCESS' | 'FAILURE') {
+    setGameStatus(status);
+  }
+
+  const handleNewGame = useCallback(() => {
+    setCurrentAttempt(0);
+    setGuesses(guessesInitialGridState);
+    setKeyboardLetters(keyboardInitialKeysState);
+    setCurrentGuess('');
+    setGameStatus('PLAYING');
+    generateSecretWord();
+    // Add any other state resets needed for a new game
+  }, [generateSecretWord]);
+
+  const handleGoHome = useCallback(() => {
+    // Implement the logic to navigate to the home screen
+    // This might involve using a navigation library or state management
+    console.log('Navigate to home screen');
+  }, []);
+
   const [guesses, setGuesses] = useState<WordGuess[]>(guessesInitialGridState);
   const [keyboardLetters, setKeyboardLetters] = useState(
     keyboardInitialKeysState,
@@ -97,6 +122,15 @@ const WordleGame: React.FC = () => {
         });
         return newState;
       });
+      const secretWordRevealed = correctness.every(
+        letter => letter === 'correct',
+      );
+      if (secretWordRevealed) {
+        return endGame('SUCCESS');
+      }
+      if (currentAttempt === MAX_ATTEMPTS) {
+        return endGame('FAILURE');
+      }
       setCurrentAttempt(prev => prev + 1);
       setCurrentGuess('');
     } else {
@@ -182,6 +216,14 @@ const WordleGame: React.FC = () => {
           <Text style={styles.submitButtonText}>אישור</Text>
         </AnimatedPressable>
       </View>
+      <GameResultDialog
+        isVisible={gameStatus !== 'PLAYING'}
+        isSuccess={gameStatus === 'SUCCESS'}
+        onNewGame={handleNewGame}
+        onGoHome={handleGoHome}
+        currentScore={0}
+        bestScore={0}
+      />
     </View>
   );
 };
