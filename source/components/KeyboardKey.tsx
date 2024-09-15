@@ -35,15 +35,6 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
     }
   }, [correctness]);
 
-  const letterColor = useMemo(() => {
-    switch (correctness) {
-      case null:
-        return '#6a6a6a';
-      default:
-        return '#ffff';
-    }
-  }, [correctness]);
-
   const handlePressIn = () => {
     setIsPressed(true);
   };
@@ -53,12 +44,7 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
   };
 
   const keyStyle = useMemo(() => {
-    const baseStyle = [
-      styles.key,
-      style,
-      {backgroundColor: baseColor},
-      disabled && styles.keyDisabled,
-    ];
+    const baseStyle = [styles.key, style, disabled && styles.keyDisabled];
 
     if (isPressed) {
       return [
@@ -79,7 +65,7 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
       onPressOut={handlePressOut}
       onPress={() => onPress(letter ?? '')}>
       {children ?? (
-        <Text style={[styles.keyText, {color: letterColor}]}>{letter}</Text>
+        <Text style={[styles.keyText, {color: baseColor}]}>{letter}</Text>
       )}
     </Pressable>
   );
@@ -99,8 +85,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   keyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '900',
   },
 });
 

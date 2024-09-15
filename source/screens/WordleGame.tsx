@@ -1,12 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Text,
-  Dimensions,
-  LayoutChangeEvent,
-} from 'react-native';
+import {View, StyleSheet, Pressable, Text, Dimensions} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -30,10 +23,11 @@ import {
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/GameResultDialog';
-import {BackgroundImage} from '~/components/BackgroundImage';
+import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
+import TopBar from '~/components/TopBar';
 
-const window = Dimensions.get('window');
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const {width, height} = Dimensions.get('window');
 
 const GameBannerAd = () => {
   const adUnitId = __DEV__
@@ -58,9 +52,14 @@ const WordleGame: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<
     'PLAYING' | 'SUCCESS' | 'FAILURE'
   >('PLAYING');
+  const [score, setScore] = useState(0);
+  const [timer, setTimer] = useState(0);
 
   function endGame(status: 'SUCCESS' | 'FAILURE') {
     setGameStatus(status);
+    if (status === 'SUCCESS') {
+      setScore(prevScore => prevScore + 1);
+    }
   }
 
   const handleNewGame = useCallback(() => {
@@ -69,8 +68,8 @@ const WordleGame: React.FC = () => {
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess('');
     setGameStatus('PLAYING');
+    setTimer(0);
     generateSecretWord();
-    // Add any other state resets needed for a new game
   }, [generateSecretWord]);
 
   const handleGoHome = useCallback(() => {
@@ -137,7 +136,7 @@ const WordleGame: React.FC = () => {
       if (secretWordRevealed) {
         return endGame('SUCCESS');
       }
-      if (currentAttempt === MAX_ATTEMPTS) {
+      if (currentAttempt + 1 === MAX_ATTEMPTS) {
         return endGame('FAILURE');
       }
       setCurrentAttempt(prev => prev + 1);
@@ -175,7 +174,7 @@ const WordleGame: React.FC = () => {
 
   const submitButtonStyle = useAnimatedStyle(() => {
     const finalColor =
-      isValidGuess === null ? '#A0A0A0' : isValidGuess ? '#4CAF50' : '#ce1616';
+      isValidGuess === null ? '#A0A0A0' : isValidGuess ? '#7FCCB5' : '#F47A89';
     const backgroundColor = interpolateColor(
       submitColorAnimation.value,
       [0, 1, 2],
@@ -188,99 +187,73 @@ const WordleGame: React.FC = () => {
     };
   }, [isValidGuess]);
 
-  const [gridLayout, setGridLayout] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
-  const [keyboardLayout, setKeyboardLayout] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
-
-  const onGridLayout = useCallback((event: LayoutChangeEvent) => {
-    const {x, y, width, height} = event.nativeEvent.layout;
-    setGridLayout({x, y, width, height});
-  }, []);
-
-  const onKeyboardLayout = useCallback((event: LayoutChangeEvent) => {
-    const {x, y, width, height} = event.nativeEvent.layout;
-    setKeyboardLayout({x, y, width, height});
+  const handleTimerUpdate = useCallback((newTime: number) => {
+    setTimer(newTime);
   }, []);
 
   return (
     <View style={styles.container}>
-      <BackgroundImage
-        imagePath={require('~/assets/images/background_stars2.webp')}
-        width={window.width}
-        height={window.height}
-        backdropFilterAreas={[
-          {
-            x: gridLayout.x,
-            y: gridLayout.y,
-            width: gridLayout.width,
-            height: gridLayout.height,
-            blurAmount: 15,
-            borderRadius: 20,
-          },
-          {
-            x: keyboardLayout.x,
-            y: keyboardLayout.y,
-            width: keyboardLayout.width,
-            height: keyboardLayout.height,
-            blurAmount: 10,
-            borderRadius: 0,
-          },
-        ]}
-        overlayColor="rgba(255, 255, 255, 0.4)"
-      />
-      <GameBannerAd />
-      <Animated.View
-        onLayout={onGridLayout}
-        style={[
-          styles.gridContainer,
-          useAnimatedStyle(() => ({
-            transform: [{translateX: shakeAnimation.value}],
-          })),
-        ]}>
-        <WordleGrid
-          guesses={guesses}
-          currentAttempt={currentAttempt}
-          currentGuess={currentGuess}
-          maxAttempts={MAX_ATTEMPTS}
-          wordLength={WORD_LENGTH}
+      <Canvas style={styles.canvas}>
+        <Rect x={0} y={0} width={width} height={height}>
+          <LinearGradient
+            start={vec(0, 0)}
+            end={vec(0, height)}
+            colors={['#343D4E', '#384555', '#3A4F6C']}
+          />
+        </Rect>
+      </Canvas>
+      <View style={styles.content}>
+        <GameBannerAd />
+        <View>
+          <TopBar
+            score={score}
+            isGameActive={gameStatus === 'PLAYING'}
+            onTimerUpdate={handleTimerUpdate}
+          />
+          <Animated.View
+            style={[
+              styles.gridContainer,
+              useAnimatedStyle(() => ({
+                transform: [{translateX: shakeAnimation.value}],
+              })),
+            ]}>
+            <WordleGrid
+              guesses={guesses}
+              currentAttempt={currentAttempt}
+              currentGuess={currentGuess}
+              maxAttempts={MAX_ATTEMPTS}
+              wordLength={WORD_LENGTH}
+            />
+          </Animated.View>
+        </View>
+        <View style={styles.bottomContainer}>
+          <Keyboard
+            handleKeyPress={handleKeyPress}
+            handleDelete={handleDelete}
+            keyboardLetters={keyboardLetters}
+            currentGuessLength={currentGuess.length}
+          />
+          <AnimatedPressable
+            disabled={currentGuess.length < WORD_LENGTH}
+            style={[styles.submitButton, submitButtonStyle]}
+            onPress={() => {
+              submitScaleAnimation.value = withSpring(0.8, {}, () => {
+                submitScaleAnimation.value = withSpring(1);
+              });
+              runOnJS(handleSubmit)();
+            }}>
+            <Text style={styles.submitButtonText}>אישור</Text>
+          </AnimatedPressable>
+        </View>
+        <GameResultDialog
+          isVisible={gameStatus !== 'PLAYING'}
+          isSuccess={gameStatus === 'SUCCESS'}
+          onNewGame={handleNewGame}
+          onGoHome={handleGoHome}
+          currentScore={0}
+          bestScore={0}
         />
-      </Animated.View>
-      <View style={styles.bottomContainer} onLayout={onKeyboardLayout}>
-        <Keyboard
-          handleKeyPress={handleKeyPress}
-          handleDelete={handleDelete}
-          keyboardLetters={keyboardLetters}
-          currentGuessLength={currentGuess.length}
-        />
-        <AnimatedPressable
-          disabled={currentGuess.length < WORD_LENGTH}
-          style={[styles.submitButton, submitButtonStyle]}
-          onPress={() => {
-            submitScaleAnimation.value = withSpring(0.8, {}, () => {
-              submitScaleAnimation.value = withSpring(1);
-            });
-            runOnJS(handleSubmit)();
-          }}>
-          <Text style={styles.submitButtonText}>אישור</Text>
-        </AnimatedPressable>
       </View>
-      <GameResultDialog
-        isVisible={gameStatus !== 'PLAYING'}
-        isSuccess={gameStatus === 'SUCCESS'}
-        onNewGame={handleNewGame}
-        onGoHome={handleGoHome}
-        currentScore={0}
-        bestScore={0}
-      />
     </View>
   );
 };
@@ -288,7 +261,7 @@ const WordleGame: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    backgroundColor: '#f0f0f0',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
@@ -296,6 +269,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,
+    backgroundColor: '#343E4F',
+    elevation: 6,
+    borderRadius: 20,
   },
   grid: {
     width: WORD_LENGTH * 50,
@@ -320,7 +296,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 3,
     marginVertical: 5,
-    backgroundColor: '#e0e0e0',
+
     borderRadius: 5,
   },
   wideKey: {
@@ -331,7 +307,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   submitButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#7FCCB5',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
@@ -340,6 +316,19 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  canvas: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: width,
+    height: height,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 

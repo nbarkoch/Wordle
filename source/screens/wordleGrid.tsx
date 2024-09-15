@@ -8,7 +8,7 @@ import Animated, {
   withDelay,
   interpolateColor,
 } from 'react-native-reanimated';
-import {WordGuess} from './WordleGame';
+import {WordGuess} from '~/utils/ui';
 
 interface WordleGridProps {
   guesses: WordGuess[];
@@ -28,10 +28,8 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
   const letterCellStyle = letter
     ? {
         backgroundColor: '#e5e5e5',
-        borderColor: '#e0e0e0',
-        borderWidth: 1,
       }
-    : {backgroundColor: '#e0e0e0'};
+    : {backgroundColor: '#EDEFEC'};
 
   const animatedValue = useSharedValue(0);
   const flipValue = useSharedValue(0);
@@ -70,10 +68,10 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
   const interpolatedColor = useAnimatedStyle(() => {
     const color =
       viewed === 'correct'
-        ? '#2fb56b'
+        ? '#7FCCB5'
         : viewed === 'exists'
-        ? '#ffcf42'
-        : '#999';
+        ? '#F9B033'
+        : '#F47A89';
     const backgroundColor = interpolateColor(
       flipValue.value,
       [0, 89, 90, 180],
@@ -155,15 +153,15 @@ const styles = StyleSheet.create({
   cell: {
     width: 40,
     height: 40,
-    borderRadius: 5,
-    margin: 5,
+    borderRadius: 15,
+    marginVertical: 4,
+    marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   letter: {
     fontSize: 24,
-    fontFamily: 'VarelaRound-Regular',
-    marginTop: -1,
+    fontWeight: '900',
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
