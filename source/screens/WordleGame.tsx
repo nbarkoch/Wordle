@@ -1,5 +1,12 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {View, StyleSheet, Pressable, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Text,
+  Dimensions,
+  LayoutChangeEvent,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -23,7 +30,9 @@ import {
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/GameResultDialog';
+import {BackgroundImage} from '~/components/BackgroundImage';
 
+const window = Dimensions.get('window');
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const GameBannerAd = () => {
@@ -179,10 +188,58 @@ const WordleGame: React.FC = () => {
     };
   }, [isValidGuess]);
 
+  const [gridLayout, setGridLayout] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const [keyboardLayout, setKeyboardLayout] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+
+  const onGridLayout = useCallback((event: LayoutChangeEvent) => {
+    const {x, y, width, height} = event.nativeEvent.layout;
+    setGridLayout({x, y, width, height});
+  }, []);
+
+  const onKeyboardLayout = useCallback((event: LayoutChangeEvent) => {
+    const {x, y, width, height} = event.nativeEvent.layout;
+    setKeyboardLayout({x, y, width, height});
+  }, []);
+
   return (
     <View style={styles.container}>
+      <BackgroundImage
+        imagePath={require('~/assets/images/background_stars2.webp')}
+        width={window.width}
+        height={window.height}
+        backdropFilterAreas={[
+          {
+            x: gridLayout.x,
+            y: gridLayout.y,
+            width: gridLayout.width,
+            height: gridLayout.height,
+            blurAmount: 15,
+            borderRadius: 20,
+          },
+          {
+            x: keyboardLayout.x,
+            y: keyboardLayout.y,
+            width: keyboardLayout.width,
+            height: keyboardLayout.height,
+            blurAmount: 10,
+            borderRadius: 0,
+          },
+        ]}
+        overlayColor="rgba(255, 255, 255, 0.4)"
+      />
       <GameBannerAd />
       <Animated.View
+        onLayout={onGridLayout}
         style={[
           styles.gridContainer,
           useAnimatedStyle(() => ({
@@ -197,7 +254,7 @@ const WordleGame: React.FC = () => {
           wordLength={WORD_LENGTH}
         />
       </Animated.View>
-      <View style={styles.bottomContainer}>
+      <View style={styles.bottomContainer} onLayout={onKeyboardLayout}>
         <Keyboard
           handleKeyPress={handleKeyPress}
           handleDelete={handleDelete}
@@ -234,11 +291,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 20,
   },
   gridContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 14,
   },
   grid: {
     width: WORD_LENGTH * 50,
@@ -247,6 +304,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     width: '100%',
     alignItems: 'center',
+    paddingBottom: 20,
   },
   keyboard: {
     flexDirection: 'row-reverse',

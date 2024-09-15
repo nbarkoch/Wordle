@@ -75,7 +75,7 @@ const GameResultDialog = ({
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(300, 300)}
-                colors={['#F6B871', '#F6B871', '#E08042']}
+                colors={['#F6B871', '#F6B871', '#FF6347']}
               />
             </RoundedRect>
           </Canvas>
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
   dialogWrapper: {
     width: 300,
     height: 300,
+    padding: 3,
     elevation: 6,
   },
   canvas: {
@@ -145,7 +146,6 @@ const styles = StyleSheet.create({
   dialog: {
     height: '100%',
     backgroundColor: '#F8E4A3',
-    margin: 3,
     borderRadius: 17,
     alignItems: 'center',
     paddingTop: 30,

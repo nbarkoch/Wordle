@@ -87,8 +87,8 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
 
 const styles = StyleSheet.create({
   key: {
-    width: 32,
-    height: 42,
+    width: 30,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 3,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   keyText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

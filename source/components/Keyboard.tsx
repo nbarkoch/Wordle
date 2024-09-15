@@ -1,7 +1,7 @@
 import React, {StyleSheet, View} from 'react-native';
 import KeyboardKey from './KeyboardKey';
 import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
-import {Correctness} from '~/utils/ui';
+import {Correctness, keyboardFormat} from '~/utils/ui';
 
 const WORD_LENGTH = 5;
 
@@ -18,37 +18,69 @@ const Keyboard = ({
   currentGuessLength,
   handleDelete,
 }: KeyboardProps) => {
+  const keys = Object.entries(keyboardLetters);
+
+  // Function to split the keys into the specified chunks
+  const formatKeysInChunks = () => {
+    const {chunks, deleteAtChunkIndex} = keyboardFormat;
+    const formattedChunks: Array<[string, Correctness][]> = [];
+    let start = 0;
+
+    chunks.forEach((chunkSize, rowIndex) => {
+      const chunk = keys.slice(start, start + chunkSize);
+      formattedChunks.push(chunk);
+
+      if (deleteAtChunkIndex === rowIndex) {
+        formattedChunks[rowIndex].push(['DELETE', null]);
+      }
+
+      start += chunkSize;
+    });
+
+    return formattedChunks;
+  };
+  const formattedKeys = formatKeysInChunks();
   return (
-    <View style={[styles.keyboard]}>
-      {Object.entries(keyboardLetters).map(([key, correctness]) => (
-        <KeyboardKey
-          disabled={currentGuessLength >= WORD_LENGTH}
-          key={key}
-          letter={key}
-          onPress={handleKeyPress}
-          correctness={correctness}
-        />
+    <View style={styles.keyboard}>
+      {formattedKeys.map((chunk, rowIndex) => (
+        <View key={`row-${rowIndex}`} style={styles.keyboardRow}>
+          {chunk.map(([key, correctness]) => (
+            <KeyboardKey
+              key={key}
+              letter={key === 'DELETE' ? undefined : key}
+              onPress={key === 'DELETE' ? handleDelete : handleKeyPress}
+              disabled={
+                key === 'DELETE'
+                  ? currentGuessLength === 0
+                  : currentGuessLength >= WORD_LENGTH
+              }
+              correctness={correctness}
+              style={key === 'DELETE' ? styles.wideKey : undefined}>
+              {key === 'DELETE' ? (
+                <DeleteKeyIcon width={30} height={50} />
+              ) : null}
+            </KeyboardKey>
+          ))}
+        </View>
       ))}
-      <KeyboardKey
-        disabled={currentGuessLength === 0}
-        onPress={handleDelete}
-        style={styles.wideKey}>
-        <DeleteKeyIcon width={40} height={50} />
-      </KeyboardKey>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   keyboard: {
-    flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
     marginHorizontal: 5,
   },
+  keyboardRow: {
+    width: '100%',
+    flexDirection: 'row-reverse',
+  },
   wideKey: {
-    width: 65,
+    width: 45,
   },
 });
 

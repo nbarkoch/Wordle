@@ -27,12 +27,14 @@ export const darkenColor = (color: string, percent: number) => {
   );
 };
 
-export const keyboardInitialKeysState = 'קראטופשדגכעיחלזסבהנמצת'
+export const keyboardInitialKeysState = 'קראטוןםפשדגכעיחלךףזסבהנמצתץ'
   .split('')
   .reduce<Record<string, Correctness>>((acc, letter) => {
     acc[letter] = null;
     return acc;
   }, {});
+
+export const keyboardFormat = {chunks: [8, 10, 9], deleteAtChunkIndex: 0};
 
 export const guessesInitialGridState = Array(MAX_ATTEMPTS)
   .fill(null)
