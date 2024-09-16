@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@shopify/react-native-skia": "1.0.6",
+    "lottie-ios": "^3.1.8",
+    "lottie-react-native": "7.0.0",
     "react": "18.1.0",
     "react-native": "0.70.10",
     "react-native-asset": "^2.1.1",

@@ -78,6 +78,10 @@ PODS:
   - GoogleUserMessagingPlatform (2.5.0)
   - hermes-engine (0.70.10)
   - libevent (2.1.12)
+  - lottie-ios (3.1.8)
+  - lottie-react-native (3.5.0):
+    - lottie-ios (~> 3.1.8)
+    - React
   - OpenSSL-Universal (1.1.1100)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -408,7 +412,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.6.0):
+  - RNSVG (12.4.4):
     - React-Core
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
@@ -444,6 +448,8 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
+  - lottie-ios (from `../node_modules/lottie-ios`)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -514,6 +520,10 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes/hermes-engine.podspec"
+  lottie-ios:
+    :path: "../node_modules/lottie-ios"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -602,6 +612,8 @@ SPEC CHECKSUMS:
   GoogleUserMessagingPlatform: 6b4f48a370e77ce121d034c908cc6ee4fdafaf13
   hermes-engine: 409b787d72bde225a3e5ce982f9c3ace6ff56691
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
+  lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: 23f0d5d0dea22af22f30f146e090a7d16e6b8be7
@@ -634,7 +646,7 @@ SPEC CHECKSUMS:
   ReactCommon: a29dac86d7219579db079cef8f380ebffe1ba545
   RNGoogleMobileAds: a94e3a53aad36abcf0869d202c1c19a381db0954
   RNReanimated: 34ffdce9b09d4c6fc03f03e8939a423cc86284c6
-  RNSVG: 5da7a24f31968ec74f0b091e3440080f347e279b
+  RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 0518155cfbcc68c56223422f6a20a71b82e307d2
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

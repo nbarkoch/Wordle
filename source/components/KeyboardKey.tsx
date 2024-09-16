@@ -25,9 +25,9 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
   const baseColor = useMemo(() => {
     switch (correctness) {
       case 'correct':
-        return '#2fb56b';
+        return '#7FCCB5';
       case 'exists':
-        return '#ffcf42';
+        return '#F9B033';
       case 'notInUse':
         return '#999999';
       default:

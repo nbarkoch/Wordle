@@ -1,17 +1,17 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import {useTimerStore} from '~/store/useTimerStore';
 
+export const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+    .toString()
+    .padStart(2, '0')}`;
+};
+
 const Timer: React.FC = () => {
   const {time, isActive, resetKey, increment} = useTimerStore();
-
-  const formatTime = useCallback((seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
-      .toString()
-      .padStart(2, '0')}`;
-  }, []);
 
   useEffect(() => {
     let intervalId: number | null = null;

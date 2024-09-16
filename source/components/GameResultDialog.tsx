@@ -6,6 +6,8 @@ import Animated, {
   withSpring,
   Easing,
   withTiming,
+  withDelay,
+  interpolate,
 } from 'react-native-reanimated';
 import {
   Canvas,
@@ -17,6 +19,8 @@ import HomeIcon from '~/assets/icons/home.svg';
 import ChevronRight from '~/assets/icons/chevron-right.svg';
 
 import StarRating from './StarRating';
+import {useTimerStore} from '~/store/useTimerStore';
+import {formatTime} from './Timer';
 
 interface GameResultDialogProps {
   isVisible: boolean;
@@ -24,19 +28,20 @@ interface GameResultDialogProps {
   onNewGame: () => void;
   onGoHome: () => void;
   currentScore: number;
-  bestScore: number;
 }
 
 const GameResultDialog = ({
   isVisible,
-  // isSuccess,
   onNewGame,
   onGoHome,
   currentScore,
-  bestScore,
 }: GameResultDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
+  const buttonContainerAnimation = useSharedValue(0);
+  const scoreWrapperAnimation = useSharedValue(0);
+
+  const {time} = useTimerStore();
 
   useEffect(() => {
     if (isVisible) {
@@ -45,14 +50,30 @@ const GameResultDialog = ({
         duration: 300,
         easing: Easing.out(Easing.exp),
       });
+      buttonContainerAnimation.value = withDelay(
+        500,
+        withSpring(1, {damping: 15, stiffness: 80}),
+      );
+      scoreWrapperAnimation.value = withDelay(
+        300,
+        withSpring(1, {damping: 12, stiffness: 100}),
+      );
     } else {
       scale.value = withSpring(0);
       opacity.value = withTiming(0, {
         duration: 300,
         easing: Easing.in(Easing.exp),
       });
+      buttonContainerAnimation.value = 0;
+      scoreWrapperAnimation.value = 0;
     }
-  }, [isVisible, scale, opacity]);
+  }, [
+    isVisible,
+    scale,
+    opacity,
+    buttonContainerAnimation,
+    scoreWrapperAnimation,
+  ]);
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -60,6 +81,29 @@ const GameResultDialog = ({
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{scale: scale.value}],
+  }));
+
+  const buttonContainerStyle = useAnimatedStyle(() => ({
+    zIndex: -1,
+    transform: [
+      {
+        translateY: interpolate(
+          buttonContainerAnimation.value,
+          [0, 1],
+          [-50, 0],
+        ),
+      },
+    ],
+    opacity: buttonContainerAnimation.value,
+  }));
+
+  const scoreWrapperStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: interpolate(scoreWrapperAnimation.value, [0, 1], [0.5, 1]),
+      },
+    ],
+    opacity: scoreWrapperAnimation.value,
   }));
 
   if (!isVisible) {
@@ -75,7 +119,14 @@ const GameResultDialog = ({
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(300, 300)}
-                colors={['#F6B871', '#F6B871', '#FF6347']}
+                colors={['#BBB6A6', '#e0b87f', '#BBB6A6']}
+              />
+            </RoundedRect>
+            <RoundedRect x={5} y={5} width={290} height={290} r={15}>
+              <LinearGradient
+                start={vec(0, 0)}
+                end={vec(0, 300)}
+                colors={['#224d66', '#3B4457']}
               />
             </RoundedRect>
           </Canvas>
@@ -88,21 +139,22 @@ const GameResultDialog = ({
               height={100}
               rating={Math.min(currentScore, 3)}
             />
-            <View style={styles.scoreWrapper}>
+            <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
               <View style={styles.scoreContainer}>
                 <View style={styles.scoreRow}>
                   <Text style={styles.scoreValue}>{currentScore}</Text>
-                  <Text style={styles.scoreLabel}>SCORE</Text>
+                  <Text style={styles.scoreLabel}>Score</Text>
                 </View>
-                <View style={[styles.scoreRow, {marginTop: 10}]}>
-                  <Text style={styles.scoreValue}>{bestScore}</Text>
-                  <Text style={[styles.scoreLabel]}>TIME</Text>
+                <View style={styles.divider} />
+                <View style={[styles.scoreRow]}>
+                  <Text style={styles.scoreValue}>{formatTime(time)}</Text>
+                  <Text style={[styles.scoreLabel]}>Time</Text>
                 </View>
               </View>
-            </View>
+            </Animated.View>
           </View>
         </View>
-        <View style={styles.buttonContainer}>
+        <Animated.View style={[styles.buttonContainer, buttonContainerStyle]}>
           <Pressable
             style={[styles.button, styles.nextButton]}
             onPress={onNewGame}>
@@ -114,7 +166,7 @@ const GameResultDialog = ({
             onPress={onGoHome}>
             <HomeIcon width={34} height={34} />
           </Pressable>
-        </View>
+        </Animated.View>
       </Animated.View>
     </Animated.View>
   );
@@ -145,7 +197,6 @@ const styles = StyleSheet.create({
   },
   dialog: {
     height: '100%',
-    backgroundColor: '#F8E4A3',
     borderRadius: 17,
     alignItems: 'center',
     paddingTop: 30,
@@ -153,7 +204,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     position: 'absolute',
     top: -15,
-    backgroundColor: '#FF6347',
+    backgroundColor: '#F7C275',
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,
@@ -174,8 +225,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#FFC68A',
-    borderColor: '#E89A60',
+    backgroundColor: '#19273040',
+    borderColor: '#77807F',
     borderWidth: 2,
     borderRadius: 10,
   },
@@ -187,12 +238,12 @@ const styles = StyleSheet.create({
   scoreLabel: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#943007',
+    color: '#F9F3AC',
   },
   scoreValue: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#943007',
+    color: '#F9F3AC',
   },
   buttonContainer: {
     marginTop: 10,
@@ -209,12 +260,12 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   nextButton: {
-    backgroundColor: '#32CD32',
+    backgroundColor: '#7FCCB5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   homeButton: {
-    backgroundColor: '#1E90FF',
+    backgroundColor: '#2993d1',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -222,6 +273,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  divider: {
+    height: 1,
+    marginVertical: 10,
+    backgroundColor: '#e0b87f',
   },
 });
 

@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {View, StyleSheet, Pressable, Text, Dimensions} from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -11,7 +11,7 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import WordleGrid from './wordleGrid';
+import WordleGrid from '~/components/WordleGrid';
 import useWordValidator from '~/database/useWordValidator';
 import Keyboard from '~/components/Keyboard';
 import useSecretWord from '~/database/useSecretWord';
@@ -26,6 +26,7 @@ import GameResultDialog from '~/components/GameResultDialog';
 import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
 import TopBar from '~/components/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
+import ConfettiOverlay from '~/components/ConfettiOverlay';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const {width, height} = Dimensions.get('window');
@@ -47,8 +48,8 @@ const GameBannerAd = () => {
 };
 
 const WordleGame: React.FC = () => {
-  const {evaluateGuess, generateSecretWord} = useSecretWord();
-
+  const {evaluateGuess, secretWord, generateSecretWord} = useSecretWord();
+  console.log('secretWord', secretWord);
   const {start, stop, reset} = useTimerStore();
 
   const [currentAttempt, setCurrentAttempt] = useState(0);
@@ -197,8 +198,25 @@ const WordleGame: React.FC = () => {
     };
   }, [isValidGuess]);
 
+  const memoizedKeyboard = useMemo(
+    () => (
+      <Keyboard
+        handleKeyPress={handleKeyPress}
+        handleDelete={handleDelete}
+        keyboardLetters={keyboardLetters}
+        currentGuessLength={currentGuess.length}
+      />
+    ),
+    [handleKeyPress, handleDelete, keyboardLetters, currentGuess.length],
+  );
+
   return (
     <View style={styles.container}>
+      <ConfettiOverlay
+        guesses={guesses}
+        currentAttempt={currentAttempt}
+        secretWord={secretWord}
+      />
       <Canvas style={styles.canvas}>
         <Rect x={0} y={0} width={width} height={height}>
           <LinearGradient
@@ -220,6 +238,7 @@ const WordleGame: React.FC = () => {
               })),
             ]}>
             <WordleGrid
+              secretWord={secretWord}
               guesses={guesses}
               currentAttempt={currentAttempt}
               currentGuess={currentGuess}
@@ -229,12 +248,7 @@ const WordleGame: React.FC = () => {
           </Animated.View>
         </View>
         <View style={styles.bottomContainer}>
-          <Keyboard
-            handleKeyPress={handleKeyPress}
-            handleDelete={handleDelete}
-            keyboardLetters={keyboardLetters}
-            currentGuessLength={currentGuess.length}
-          />
+          {memoizedKeyboard}
           <AnimatedPressable
             disabled={currentGuess.length < WORD_LENGTH}
             style={[styles.submitButton, submitButtonStyle]}
@@ -253,7 +267,6 @@ const WordleGame: React.FC = () => {
           onNewGame={handleNewGame}
           onGoHome={handleGoHome}
           currentScore={0}
-          bestScore={0}
         />
       </View>
     </View>

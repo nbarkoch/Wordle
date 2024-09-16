@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, I18nManager} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,15 +8,6 @@ import Animated, {
   withDelay,
   interpolateColor,
 } from 'react-native-reanimated';
-import {WordGuess} from '~/utils/ui';
-
-interface WordleGridProps {
-  guesses: WordGuess[];
-  currentAttempt: number;
-  currentGuess: string;
-  maxAttempts: number;
-  wordLength: number;
-}
 
 interface LetterCellProps {
   letter: string;
@@ -105,51 +96,7 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
   );
 }
 
-const WordleGrid: React.FC<WordleGridProps> = ({
-  guesses,
-  currentAttempt,
-  currentGuess,
-  maxAttempts,
-  wordLength,
-}) => {
-  return (
-    <View style={styles.grid}>
-      {Array(maxAttempts)
-        .fill(0)
-        .map((_, rowIndex) => (
-          <View key={rowIndex} style={styles.row}>
-            {Array(wordLength)
-              .fill(0)
-              .map((__, colIndex) => {
-                const letter =
-                  rowIndex === currentAttempt
-                    ? currentGuess[colIndex]
-                    : guesses[rowIndex]?.letters[colIndex] ?? '';
-
-                return (
-                  <LetterCell
-                    key={`${rowIndex}-${colIndex}`}
-                    letter={letter}
-                    viewed={guesses[rowIndex]?.correctness[colIndex]}
-                    delay={colIndex * 100} // 100ms delay between each cell
-                  />
-                );
-              })}
-          </View>
-        ))}
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
-  grid: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  row: {
-    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
-  },
   cell: {
     width: 40,
     height: 40,
@@ -167,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WordleGrid;
+export default LetterCell;
