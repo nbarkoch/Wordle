@@ -25,6 +25,7 @@ import {
 import GameResultDialog from '~/components/GameResultDialog';
 import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
 import TopBar from '~/components/TopBar';
+import {useTimerStore} from '~/store/useTimerStore';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const {width, height} = Dimensions.get('window');
@@ -46,21 +47,28 @@ const GameBannerAd = () => {
 };
 
 const WordleGame: React.FC = () => {
-  const {evaluateGuess, secretWord, generateSecretWord} = useSecretWord();
-  console.log('secretWord', secretWord);
+  const {evaluateGuess, generateSecretWord} = useSecretWord();
+
+  const {start, stop, reset} = useTimerStore();
+
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [gameStatus, setGameStatus] = useState<
     'PLAYING' | 'SUCCESS' | 'FAILURE'
   >('PLAYING');
   const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(0);
 
   function endGame(status: 'SUCCESS' | 'FAILURE') {
+    stop();
     setGameStatus(status);
     if (status === 'SUCCESS') {
       setScore(prevScore => prevScore + 1);
     }
   }
+
+  useEffect(() => {
+    start();
+    return () => stop();
+  }, [start, stop]);
 
   const handleNewGame = useCallback(() => {
     setCurrentAttempt(0);
@@ -68,14 +76,15 @@ const WordleGame: React.FC = () => {
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess('');
     setGameStatus('PLAYING');
-    setTimer(0);
+    reset();
+    start();
     generateSecretWord();
-  }, [generateSecretWord]);
+  }, [generateSecretWord, reset, start]);
 
   const handleGoHome = useCallback(() => {
     // Implement the logic to navigate to the home screen
     // This might involve using a navigation library or state management
-    console.log('Navigate to home screen');
+    // console.log('Navigate to home screen');
   }, []);
 
   const [guesses, setGuesses] = useState<WordGuess[]>(guessesInitialGridState);
@@ -151,6 +160,7 @@ const WordleGame: React.FC = () => {
         withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isValidGuess,
     evaluateGuess,
@@ -187,10 +197,6 @@ const WordleGame: React.FC = () => {
     };
   }, [isValidGuess]);
 
-  const handleTimerUpdate = useCallback((newTime: number) => {
-    setTimer(newTime);
-  }, []);
-
   return (
     <View style={styles.container}>
       <Canvas style={styles.canvas}>
@@ -205,11 +211,7 @@ const WordleGame: React.FC = () => {
       <View style={styles.content}>
         <GameBannerAd />
         <View>
-          <TopBar
-            score={score}
-            isGameActive={gameStatus === 'PLAYING'}
-            onTimerUpdate={handleTimerUpdate}
-          />
+          <TopBar score={score} />
           <Animated.View
             style={[
               styles.gridContainer,

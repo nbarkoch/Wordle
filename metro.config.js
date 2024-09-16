@@ -26,5 +26,7 @@ module.exports = (async () => {
       path.resolve(__dirname, 'source'),
       path.resolve(__dirname, 'node_modules'),
     ],
+    presets: ['module:metro-react-native-babel-preset'],
+    plugins: [['@babel/plugin-proposal-decorators', {legacy: true}]],
   };
 })();

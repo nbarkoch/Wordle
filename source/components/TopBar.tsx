@@ -4,18 +4,12 @@ import Timer from './Timer';
 
 interface TopBarProps {
   score: number;
-  isGameActive: boolean;
-  onTimerUpdate: (time: number) => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({
-  score,
-  isGameActive,
-  onTimerUpdate,
-}) => {
+const TopBar: React.FC<TopBarProps> = ({score}) => {
   return (
     <View style={styles.topBar}>
-      <Timer isActive={isGameActive} onTimerUpdate={onTimerUpdate} />
+      <Timer />
       <Text style={styles.topBarScore}>Score: {score}</Text>
     </View>
   );

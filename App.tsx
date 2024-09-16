@@ -14,7 +14,6 @@ mobileAds()
   .initialize()
   .then(_ => {
     // Initialization complete
-    console.log('Mobile Ads SDK initialized');
   });
 
 const App = () => {

@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import wordList from '~/database/wordlist';
 
 class TrieNode {
@@ -58,13 +58,19 @@ const useWordValidator = () => {
     return wordsTrie;
   }, []);
 
-  const isValidWord = (word: string): boolean => {
-    return trie.search(word);
-  };
+  const isValidWord = useCallback(
+    (word: string): boolean => {
+      return trie.search(word);
+    },
+    [trie],
+  );
 
-  const isValidPrefix = (prefix: string): boolean => {
-    return trie.startsWith(prefix);
-  };
+  const isValidPrefix = useCallback(
+    (prefix: string): boolean => {
+      return trie.startsWith(prefix);
+    },
+    [trie],
+  );
 
   return {isValidWord, isValidPrefix, isReady: true};
 };
