@@ -17,15 +17,25 @@ const {width, height} = Dimensions.get('window');
 interface ConfettiOverlayProps {
   guesses: WordGuess[];
   currentAttempt: number;
-  secretWord: string;
+  gameStatus: 'PLAYING' | 'SUCCESS' | 'FAILURE';
 }
+
+type ConfettiType = 'spark' | 'party';
+
+type Feedback = {
+  type: ConfettiType;
+  text: string;
+};
 
 function ConfettiOverlay({
   guesses,
   currentAttempt,
-  secretWord,
+  gameStatus,
 }: ConfettiOverlayProps) {
-  const [showFeedback, setShowFeedback] = useState(false);
+  const [showFeedback, setShowFeedback] = useState<Feedback | null>(null);
+
+  const timeout = useRef<number | null>(null);
+
   const previousCorrectLetters = useRef<Set<string>>(new Set());
   const textScale = useSharedValue(0);
   const textOpacity = useSharedValue(0);
@@ -43,18 +53,37 @@ function ConfettiOverlay({
       },
       finished => {
         if (finished) {
-          runOnJS(setShowFeedback)(false);
+          runOnJS(setShowFeedback)(null);
         }
       },
     );
   }, [textOpacity, textScale]);
 
-  useEffect(() => {
-    previousCorrectLetters.current.clear();
-  }, [secretWord]);
+  const animateFeedbackIn = useCallback(
+    (text: string, confettiType: ConfettiType, duration: number) => {
+      setShowFeedback({text, type: confettiType});
+      textScale.value = withSpring(1, {damping: 5, stiffness: 80});
+      textOpacity.value = withTiming(1, {
+        duration: 600,
+        easing: Easing.out(Easing.cubic),
+      });
+
+      timeout.current = setTimeout(animateFeedbackOut, duration);
+    },
+    [animateFeedbackOut, textOpacity, textScale],
+  );
 
   useEffect(() => {
-    if (currentAttempt > 0) {
+    if (gameStatus === 'SUCCESS') {
+      animateFeedbackIn('Congrats!', 'party', 7000);
+    }
+    if (gameStatus !== 'PLAYING') {
+      previousCorrectLetters.current.clear();
+    }
+  }, [animateFeedbackIn, gameStatus]);
+
+  useEffect(() => {
+    if (currentAttempt > 0 && gameStatus === 'PLAYING') {
       const lastGuess = guesses[currentAttempt - 1];
       if (lastGuess) {
         const newCorrectLetters = lastGuess.letters.filter(
@@ -62,25 +91,24 @@ function ConfettiOverlay({
             lastGuess.correctness[index] === 'correct' &&
             !previousCorrectLetters.current.has(letter),
         );
-
+        newCorrectLetters.forEach(letter =>
+          previousCorrectLetters.current.add(letter),
+        );
         if (newCorrectLetters.length >= 3) {
-          setShowFeedback(true);
-          textScale.value = withSpring(1, {damping: 5, stiffness: 80});
-          textOpacity.value = withTiming(1, {
-            duration: 600,
-            easing: Easing.out(Easing.cubic),
-          });
-
-          newCorrectLetters.forEach(letter =>
-            previousCorrectLetters.current.add(letter),
-          );
-
-          // Hide feedback after 3 seconds
-          setTimeout(animateFeedbackOut, 3000);
+          animateFeedbackIn('Strike!', 'spark', 3000);
         }
       }
     }
-  }, [currentAttempt, guesses, textScale, textOpacity, animateFeedbackOut]);
+    if (currentAttempt === 0 && gameStatus === 'PLAYING') {
+      animateFeedbackOut();
+    }
+  }, [
+    currentAttempt,
+    guesses,
+    animateFeedbackIn,
+    gameStatus,
+    animateFeedbackOut,
+  ]);
 
   const animatedTextStyle = useAnimatedStyle(() => ({
     transform: [{scale: textScale.value}],
@@ -89,16 +117,20 @@ function ConfettiOverlay({
 
   return (
     <>
-      {showFeedback && (
+      {showFeedback !== null && (
         <View style={styles.feedbackContainer}>
           <LottieView
             style={styles.confetti}
-            source={require('~/assets/lottie/confetti_1.json')}
+            source={
+              showFeedback.type === 'spark'
+                ? require('~/assets/lottie/confetti_1.json')
+                : require('~/assets/lottie/confetti_2.json')
+            }
             autoPlay
             loop={false}
           />
           <Animated.Text style={[styles.niceText, animatedTextStyle]}>
-            NICE!
+            {showFeedback.text}
           </Animated.Text>
         </View>
       )}
@@ -111,7 +143,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: width,
     height: height,
-    zIndex: 100,
+    zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -123,11 +155,14 @@ const styles = StyleSheet.create({
   niceText: {
     fontSize: 40,
     fontWeight: '900',
-    color: '#84f4ff',
+    color: '#ffffff',
     textShadowColor: '#353f4f',
     textShadowOffset: {width: 0, height: 2},
     textShadowRadius: 20,
-    padding: 20,
+    borderRadius: 27,
+    backgroundColor: '#5c92ffd0',
+    padding: 17,
+    fontStyle: 'italic',
   },
 });
 

@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 3,
   },
   overlayDialog: {
     ...StyleSheet.absoluteFillObject,

@@ -51,6 +51,7 @@ const WordleGame: React.FC = () => {
   const {evaluateGuess, secretWord, generateSecretWord} = useSecretWord();
   console.log('secretWord', secretWord);
   const {start, stop, reset} = useTimerStore();
+  const [isGameEnd, setGameEnd] = useState<boolean>(false);
 
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [gameStatus, setGameStatus] = useState<
@@ -61,6 +62,10 @@ const WordleGame: React.FC = () => {
   function endGame(status: 'SUCCESS' | 'FAILURE') {
     stop();
     setGameStatus(status);
+    const timeout = setTimeout(() => {
+      setGameEnd(true);
+      clearTimeout(timeout);
+    }, 2000);
     if (status === 'SUCCESS') {
       setScore(prevScore => prevScore + 1);
     }
@@ -76,6 +81,7 @@ const WordleGame: React.FC = () => {
     setGuesses(guessesInitialGridState);
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess('');
+    setGameEnd(false);
     setGameStatus('PLAYING');
     reset();
     start();
@@ -213,9 +219,9 @@ const WordleGame: React.FC = () => {
   return (
     <View style={styles.container}>
       <ConfettiOverlay
+        gameStatus={gameStatus}
         guesses={guesses}
         currentAttempt={currentAttempt}
-        secretWord={secretWord}
       />
       <Canvas style={styles.canvas}>
         <Rect x={0} y={0} width={width} height={height}>
@@ -238,7 +244,6 @@ const WordleGame: React.FC = () => {
               })),
             ]}>
             <WordleGrid
-              secretWord={secretWord}
               guesses={guesses}
               currentAttempt={currentAttempt}
               currentGuess={currentGuess}
@@ -262,7 +267,7 @@ const WordleGame: React.FC = () => {
           </AnimatedPressable>
         </View>
         <GameResultDialog
-          isVisible={gameStatus !== 'PLAYING'}
+          isVisible={isGameEnd}
           isSuccess={gameStatus === 'SUCCESS'}
           onNewGame={handleNewGame}
           onGoHome={handleGoHome}
