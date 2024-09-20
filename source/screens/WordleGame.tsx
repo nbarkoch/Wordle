@@ -169,23 +169,19 @@ const WordleGame: React.FC = () => {
         confettiRef.current?.triggerFeedback('spark');
       }
 
-      console.log('newCorrectLetters.length', newCorrectLetters.length);
-
       setKeyboardLetters(prev => {
         const newState = {...prev};
         currentGuess.split('').forEach((letter, index) => {
           const letterCorrectness = correctness[index];
           if (
-            newState[letter] !== letterCorrectness &&
-            (letterCorrectness === 'correct' ||
-              (letterCorrectness === 'exists' &&
-                newState[letter] === 'notInUse') ||
-              (letterCorrectness === 'notInUse' && !newState[letter]))
+            letterCorrectness === 'correct' ||
+            (letterCorrectness === 'exists' &&
+              newState[letter] !== 'correct') ||
+            (letterCorrectness === 'notInUse' && !newState[letter])
           ) {
             newState[letter] = letterCorrectness;
           }
         });
-
         return newState;
       });
 

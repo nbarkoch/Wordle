@@ -72,7 +72,6 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
           easing: Easing.out(Easing.cubic),
         });
 
-        console.log('animDuration', animDuration);
         feedbackTimeout.current = setTimeout(() => {
           setShowFeedback(null);
           feedbackTimeout.current && clearTimeout(feedbackTimeout.current);
@@ -87,7 +86,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
       triggerFeedback: (type: ConfettiType) => {
         switch (type) {
           case 'party':
-            animateFeedbackIn('Congrats!', type, 7000, 3000);
+            animateFeedbackIn('Congrats!', type, 9000, 3000);
             break;
           case 'spark':
             animateFeedbackIn('Strike!', type, 3000, 2000);
