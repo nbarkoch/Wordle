@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {View, Text, StyleSheet, Pressable, Dimensions} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -22,12 +22,14 @@ import StarRating from './StarRating';
 import {useTimerStore} from '~/store/useTimerStore';
 import {formatTime} from './Timer';
 
+const {width, height} = Dimensions.get('window');
 interface GameResultDialogProps {
   isVisible: boolean;
   isSuccess: boolean;
   onNewGame: () => void;
   onGoHome: () => void;
   currentScore: number;
+  secretWord: string;
 }
 
 const GameResultDialog = ({
@@ -35,6 +37,7 @@ const GameResultDialog = ({
   onNewGame,
   onGoHome,
   currentScore,
+  secretWord,
 }: GameResultDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -139,6 +142,8 @@ const GameResultDialog = ({
               height={100}
               rating={Math.min(currentScore, 3)}
             />
+            <Text style={styles.secretWordWas}>{'Secret Word:'}</Text>
+            <Text style={styles.secretWord}>{secretWord}</Text>
             <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
               <View style={styles.scoreContainer}>
                 <View style={styles.scoreRow}>
@@ -174,16 +179,21 @@ const GameResultDialog = ({
 
 const styles = StyleSheet.create({
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    width,
+    height,
+    position: 'absolute',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 3,
+    zIndex: 1000,
   },
   overlayDialog: {
-    ...StyleSheet.absoluteFillObject,
+    width,
+    height,
+    position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1001,
   },
   dialogWrapper: {
     width: 300,
@@ -279,6 +289,15 @@ const styles = StyleSheet.create({
     height: 1,
     marginVertical: 10,
     backgroundColor: '#e0b87f',
+  },
+  secretWordWas: {
+    color: '#758082',
+    fontWeight: '500',
+  },
+  secretWord: {
+    fontWeight: '900',
+    fontSize: 16,
+    color: '#e0b87f',
   },
 });
 

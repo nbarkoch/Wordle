@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useMemo} from 'react';
+import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
 import {View, StyleSheet, Pressable, Text, Dimensions} from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -26,7 +26,10 @@ import GameResultDialog from '~/components/GameResultDialog';
 import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
 import TopBar from '~/components/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
-import ConfettiOverlay from '~/components/ConfettiOverlay';
+import ConfettiOverlay, {
+  ConfettiOverlayRef,
+} from '~/components/ConfettiOverlay';
+import {useScoreStore} from '~/store/useScore';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const {width, height} = Dimensions.get('window');
@@ -51,13 +54,17 @@ const WordleGame: React.FC = () => {
   const {evaluateGuess, secretWord, generateSecretWord} = useSecretWord();
   console.log('secretWord', secretWord);
   const {start, stop, reset} = useTimerStore();
+  const {score, addScore} = useScoreStore();
+  const [gameScore, setGameScore] = useState<number>(0);
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
+  const confettiRef = useRef<ConfettiOverlayRef>(null);
+
+  const previousCorrectLetters = useRef<Set<string>>(new Set());
 
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [gameStatus, setGameStatus] = useState<
     'PLAYING' | 'SUCCESS' | 'FAILURE'
   >('PLAYING');
-  const [score, setScore] = useState(0);
 
   function endGame(status: 'SUCCESS' | 'FAILURE') {
     stop();
@@ -66,8 +73,9 @@ const WordleGame: React.FC = () => {
       setGameEnd(true);
       clearTimeout(timeout);
     }, 2000);
+    previousCorrectLetters.current.clear();
     if (status === 'SUCCESS') {
-      setScore(prevScore => prevScore + 1);
+      addScore(gameScore);
     }
   }
 
@@ -86,6 +94,7 @@ const WordleGame: React.FC = () => {
     reset();
     start();
     generateSecretWord();
+    setGameScore(0);
   }, [generateSecretWord, reset, start]);
 
   const handleGoHome = useCallback(() => {
@@ -124,32 +133,56 @@ const WordleGame: React.FC = () => {
   const handleSubmit = useCallback(() => {
     if (isValidGuess) {
       const correctness = evaluateGuess(currentGuess);
+      const currentLetters = currentGuess.split('');
       setGuesses(prev =>
         prev.map((guess, index) =>
           index === currentAttempt
-            ? {letters: currentGuess.split(''), correctness}
+            ? {letters: currentLetters, correctness}
             : guess,
         ),
       );
+
+      const newCorrectLetters = currentLetters.filter(
+        (letter, index) =>
+          correctness[index] === 'correct' &&
+          !previousCorrectLetters.current.has(letter),
+      );
+      newCorrectLetters.forEach(letter =>
+        previousCorrectLetters.current.add(letter),
+      );
+
+      if (
+        newCorrectLetters.length >= 3 &&
+        newCorrectLetters.length < WORD_LENGTH
+      ) {
+        confettiRef.current?.triggerFeedback('spark');
+      }
+
+      setGameScore(prevScore => prevScore + newCorrectLetters.length);
+
       setKeyboardLetters(prev => {
         const newState = {...prev};
         currentGuess.split('').forEach((letter, index) => {
           const letterCorrectness = correctness[index];
           if (
-            letterCorrectness === 'correct' ||
-            (letterCorrectness === 'exists' &&
-              newState[letter] !== 'correct') ||
-            (letterCorrectness === 'notInUse' && !newState[letter])
+            newState[letter] !== letterCorrectness &&
+            (letterCorrectness === 'correct' ||
+              (letterCorrectness === 'exists' &&
+                newState[letter] === 'notInUse') ||
+              (letterCorrectness === 'notInUse' && !newState[letter]))
           ) {
             newState[letter] = letterCorrectness;
           }
         });
+
         return newState;
       });
+
       const secretWordRevealed = correctness.every(
         letter => letter === 'correct',
       );
       if (secretWordRevealed) {
+        confettiRef.current?.triggerFeedback('party');
         return endGame('SUCCESS');
       }
       if (currentAttempt + 1 === MAX_ATTEMPTS) {
@@ -218,11 +251,6 @@ const WordleGame: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ConfettiOverlay
-        gameStatus={gameStatus}
-        guesses={guesses}
-        currentAttempt={currentAttempt}
-      />
       <Canvas style={styles.canvas}>
         <Rect x={0} y={0} width={width} height={height}>
           <LinearGradient
@@ -235,7 +263,7 @@ const WordleGame: React.FC = () => {
       <View style={styles.content}>
         <GameBannerAd />
         <View>
-          <TopBar score={score} />
+          <TopBar score={gameScore + score} />
           <Animated.View
             style={[
               styles.gridContainer,
@@ -266,12 +294,14 @@ const WordleGame: React.FC = () => {
             <Text style={styles.submitButtonText}>אישור</Text>
           </AnimatedPressable>
         </View>
+        <ConfettiOverlay ref={confettiRef} />
         <GameResultDialog
           isVisible={isGameEnd}
           isSuccess={gameStatus === 'SUCCESS'}
           onNewGame={handleNewGame}
           onGoHome={handleGoHome}
-          currentScore={0}
+          currentScore={gameScore}
+          secretWord={secretWord}
         />
       </View>
     </View>
