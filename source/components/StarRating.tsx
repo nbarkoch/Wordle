@@ -56,9 +56,10 @@ const StarComponent = ({
       i * 200,
       withSpring(1, {damping: 12, stiffness: 90}),
     );
+
     fillOpacity.value = withDelay(
       i * 200,
-      withTiming(Math.min(1, rating / 3 - i / 3), {
+      withTiming(rating / 3 >= (i + 1) / 3 ? 1 : 0, {
         duration: 300,
         easing: Easing.inOut(Easing.ease),
       }),

@@ -113,6 +113,13 @@ const GameResultDialog = ({
     return null;
   }
 
+  const rating = Math.min(
+    Math.round(
+      ((currentScore - secretWord.length) / secretWord.length) * 3 + 1,
+    ),
+    3,
+  );
+
   return (
     <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
       <Animated.View style={[styles.overlayDialog, animatedStyle]}>
@@ -137,11 +144,7 @@ const GameResultDialog = ({
             <View style={styles.titleContainer}>
               <Text style={styles.title}>SUMMARY</Text>
             </View>
-            <StarRating
-              width={270}
-              height={100}
-              rating={Math.min(currentScore, 3)}
-            />
+            <StarRating width={270} height={100} rating={rating} />
             <Text style={styles.secretWordWas}>{'Secret Word:'}</Text>
             <Text style={styles.secretWord}>{secretWord}</Text>
             <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>

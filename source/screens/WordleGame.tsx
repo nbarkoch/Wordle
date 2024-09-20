@@ -89,9 +89,17 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setUserScore(userScore + getScore());
+      setScore(0);
       setGameEnd(true);
     }, ROW_SAVED_DELAY * savedRows + 500);
-  }, [userScore, currentAttempt, setUserScore, getScore, maxAttempts]);
+  }, [
+    userScore,
+    currentAttempt,
+    setUserScore,
+    setScore,
+    getScore,
+    maxAttempts,
+  ]);
 
   useEffect(() => {
     start();
@@ -108,9 +116,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     reset();
     start();
     generateSecretWord();
-    setScore(0);
     setNumberOfSavedRows(0);
-  }, [generateSecretWord, reset, setScore, start, initialGuessesState]);
+  }, [generateSecretWord, reset, start, initialGuessesState]);
 
   const handleGoHome = useCallback(() => {
     // Implement the logic to navigate to the home screen
@@ -192,6 +199,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
       const secretWordRevealed = correctness.every(
         letter => letter === 'correct',
       );
+      addScore(newCorrectLetters.length);
       if (secretWordRevealed) {
         confettiRef.current?.triggerFeedback('party');
         return endGame('SUCCESS');
@@ -199,7 +207,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
       if (currentAttempt + 1 === maxAttempts) {
         return endGame('FAILURE');
       }
-      addScore(newCorrectLetters.length);
+
       setCurrentAttempt(prev => prev + 1);
       setCurrentGuess('');
     } else {
@@ -315,7 +323,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
           isSuccess={gameStatus === 'SUCCESS'}
           onNewGame={handleNewGame}
           onGoHome={handleGoHome}
-          currentScore={score}
+          currentScore={getScore()}
           secretWord={secretWord}
         />
       </View>
