@@ -18,8 +18,6 @@ import useSecretWord from '~/database/useSecretWord';
 import {
   guessesInitialGridState,
   keyboardInitialKeysState,
-  MAX_ATTEMPTS,
-  WORD_LENGTH,
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/GameResultDialog';
@@ -51,8 +49,13 @@ const GameBannerAd = () => {
   );
 };
 
-const WordleGame: React.FC = () => {
-  const {evaluateGuess, secretWord, generateSecretWord} = useSecretWord();
+interface WordleGameProps {
+  maxAttempts: number;
+  wordLength: number;
+}
+const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
+  const {evaluateGuess, secretWord, generateSecretWord} =
+    useSecretWord(wordLength);
   console.log('secretWord', secretWord);
   const {start, stop, reset} = useTimerStore();
   const {score, setScore, addScore, userScore, getScore, setUserScore} =
@@ -61,6 +64,7 @@ const WordleGame: React.FC = () => {
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
   const [numberOfSavedRows, setNumberOfSavedRows] = useState<number>(0);
+  const initialGuessesState = guessesInitialGridState(maxAttempts, wordLength);
 
   const previousCorrectLetters = useRef<Set<string>>(new Set());
 
@@ -80,14 +84,14 @@ const WordleGame: React.FC = () => {
   }
 
   const checkSavedRows = useCallback(() => {
-    const savedRows = MAX_ATTEMPTS - currentAttempt - 1;
+    const savedRows = maxAttempts - currentAttempt - 1;
     setNumberOfSavedRows(savedRows);
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       setUserScore(userScore + getScore());
       setGameEnd(true);
     }, ROW_SAVED_DELAY * savedRows + 500);
-  }, [userScore, currentAttempt, setUserScore, getScore]);
+  }, [userScore, currentAttempt, setUserScore, getScore, maxAttempts]);
 
   useEffect(() => {
     start();
@@ -96,7 +100,7 @@ const WordleGame: React.FC = () => {
 
   const handleNewGame = useCallback(() => {
     setCurrentAttempt(0);
-    setGuesses(guessesInitialGridState);
+    setGuesses(initialGuessesState);
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess('');
     setGameEnd(false);
@@ -106,7 +110,7 @@ const WordleGame: React.FC = () => {
     generateSecretWord();
     setScore(0);
     setNumberOfSavedRows(0);
-  }, [generateSecretWord, reset, setScore, start]);
+  }, [generateSecretWord, reset, setScore, start, initialGuessesState]);
 
   const handleGoHome = useCallback(() => {
     // Implement the logic to navigate to the home screen
@@ -114,13 +118,13 @@ const WordleGame: React.FC = () => {
     // console.log('Navigate to home screen');
   }, []);
 
-  const [guesses, setGuesses] = useState<WordGuess[]>(guessesInitialGridState);
+  const [guesses, setGuesses] = useState<WordGuess[]>(initialGuessesState);
   const [keyboardLetters, setKeyboardLetters] = useState(
     keyboardInitialKeysState,
   );
 
   const [currentGuess, setCurrentGuess] = useState('');
-  const {isValidWord} = useWordValidator();
+  const {isValidWord} = useWordValidator(wordLength);
   const [isValidGuess, setIsValidGuess] = useState<boolean | null>(null);
 
   const shakeAnimation = useSharedValue(0);
@@ -130,11 +134,11 @@ const WordleGame: React.FC = () => {
 
   const handleKeyPress = useCallback(
     (key: string) => {
-      if (currentGuess.length < WORD_LENGTH) {
+      if (currentGuess.length < wordLength) {
         setCurrentGuess(prev => prev + key);
       }
     },
-    [currentGuess],
+    [currentGuess, wordLength],
   );
 
   const handleDelete = useCallback(() => {
@@ -164,7 +168,7 @@ const WordleGame: React.FC = () => {
 
       if (
         newCorrectLetters.length >= 3 &&
-        newCorrectLetters.length < WORD_LENGTH
+        newCorrectLetters.length < wordLength
       ) {
         confettiRef.current?.triggerFeedback('spark');
       }
@@ -192,7 +196,7 @@ const WordleGame: React.FC = () => {
         confettiRef.current?.triggerFeedback('party');
         return endGame('SUCCESS');
       }
-      if (currentAttempt + 1 === MAX_ATTEMPTS) {
+      if (currentAttempt + 1 === maxAttempts) {
         return endGame('FAILURE');
       }
       addScore(newCorrectLetters.length);
@@ -220,17 +224,17 @@ const WordleGame: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (currentGuess.length === WORD_LENGTH) {
+    if (currentGuess.length === wordLength) {
       setIsValidGuess(isValidWord(currentGuess));
     }
     submitColorAnimation.value = withTiming(
-      currentGuess.length < WORD_LENGTH ? 0 : 1,
+      currentGuess.length < wordLength ? 0 : 1,
       {
         duration: 300,
         easing: Easing.inOut(Easing.quad),
       },
     );
-  }, [submitColorAnimation, isValidWord, currentGuess]);
+  }, [submitColorAnimation, isValidWord, currentGuess, wordLength]);
 
   const submitButtonStyle = useAnimatedStyle(() => {
     const finalColor =
@@ -285,8 +289,8 @@ const WordleGame: React.FC = () => {
               guesses={guesses}
               currentAttempt={currentAttempt}
               currentGuess={currentGuess}
-              maxAttempts={MAX_ATTEMPTS}
-              wordLength={WORD_LENGTH}
+              maxAttempts={maxAttempts}
+              wordLength={wordLength}
               numberOfSavedRows={numberOfSavedRows}
             />
           </Animated.View>
@@ -294,7 +298,7 @@ const WordleGame: React.FC = () => {
         <View style={styles.bottomContainer}>
           {memoizedKeyboard}
           <AnimatedPressable
-            disabled={currentGuess.length < WORD_LENGTH}
+            disabled={currentGuess.length < wordLength}
             style={[styles.submitButton, submitButtonStyle]}
             onPress={() => {
               submitScaleAnimation.value = withSpring(0.8, {}, () => {
@@ -333,10 +337,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#343E4F',
     elevation: 6,
     borderRadius: 20,
-  },
-  grid: {
-    width: WORD_LENGTH * 50,
-    height: MAX_ATTEMPTS * 50,
   },
   bottomContainer: {
     width: '100%',

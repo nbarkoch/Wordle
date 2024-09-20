@@ -29,7 +29,7 @@ const App = () => {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <WordGame />
+      <WordGame maxAttempts={6} wordLength={5} />
     </SafeAreaView>
   );
 };

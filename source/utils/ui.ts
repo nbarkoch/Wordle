@@ -36,9 +36,13 @@ export const keyboardInitialKeysState = 'קראטוןםפשדגכעיחלךףז�
 
 export const keyboardFormat = {chunks: [8, 10, 9], deleteAtChunkIndex: 0};
 
-export const guessesInitialGridState = Array(MAX_ATTEMPTS)
-  .fill(null)
-  .map(() => ({
-    letters: Array(WORD_LENGTH).fill(''),
-    correctness: Array(WORD_LENGTH).fill(null),
-  }));
+export const guessesInitialGridState = (
+  maxAttempts: number,
+  wordLength: number,
+) =>
+  Array(maxAttempts)
+    .fill(null)
+    .map(() => ({
+      letters: Array(wordLength).fill(''),
+      correctness: Array(wordLength).fill(null),
+    }));

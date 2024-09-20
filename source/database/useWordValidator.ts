@@ -1,5 +1,14 @@
 import {useCallback, useMemo} from 'react';
-import wordList from '~/database/wordlist';
+
+import wordList3 from '~/database/wordle_3.json';
+import wordList4 from '~/database/wordle_4.json';
+import wordList5 from '~/database/wordle_5.json';
+
+const wordLists: {[key: number]: string[]} = {
+  3: wordList3,
+  4: wordList4,
+  5: wordList5,
+};
 
 class TrieNode {
   children: Map<string, TrieNode> = new Map();
@@ -43,20 +52,19 @@ class Trie {
   }
 }
 
-const useWordValidator = () => {
+const useWordValidator = (wordLength: number) => {
   const trie = useMemo(() => {
     const wordsTrie = new Trie();
 
     try {
-      const words: string[] = wordList.split('\n');
-
+      const words = wordLists[wordLength];
       words.forEach(word => wordsTrie.insert(word.trim()));
     } catch (error) {
       console.error('Failed to load words:', error);
     }
 
     return wordsTrie;
-  }, []);
+  }, [wordLength]);
 
   const isValidWord = useCallback(
     (word: string): boolean => {
