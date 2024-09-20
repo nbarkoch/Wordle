@@ -2,7 +2,8 @@ import React from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
 import {WordGuess} from '~/utils/ui';
-import LetterCell from './LetterCell';
+import WordleRow from './WordleRow';
+import {ROW_SAVED_DELAY} from '~/utils/consts';
 
 interface WordleGridProps {
   guesses: WordGuess[];
@@ -10,6 +11,7 @@ interface WordleGridProps {
   currentGuess: string;
   maxAttempts: number;
   wordLength: number;
+  numberOfSavedRows: number;
 }
 
 const WordleGrid: React.FC<WordleGridProps> = ({
@@ -18,32 +20,34 @@ const WordleGrid: React.FC<WordleGridProps> = ({
   currentGuess,
   maxAttempts,
   wordLength,
+  numberOfSavedRows,
 }) => {
   return (
     <View style={styles.grid}>
       {Array(maxAttempts)
         .fill(0)
-        .map((_, rowIndex) => (
-          <View key={rowIndex} style={styles.row}>
-            {Array(wordLength)
-              .fill(0)
-              .map((__, colIndex) => {
-                const letter =
-                  rowIndex === currentAttempt
-                    ? currentGuess[colIndex]
-                    : guesses[rowIndex]?.letters[colIndex] ?? '';
+        .map((_, rowIndex) => {
+          const isCurrentRow = rowIndex === currentAttempt;
 
-                return (
-                  <LetterCell
-                    key={`${rowIndex}-${colIndex}`}
-                    letter={letter}
-                    viewed={guesses[rowIndex]?.correctness[colIndex]}
-                    delay={colIndex * 100}
-                  />
-                );
-              })}
-          </View>
-        ))}
+          const shouldShowOverlay = rowIndex >= maxAttempts - numberOfSavedRows;
+
+          const letters = isCurrentRow
+            ? currentGuess.split('')
+            : guesses[rowIndex]?.letters || [];
+          const correctness = guesses[rowIndex]?.correctness || [];
+
+          return (
+            <WordleRow
+              key={rowIndex}
+              rowIndex={rowIndex}
+              wordLength={wordLength}
+              letters={letters}
+              correctness={correctness}
+              shouldShowOverlay={shouldShowOverlay}
+              delay={(maxAttempts - rowIndex) * ROW_SAVED_DELAY}
+            />
+          );
+        })}
     </View>
   );
 };
