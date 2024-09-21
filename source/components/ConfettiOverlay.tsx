@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useRef,
   useState,
   forwardRef,
   useImperativeHandle,
@@ -14,6 +13,8 @@ import Animated, {
   withTiming,
   Easing,
   runOnJS,
+  withSequence,
+  withDelay,
 } from 'react-native-reanimated';
 
 const {width, height} = Dimensions.get('window');
@@ -22,6 +23,10 @@ interface ConfettiOverlayProps {}
 
 type ConfettiType = 'spark' | 'party';
 
+const SPRING_DELAY = 300;
+const TEXT_DISPLAY_DUR = 2000;
+const OPACITY_DUR = 600;
+const SCALE_DUR = 500;
 export interface ConfettiOverlayRef {
   triggerFeedback: (type: ConfettiType) => void;
 }
@@ -31,65 +36,58 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
     const [showFeedback, setShowFeedback] = useState<ConfettiType | null>(null);
     const [showText, setShowText] = useState<string | null>(null);
 
-    const feedbackTimeout = useRef<number | null>(null);
-    const textTimeout = useRef<number | null>(null);
-
     const textScale = useSharedValue(0);
     const textOpacity = useSharedValue(0);
 
-    const animateFeedbackOut = useCallback(() => {
-      textScale.value = withTiming(0, {
-        duration: 500,
-        easing: Easing.out(Easing.cubic),
-      });
-      textOpacity.value = withTiming(
-        0,
-        {
-          duration: 500,
-          easing: Easing.out(Easing.cubic),
-        },
-        finished => {
-          if (finished) {
-            runOnJS(setShowText)(null);
-          }
-        },
-      );
-      textTimeout.current && clearTimeout(textTimeout.current);
-    }, [textOpacity, textScale]);
-
     const animateFeedbackIn = useCallback(
-      (
-        text: string,
-        confettiType: ConfettiType,
-        animDuration: number,
-        textDuration: number,
-      ) => {
+      (text: string, confettiType: ConfettiType) => {
         setShowFeedback(confettiType);
         setShowText(text);
-        textScale.value = withSpring(1, {damping: 5, stiffness: 80});
-        textOpacity.value = withTiming(1, {
-          duration: 600,
-          easing: Easing.out(Easing.cubic),
-        });
 
-        feedbackTimeout.current = setTimeout(() => {
-          setShowFeedback(null);
-          feedbackTimeout.current && clearTimeout(feedbackTimeout.current);
-        }, animDuration);
+        textScale.value = withSequence(
+          withSpring(1, {damping: 5, stiffness: 80}),
+          withDelay(
+            TEXT_DISPLAY_DUR,
+            withTiming(0, {
+              duration: SCALE_DUR,
+              easing: Easing.out(Easing.cubic),
+            }),
+          ),
+        );
 
-        textTimeout.current = setTimeout(animateFeedbackOut, textDuration);
+        textOpacity.value = withSequence(
+          withTiming(1, {
+            duration: OPACITY_DUR,
+            easing: Easing.out(Easing.cubic),
+          }),
+          withDelay(
+            TEXT_DISPLAY_DUR + SPRING_DELAY,
+            withTiming(
+              0,
+              {
+                duration: OPACITY_DUR,
+                easing: Easing.out(Easing.cubic),
+              },
+              finished => {
+                if (finished) {
+                  runOnJS(setShowText)(null);
+                }
+              },
+            ),
+          ),
+        );
       },
-      [animateFeedbackOut, textOpacity, textScale],
+      [textOpacity, textScale],
     );
 
     useImperativeHandle(ref, () => ({
       triggerFeedback: (type: ConfettiType) => {
         switch (type) {
           case 'party':
-            animateFeedbackIn('Congrats!', type, 9000, 3000);
+            animateFeedbackIn('Congrats!', type);
             break;
           case 'spark':
-            animateFeedbackIn('Strike!', type, 3000, 2000);
+            animateFeedbackIn('Strike!', type);
             break;
         }
       },
@@ -102,7 +100,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
 
     return (
       <>
-        {showFeedback && (
+        {(showFeedback || showText) && (
           <View style={styles.feedbackContainer} pointerEvents="none">
             <LottieView
               style={styles.confetti}
@@ -114,6 +112,9 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
               autoPlay
               loop={false}
               resizeMode={showFeedback === 'party' ? 'cover' : 'center'}
+              onAnimationFinish={() => {
+                setShowFeedback(null);
+              }}
             />
             {showText && (
               <Animated.View style={[styles.feedbackView, animatedTextStyle]}>

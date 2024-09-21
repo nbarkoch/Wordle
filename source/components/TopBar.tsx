@@ -1,16 +1,14 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Timer from './Timer';
+import {useScoreStore} from '~/store/useScore';
 
-interface TopBarProps {
-  score: number;
-}
-
-const TopBar: React.FC<TopBarProps> = ({score}) => {
+const TopBar: React.FC = () => {
+  const {userScore} = useScoreStore();
   return (
     <View style={styles.topBar}>
       <Timer />
-      <Text style={styles.topBarScore}>Score: {score}</Text>
+      <Text style={styles.topBarScore}>Score: {userScore}</Text>
     </View>
   );
 };

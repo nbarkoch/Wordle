@@ -56,10 +56,13 @@ interface WordleGameProps {
 const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
   const {evaluateGuess, secretWord, generateSecretWord} =
     useSecretWord(wordLength);
-  console.log('secretWord', secretWord);
+
+  useEffect(() => {
+    console.log('secretWord', secretWord);
+  }, [secretWord]);
+
   const {start, stop, reset} = useTimerStore();
-  const {score, setScore, addScore, userScore, getScore, setUserScore} =
-    useScoreStore();
+  const {setScore, addScore, getScore, setUserScore} = useScoreStore();
 
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
@@ -88,18 +91,9 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     setNumberOfSavedRows(savedRows);
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
-      setUserScore(userScore + getScore());
-      setScore(0);
       setGameEnd(true);
     }, ROW_SAVED_DELAY * savedRows + 500);
-  }, [
-    userScore,
-    currentAttempt,
-    setUserScore,
-    setScore,
-    getScore,
-    maxAttempts,
-  ]);
+  }, [currentAttempt, maxAttempts]);
 
   useEffect(() => {
     start();
@@ -117,7 +111,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     start();
     generateSecretWord();
     setNumberOfSavedRows(0);
-  }, [generateSecretWord, reset, start, initialGuessesState]);
+    setScore(0);
+  }, [initialGuessesState, reset, start, generateSecretWord, setScore]);
 
   const handleGoHome = useCallback(() => {
     // Implement the logic to navigate to the home screen
@@ -228,7 +223,6 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     currentAttempt,
     shakeAnimation,
     setUserScore,
-    score,
   ]);
 
   useEffect(() => {
@@ -285,7 +279,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
       <View style={styles.content}>
         <GameBannerAd />
         <View>
-          <TopBar score={userScore + score} />
+          <TopBar />
           <Animated.View
             style={[
               styles.gridContainer,

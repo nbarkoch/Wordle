@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import Animated, {
   useSharedValue,
@@ -7,26 +7,36 @@ import Animated, {
   withTiming,
   withDelay,
   interpolateColor,
+  runOnJS,
 } from 'react-native-reanimated';
+import {Correctness} from '~/utils/ui';
 
 interface LetterCellProps {
   letter: string;
-  viewed?: 'correct' | 'exists' | 'notInUse' | null;
+  viewed?: Correctness;
   delay: number;
 }
 
 function LetterCell({letter, viewed, delay}: LetterCellProps) {
-  const letterCellStyle = letter
+  const animatedValue = useSharedValue(0);
+  const flipValue = useSharedValue(0);
+
+  const [letterValue, setLetterValue] = useState<string>(letter);
+  const [letterViewed, setLetterViewed] = useState<Correctness | undefined>(
+    viewed,
+  );
+
+  const letterCellStyle = letterValue
     ? {
         backgroundColor: '#e5e5e5',
       }
     : {backgroundColor: '#EDEFEC'};
 
-  const animatedValue = useSharedValue(0);
-  const flipValue = useSharedValue(0);
-
   useEffect(() => {
-    if (letter) {
+    if (!letterViewed) {
+      setLetterValue(letter);
+    }
+    if (letter !== '') {
       animatedValue.value = withSpring(1, {
         damping: 20,
         stiffness: 400,
@@ -34,15 +44,25 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
     } else {
       animatedValue.value = 0;
     }
-  }, [animatedValue, letter]);
+  }, [animatedValue, letter, letterViewed, viewed]);
+
+  const resetLetter = useCallback(() => {
+    setLetterValue('');
+    setLetterViewed(undefined);
+  }, []);
 
   useEffect(() => {
     if (viewed) {
+      setLetterViewed(viewed);
       flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
     } else {
-      flipValue.value = withTiming(0, {duration: 500});
+      flipValue.value = withTiming(0, {duration: 500}, finished => {
+        if (finished) {
+          runOnJS(resetLetter)();
+        }
+      });
     }
-  }, [flipValue, viewed, delay]);
+  }, [flipValue, viewed, delay, resetLetter]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -58,9 +78,9 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
 
   const interpolatedColor = useAnimatedStyle(() => {
     const color =
-      viewed === 'correct'
+      letterViewed === 'correct'
         ? '#7FCCB5'
-        : viewed === 'exists'
+        : letterViewed === 'exists'
         ? '#F9B033'
         : '#F47A89';
     const backgroundColor = interpolateColor(
@@ -75,10 +95,15 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
   });
 
   const letterStyle = useAnimatedStyle(() => {
+    let textColor = '#6a6a6a';
+    if (letter === '') {
+      textColor = 'transparent';
+    }
+
     const color = interpolateColor(
       flipValue.value,
       [0, 89, 90, 180],
-      ['#6a6a6a', '#6a6a6a', '#ffffff', '#ffffff'],
+      [textColor, textColor, '#ffffff', '#ffffff'],
     );
     return {
       color,
@@ -90,7 +115,7 @@ function LetterCell({letter, viewed, delay}: LetterCellProps) {
     <Animated.View
       style={[styles.cell, letterCellStyle, interpolatedColor, flipStyle]}>
       <Animated.Text style={[styles.letter, letterStyle, animatedStyle]}>
-        {letter}
+        {letterValue}
       </Animated.Text>
     </Animated.View>
   );
