@@ -124,7 +124,7 @@ function LetterCell({
   });
 
   const letterStyle = useAnimatedStyle(() => {
-    const textColor = letter === '' ? 'transparent' : '#6a6a6a';
+    const textColor = !letter ? 'transparent' : '#6a6a6a';
 
     const color = interpolateColor(
       flipValue.value,
