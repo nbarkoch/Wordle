@@ -29,6 +29,7 @@ import ConfettiOverlay, {
 } from '~/components/ConfettiOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
+import {LetterCellLocation} from '~/components/LetterCell';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const {width, height} = Dimensions.get('window');
@@ -68,6 +69,9 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
   const confettiRef = useRef<ConfettiOverlayRef>(null);
   const [numberOfSavedRows, setNumberOfSavedRows] = useState<number>(0);
   const initialGuessesState = guessesInitialGridState(maxAttempts, wordLength);
+  const [selectedLetter, setSelectedLetter] = useState<
+    LetterCellLocation | undefined
+  >();
 
   const previousCorrectLetters = useRef<Set<string>>(new Set());
 
@@ -294,6 +298,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
               maxAttempts={maxAttempts}
               wordLength={wordLength}
               numberOfSavedRows={numberOfSavedRows}
+              selectedLetter={selectedLetter}
+              onLetterSelected={setSelectedLetter}
             />
           </Animated.View>
         </View>

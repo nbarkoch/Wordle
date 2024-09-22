@@ -2,9 +2,8 @@ import React, {useEffect, useRef} from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
 import {Correctness} from '~/utils/ui';
-import LetterCell from './LetterCell';
+import LetterCell, {LetterCellLocation} from './LetterCell';
 import RowOverlay, {RowOverlayRef} from './RowOverlay';
-import Animated from 'react-native-reanimated';
 import {LETTER_CELL_DISPLAY_DELAY} from '~/utils/consts';
 
 interface WordleRowProps {
@@ -14,6 +13,8 @@ interface WordleRowProps {
   correctness: Correctness[];
   shouldShowOverlay: boolean;
   delay: number;
+  selectedLetter?: LetterCellLocation;
+  onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
 }
 
 const WordleRow: React.FC<WordleRowProps> = ({
@@ -23,6 +24,8 @@ const WordleRow: React.FC<WordleRowProps> = ({
   correctness,
   shouldShowOverlay,
   delay,
+  selectedLetter,
+  onLetterSelected,
 }) => {
   const rowOverlayRef = useRef<RowOverlayRef>(null);
 
@@ -34,18 +37,22 @@ const WordleRow: React.FC<WordleRowProps> = ({
 
   return (
     <View style={styles.rowContainer}>
-      <Animated.View style={styles.row}>
+      <View style={styles.row}>
         {Array(wordLength)
           .fill(0)
           .map((_, colIndex) => (
             <LetterCell
               key={`${rowIndex}-${colIndex}`}
+              rowIndex={rowIndex}
+              colIndex={colIndex}
               letter={letters[colIndex] || ''}
               viewed={correctness[colIndex]}
               delay={colIndex * LETTER_CELL_DISPLAY_DELAY}
+              selectedLetter={selectedLetter}
+              onLetterSelected={onLetterSelected}
             />
           ))}
-      </Animated.View>
+      </View>
       <RowOverlay ref={rowOverlayRef} aspect={1.3} />
     </View>
   );

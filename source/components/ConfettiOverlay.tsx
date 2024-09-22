@@ -17,6 +17,9 @@ import Animated, {
   withDelay,
 } from 'react-native-reanimated';
 
+import confettiSpark from '~/assets/lottie/confetti_1.json';
+import confettiParty from '~/assets/lottie/confetti_2.json';
+
 const {width, height} = Dimensions.get('window');
 
 interface ConfettiOverlayProps {}
@@ -104,11 +107,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
           <View style={styles.feedbackContainer} pointerEvents="none">
             <LottieView
               style={styles.confetti}
-              source={
-                showFeedback === 'party'
-                  ? require('~/assets/lottie/confetti_2.json')
-                  : require('~/assets/lottie/confetti_1.json')
-              }
+              source={showFeedback === 'party' ? confettiParty : confettiSpark}
               autoPlay
               loop={false}
               resizeMode={showFeedback === 'party' ? 'cover' : 'center'}

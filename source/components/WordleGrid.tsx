@@ -4,6 +4,7 @@ import {View, StyleSheet, I18nManager} from 'react-native';
 import {WordGuess} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
+import {LetterCellLocation} from './LetterCell';
 
 interface WordleGridProps {
   guesses: WordGuess[];
@@ -12,6 +13,8 @@ interface WordleGridProps {
   maxAttempts: number;
   wordLength: number;
   numberOfSavedRows: number;
+  selectedLetter?: LetterCellLocation;
+  onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
 }
 
 const WordleGrid: React.FC<WordleGridProps> = ({
@@ -21,6 +24,8 @@ const WordleGrid: React.FC<WordleGridProps> = ({
   maxAttempts,
   wordLength,
   numberOfSavedRows,
+  selectedLetter,
+  onLetterSelected,
 }) => {
   return (
     <View style={styles.grid}>
@@ -45,6 +50,8 @@ const WordleGrid: React.FC<WordleGridProps> = ({
               correctness={correctness}
               shouldShowOverlay={shouldShowOverlay}
               delay={(maxAttempts - rowIndex) * ROW_SAVED_DELAY}
+              selectedLetter={selectedLetter}
+              onLetterSelected={onLetterSelected}
             />
           );
         })}
