@@ -6,6 +6,9 @@ export type WordGuess = {
   letters: string[];
   correctness: Correctness[];
 };
+export type LetterCellLocation = {rowIndex: number; colIndex: number};
+
+export type LineHint = {letters: string[]; correctness: (Correctness | null)[]};
 
 // Helper function to darken a hex color
 export const darkenColor = (color: string, percent: number) => {
@@ -46,3 +49,59 @@ export const guessesInitialGridState = (
       letters: Array(wordLength).fill(''),
       correctness: Array(wordLength).fill(null),
     }));
+
+export async function calculateHintForLetter(
+  guesses: WordGuess[],
+  letter: LetterCellLocation,
+): Promise<LineHint> {
+  return new Promise(resolve => {
+    const wordLength = guesses[0].letters.length;
+    const letterCorrectness =
+      guesses[letter.rowIndex].correctness[letter.colIndex];
+
+    const letterValue = guesses[letter.rowIndex].letters[letter.colIndex];
+    // 1. finding all greens letters
+    // 2. find all places where we see the letter yellow
+    // 3. infer where it could be remain
+    const letterNotTherePositions: number[] = [];
+    if (letterCorrectness === 'notInUse') {
+      resolve({
+        letters: Array(wordLength).fill(''),
+        correctness: Array(wordLength).fill(null),
+      });
+    }
+
+    guesses.forEach(guess => {
+      guess.correctness.forEach((correctness, i) => {
+        if (correctness === 'correct' && !letterNotTherePositions.includes(i)) {
+          letterNotTherePositions.push(i);
+        } else if (
+          guess.letters[i] === letterValue &&
+          (correctness === 'exists' || correctness === 'notInUse') &&
+          !letterNotTherePositions.includes(i)
+        ) {
+          letterNotTherePositions.push(i);
+        }
+      });
+    });
+
+    const line = {
+      letters: Array(wordLength)
+        .fill(letterValue)
+        .map((l, i) =>
+          letterNotTherePositions.find(j => j === i) !== undefined ? '' : l,
+        ),
+      correctness: Array(wordLength)
+        .fill('exists')
+        .map((c, i) => {
+          const found = letterNotTherePositions.find(j => j === i);
+          const isSingle =
+            letterCorrectness === 'exists' &&
+            wordLength - letterNotTherePositions.length <= 1;
+
+          return found !== undefined ? null : isSingle ? 'correct' : c;
+        }),
+    };
+    resolve(line);
+  });
+}

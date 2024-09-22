@@ -16,8 +16,12 @@ import useWordValidator from '~/database/useWordValidator';
 import Keyboard from '~/components/Keyboard';
 import useSecretWord from '~/database/useSecretWord';
 import {
+  calculateHintForLetter,
+  Correctness,
   guessesInitialGridState,
   keyboardInitialKeysState,
+  LetterCellLocation,
+  LineHint,
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/GameResultDialog';
@@ -29,7 +33,6 @@ import ConfettiOverlay, {
 } from '~/components/ConfettiOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
-import {LetterCellLocation} from '~/components/LetterCell';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const {width, height} = Dimensions.get('window');
@@ -72,6 +75,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
   const [selectedLetter, setSelectedLetter] = useState<
     LetterCellLocation | undefined
   >();
+  const [lineHint, setLineHint] = useState<LineHint | undefined>();
 
   const previousCorrectLetters = useRef<Set<string>>(new Set());
 
@@ -82,6 +86,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
 
   function endGame(status: 'SUCCESS' | 'FAILURE') {
     stop();
+    setSelectedLetter(undefined);
+    setLineHint(undefined);
     setGameStatus(status);
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
@@ -111,6 +117,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     setCurrentGuess('');
     setGameEnd(false);
     setGameStatus('PLAYING');
+
     reset();
     start();
     generateSecretWord();
@@ -145,6 +152,19 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
       }
     },
     [currentGuess, wordLength],
+  );
+
+  const $setSelectedLetter = useCallback(
+    async (selectedLetter: LetterCellLocation | undefined) => {
+      setSelectedLetter(selectedLetter);
+      if (selectedLetter) {
+        const lineHint = await calculateHintForLetter(guesses, selectedLetter);
+        setLineHint(lineHint);
+      } else {
+        setLineHint(undefined);
+      }
+    },
+    [guesses],
   );
 
   const handleDelete = useCallback(() => {
@@ -299,7 +319,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
               wordLength={wordLength}
               numberOfSavedRows={numberOfSavedRows}
               selectedLetter={selectedLetter}
-              onLetterSelected={setSelectedLetter}
+              onLetterSelected={$setSelectedLetter}
+              lineHint={lineHint}
             />
           </Animated.View>
         </View>

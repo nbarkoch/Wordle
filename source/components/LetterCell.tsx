@@ -9,17 +9,17 @@ import Animated, {
   interpolateColor,
   runOnJS,
 } from 'react-native-reanimated';
-import {Correctness} from '~/utils/ui';
+import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
 
-export type LetterCellLocation = {rowIndex: number; colIndex: number};
 interface LetterCellProps {
-  letter: string;
+  letter: string | undefined;
   viewed?: Correctness;
   delay: number;
   rowIndex: number;
   colIndex: number;
   selectedLetter?: LetterCellLocation;
   onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
+  lineHint?: LineHint | undefined;
 }
 
 function LetterCell({
@@ -30,12 +30,13 @@ function LetterCell({
   rowIndex,
   selectedLetter,
   onLetterSelected,
+  lineHint,
 }: LetterCellProps) {
-  const animatedValue = useSharedValue(0);
+  const letterScale = useSharedValue(0);
   const flipValue = useSharedValue(0);
   const cellScale = useSharedValue(1);
 
-  const [letterValue, setLetterValue] = useState<string>(letter);
+  const [letterValue, setLetterValue] = useState<string | undefined>(letter);
   const [letterViewed, setLetterViewed] = useState<Correctness | undefined>(
     viewed,
   );
@@ -47,22 +48,34 @@ function LetterCell({
     );
   }, [colIndex, rowIndex, selectedLetter?.colIndex, selectedLetter?.rowIndex]);
 
+  const hint = useMemo<
+    {letter: string; correctness: Correctness} | undefined
+  >(() => {
+    return lineHint !== undefined
+      ? {
+          letter: lineHint?.letters[colIndex],
+          correctness: lineHint?.correctness[colIndex],
+        }
+      : undefined;
+  }, [lineHint]);
+
   useEffect(() => {
     if (letterViewed === null || letterViewed === undefined) {
+      if (letter) {
+        letterScale.value = withSpring(1, {
+          damping: 20,
+          stiffness: 400,
+        });
+      } else {
+        letterScale.value = 0;
+      }
       setLetterValue(letter);
     }
-    if (letter !== '') {
-      animatedValue.value = withSpring(1, {
-        damping: 20,
-        stiffness: 400,
-      });
-    }
-  }, [animatedValue, letter, letterViewed, viewed]);
+  }, [letterScale, letter, letterValue, letterViewed, viewed]);
 
   const resetLetter = useCallback(() => {
     setLetterViewed(undefined);
-    animatedValue.value = 0;
-  }, [animatedValue]);
+  }, []);
 
   useEffect(() => {
     if (viewed) {
@@ -92,8 +105,18 @@ function LetterCell({
       [defaultColor, defaultColor, color, color],
     );
 
+    const hintColor =
+      hint?.correctness === 'correct'
+        ? '#c7fce6'
+        : hint?.correctness === 'exists'
+        ? '#ffd593'
+        : hint?.correctness === 'notInUse'
+        ? '#e5b7bc'
+        : '#e5e5e5';
+
     return {
-      backgroundColor,
+      backgroundColor:
+        letterValue === undefined && hint ? hintColor : backgroundColor,
       borderWidth: selected ? 3 : 0,
       borderColor: '#2993d1',
       transform: [{scale: cellScale.value}, {rotateX: `${flipValue.value}deg`}],
@@ -109,10 +132,10 @@ function LetterCell({
       [textColor, textColor, '#ffffff', '#ffffff'],
     );
     return {
-      color,
+      color: letterValue === undefined && hint ? '#bfbfbf' : color,
       transform: [
         {rotateX: `${-flipValue.value}deg`},
-        {scale: animatedValue.value},
+        {scale: hint ? 1 : letterScale.value},
       ],
     };
   });
@@ -166,14 +189,11 @@ function LetterCell({
     }
   }, [selected, onLetterSelected, colIndex, rowIndex, cellScale]);
 
-  if (selected) {
-    console.log('render');
-  }
   return (
     <Pressable style={[styles.cell, styles.pressable]} onPress={handlePress}>
       <Animated.View style={[styles.cell, letterCellStyle]}>
         <Animated.Text style={[styles.letter, letterStyle]}>
-          {letterValue}
+          {letterValue ?? hint?.letter}
         </Animated.Text>
       </Animated.View>
     </Pressable>

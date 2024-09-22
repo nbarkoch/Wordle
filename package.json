@@ -20,7 +20,7 @@
     "react-native-google-mobile-ads": "^14.2.3",
     "react-native-reanimated": "3.0.0",
     "react-native-sqlite-storage": "^6.0.1",
-    "react-native-svg": "12.4.4",
+    "react-native-svg": "^15.7.1",
     "react-native-svg-transformer": "0.14.3",
     "zustand": "^5.0.0-rc.2"
   },

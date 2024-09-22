@@ -1,10 +1,9 @@
 import React from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
-import {WordGuess} from '~/utils/ui';
+import {LetterCellLocation, LineHint, WordGuess} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
-import {LetterCellLocation} from './LetterCell';
 
 interface WordleGridProps {
   guesses: WordGuess[];
@@ -15,6 +14,7 @@ interface WordleGridProps {
   numberOfSavedRows: number;
   selectedLetter?: LetterCellLocation;
   onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
+  lineHint?: LineHint;
 }
 
 const WordleGrid: React.FC<WordleGridProps> = ({
@@ -26,6 +26,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
   numberOfSavedRows,
   selectedLetter,
   onLetterSelected,
+  lineHint,
 }) => {
   return (
     <View style={styles.grid}>
@@ -41,6 +42,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
             : guesses[rowIndex]?.letters || [];
           const correctness = guesses[rowIndex]?.correctness || [];
 
+          const $lineHint = isCurrentRow ? lineHint : undefined;
           return (
             <WordleRow
               key={rowIndex}
@@ -52,6 +54,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
               delay={(maxAttempts - rowIndex) * ROW_SAVED_DELAY}
               selectedLetter={selectedLetter}
               onLetterSelected={onLetterSelected}
+              lineHint={$lineHint}
             />
           );
         })}
