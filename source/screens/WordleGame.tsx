@@ -71,7 +71,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
   }, [secretWord]);
 
   const {start, stop, reset} = useTimerStore();
-  const {setScore, addScore, getScore, setUserScore} = useScoreStore();
+  const {setScore, addScore, getScore, setUserScore, removeFromUserScore} =
+    useScoreStore();
 
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
@@ -161,11 +162,12 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
 
   const onHintRequested = useCallback(async () => {
     giveHint(secretWord, guesses, lineHint).then($lineHint => {
+      removeFromUserScore(10);
       setLineHint(prev => {
         return mergeHints(prev, $lineHint);
       });
     });
-  }, [guesses, secretWord, lineHint]);
+  }, [secretWord, guesses, lineHint, removeFromUserScore]);
 
   const $setSelectedLetter = useCallback(
     async ($selectedLetter: LetterCellLocation | undefined) => {

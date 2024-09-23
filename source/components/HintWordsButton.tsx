@@ -43,7 +43,7 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({onHintRequested}) => {
 
   return (
     <AnimatedPressable
-      disabled={false}
+      disabled={disabled}
       onPress={() => {
         scaleAnimation.value = withSpring(0.8, {}, () => {
           scaleAnimation.value = withSpring(1);

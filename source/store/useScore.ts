@@ -9,6 +9,7 @@ interface ScoreState {
   userScore: number;
   resetUserScore: () => void;
   setUserScore: (newScore: number) => void;
+  removeFromUserScore: (scoreRemove: number) => void;
   getUserScore: () => number;
 }
 
@@ -24,6 +25,8 @@ export const useScoreStore = create<ScoreState>((set, get) => ({
   getScore: () => get().score,
   userScore: 0,
   resetUserScore: () => set({userScore: 0}),
+  removeFromUserScore: scoreRemove =>
+    set(state => ({userScore: state.userScore - scoreRemove})),
   setUserScore: newScore => set({userScore: newScore}),
   getUserScore: () => get().userScore,
 }));
