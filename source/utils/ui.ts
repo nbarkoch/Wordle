@@ -50,6 +50,92 @@ export const guessesInitialGridState = (
       correctness: Array(wordLength).fill(null),
     }));
 
+function shuffleAndSplit(str: string): string[] {
+  // Convert the string into an array of characters
+  const charArray = str.split('');
+
+  // Shuffle the array using Fisher-Yates algorithm
+  for (let i = charArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [charArray[i], charArray[j]] = [charArray[j], charArray[i]]; // Swap elements
+  }
+  return charArray;
+}
+
+export function mergeHints(
+  hint1: LineHint | undefined,
+  hint2: LineHint | undefined,
+): LineHint | undefined {
+  if (hint1 === undefined) {
+    return hint2;
+  }
+  if (hint2 === undefined) {
+    return hint1;
+  }
+
+  const mergedCorrectness = hint1.correctness.map((c, i) =>
+    c === 'correct'
+      ? c
+      : hint2.correctness[i] === 'correct'
+      ? hint2.correctness[i]
+      : c ?? hint2.correctness[i],
+  );
+  return {
+    letters: hint1.letters.map((l, i) => (l !== '' ? l : hint2.letters[i])),
+    correctness: mergedCorrectness,
+  };
+}
+
+export async function giveHint(
+  secretWord: string,
+  guesses: WordGuess[],
+  lineHint?: LineHint,
+): Promise<LineHint> {
+  return new Promise(resolve => {
+    const reveals = Array(secretWord.length).fill(null);
+    const maxReveal = 2;
+    guesses.forEach(guess => {
+      guess.correctness.forEach((correctness, i) => {
+        if (correctness === 'correct') {
+          reveals[i] = false;
+        }
+      });
+    });
+    lineHint?.correctness.forEach((correctness, i) => {
+      if (correctness === 'correct') {
+        reveals[i] = false;
+      }
+    });
+
+    secretWord.split('').forEach((_, i) => {
+      if (reveals[i] === null) {
+        reveals[i] = reveals[i] || true;
+      } else {
+        reveals[i] = reveals[i] || false;
+      }
+    });
+
+    const revealedLetters = secretWord
+      .split('')
+      .map((l, i) => (reveals[i] ? l : ''));
+
+    let letterRevealed = revealedLetters.filter(l => l !== '').length;
+    shuffleAndSplit(secretWord).forEach(w => {
+      if (letterRevealed <= maxReveal) {
+        return;
+      }
+      const indexToRemove = revealedLetters.findIndex(l => w === l);
+      revealedLetters[indexToRemove] = '';
+      letterRevealed = revealedLetters.filter(l => l !== '').length;
+    });
+
+    resolve({
+      letters: revealedLetters,
+      correctness: revealedLetters.map(l => (l === '' ? null : 'correct')),
+    });
+  });
+}
+
 export async function calculateHintForLetter(
   guesses: WordGuess[],
   letter: LetterCellLocation,
@@ -104,4 +190,25 @@ export async function calculateHintForLetter(
     };
     resolve(line);
   });
+}
+
+export async function calculateHintForAllLetters(guesses: WordGuess[]) {
+  const lettersMap: Record<string, number[]> = {};
+
+  guesses.forEach(guess => {
+    guess.correctness.forEach((correctness, i) => {
+      'קראטוןםפשדגכעיחלךףזסבהנמצתץ'.split('').forEach(l => {
+        if (correctness === 'correct' && !lettersMap[l]?.includes(i)) {
+          lettersMap[l].push(i);
+        } else if (
+          guess.letters[i] === l &&
+          (correctness === 'exists' || correctness === 'notInUse') &&
+          !lettersMap[l]?.includes(i)
+        ) {
+          lettersMap[l].push(i);
+        }
+      });
+    });
+  });
+  return lettersMap;
 }

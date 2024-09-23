@@ -16,6 +16,7 @@ interface WordleRowProps {
   selectedLetter?: LetterCellLocation;
   onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
   lineHint?: LineHint;
+  isCurrentRow: boolean;
 }
 
 const WordleRow: React.FC<WordleRowProps> = ({
@@ -39,7 +40,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
 
   return (
     <View style={styles.rowContainer}>
-      <View style={styles.row}>
+      <View style={[styles.row]}>
         {Array(wordLength)
           .fill(0)
           .map((_, colIndex) => (

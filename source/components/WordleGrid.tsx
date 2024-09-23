@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
 import {LetterCellLocation, LineHint, WordGuess} from '~/utils/ui';
@@ -55,6 +55,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
               selectedLetter={selectedLetter}
               onLetterSelected={onLetterSelected}
               lineHint={$lineHint}
+              isCurrentRow={isCurrentRow}
             />
           );
         })}
@@ -73,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WordleGrid;
+export default memo(WordleGrid);

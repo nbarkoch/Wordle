@@ -57,7 +57,7 @@ function LetterCell({
           correctness: lineHint?.correctness[colIndex],
         }
       : undefined;
-  }, [lineHint]);
+  }, [colIndex, lineHint]);
 
   useEffect(() => {
     if (letterViewed === null || letterViewed === undefined) {

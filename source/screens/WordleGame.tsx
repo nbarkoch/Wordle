@@ -17,11 +17,12 @@ import Keyboard from '~/components/Keyboard';
 import useSecretWord from '~/database/useSecretWord';
 import {
   calculateHintForLetter,
-  Correctness,
+  giveHint,
   guessesInitialGridState,
   keyboardInitialKeysState,
   LetterCellLocation,
   LineHint,
+  mergeHints,
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/GameResultDialog';
@@ -34,7 +35,11 @@ import ConfettiOverlay, {
 import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 
+import SearchIcon from '~/assets/icons/icon-search.svg';
+import HintWordButton from '~/components/HintWordsButton';
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 const {width, height} = Dimensions.get('window');
 
 const GameBannerAd = () => {
@@ -154,12 +159,24 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     [currentGuess, wordLength],
   );
 
+  const onHintRequested = useCallback(async () => {
+    giveHint(secretWord, guesses, lineHint).then($lineHint => {
+      setLineHint(prev => {
+        return mergeHints(prev, $lineHint);
+      });
+    });
+  }, [guesses, secretWord, lineHint]);
+
   const $setSelectedLetter = useCallback(
-    async (selectedLetter: LetterCellLocation | undefined) => {
-      setSelectedLetter(selectedLetter);
-      if (selectedLetter) {
-        const lineHint = await calculateHintForLetter(guesses, selectedLetter);
-        setLineHint(lineHint);
+    async ($selectedLetter: LetterCellLocation | undefined) => {
+      setSelectedLetter($selectedLetter);
+
+      if ($selectedLetter) {
+        const $lineHint = await calculateHintForLetter(
+          guesses,
+          $selectedLetter,
+        );
+        setLineHint($lineHint);
       } else {
         setLineHint(undefined);
       }
@@ -226,7 +243,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
       if (currentAttempt + 1 === maxAttempts) {
         return endGame('FAILURE');
       }
-
+      setLineHint(undefined);
       setCurrentAttempt(prev => prev + 1);
       setCurrentGuess('');
     } else {
@@ -326,17 +343,21 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
         </View>
         <View style={styles.bottomContainer}>
           {memoizedKeyboard}
-          <AnimatedPressable
-            disabled={currentGuess.length < wordLength}
-            style={[styles.submitButton, submitButtonStyle]}
-            onPress={() => {
-              submitScaleAnimation.value = withSpring(0.8, {}, () => {
-                submitScaleAnimation.value = withSpring(1);
-              });
-              runOnJS(handleSubmit)();
-            }}>
-            <Text style={styles.submitButtonText}>אישור</Text>
-          </AnimatedPressable>
+          <View style={styles.footer}>
+            <SearchIcon width={34} height={34} />
+            <AnimatedPressable
+              disabled={currentGuess.length < wordLength}
+              style={[styles.submitButton, submitButtonStyle]}
+              onPress={() => {
+                submitScaleAnimation.value = withSpring(0.8, {}, () => {
+                  submitScaleAnimation.value = withSpring(1);
+                });
+                runOnJS(handleSubmit)();
+              }}>
+              <Text style={styles.submitButtonText}>אישור</Text>
+            </AnimatedPressable>
+            <HintWordButton onHintRequested={onHintRequested} />
+          </View>
         </View>
         <ConfettiOverlay ref={confettiRef} />
         <GameResultDialog
@@ -419,6 +440,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  footer: {
+    width: width,
+    paddingHorizontal: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 
