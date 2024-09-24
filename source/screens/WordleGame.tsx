@@ -1,14 +1,11 @@
 import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
-import {View, StyleSheet, Pressable, Text, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
-  runOnJS,
   Easing,
   withTiming,
   withSequence,
-  interpolateColor,
 } from 'react-native-reanimated';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import WordleGrid from '~/components/WordleGrid';
@@ -34,11 +31,9 @@ import ConfettiOverlay, {
 } from '~/components/ConfettiOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
-
-import SearchIcon from '~/assets/icons/icon-search.svg';
 import HintWordButton from '~/components/HintWordsButton';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import HomeButton from '~/components/HomeButton';
+import SubmitButton from '~/components/SubmitButton';
 
 const {width, height} = Dimensions.get('window');
 
@@ -147,9 +142,6 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
   const [isValidGuess, setIsValidGuess] = useState<boolean | null>(null);
 
   const shakeAnimation = useSharedValue(0);
-
-  const submitScaleAnimation = useSharedValue(1);
-  const submitColorAnimation = useSharedValue(0);
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -271,30 +263,10 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
   useEffect(() => {
     if (currentGuess.length === wordLength) {
       setIsValidGuess(isValidWord(currentGuess));
+    } else {
+      setIsValidGuess(null);
     }
-    submitColorAnimation.value = withTiming(
-      currentGuess.length < wordLength ? 0 : 1,
-      {
-        duration: 300,
-        easing: Easing.inOut(Easing.quad),
-      },
-    );
-  }, [submitColorAnimation, isValidWord, currentGuess, wordLength]);
-
-  const submitButtonStyle = useAnimatedStyle(() => {
-    const finalColor =
-      isValidGuess === null ? '#A0A0A0' : isValidGuess ? '#7FCCB5' : '#F47A89';
-    const backgroundColor = interpolateColor(
-      submitColorAnimation.value,
-      [0, 1, 2],
-      ['#A0A0A0', finalColor],
-    );
-
-    return {
-      backgroundColor,
-      transform: [{scale: submitScaleAnimation.value}],
-    };
-  }, [isValidGuess]);
+  }, [isValidWord, currentGuess, wordLength]);
 
   const memoizedKeyboard = useMemo(
     () => (
@@ -346,19 +318,16 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
         <View style={styles.bottomContainer}>
           {memoizedKeyboard}
           <View style={styles.footer}>
-            <SearchIcon width={34} height={34} />
-            <AnimatedPressable
-              disabled={currentGuess.length < wordLength}
-              style={[styles.submitButton, submitButtonStyle]}
-              onPress={() => {
-                submitScaleAnimation.value = withSpring(0.8, {}, () => {
-                  submitScaleAnimation.value = withSpring(1);
-                });
-                runOnJS(handleSubmit)();
-              }}>
-              <Text style={styles.submitButtonText}>אישור</Text>
-            </AnimatedPressable>
-            <HintWordButton onHintRequested={onHintRequested} />
+            <View style={styles.centerer}>
+              <HomeButton onClick={handleGoHome} />
+            </View>
+            <SubmitButton
+              handleSubmit={handleSubmit}
+              isValidGuess={isValidGuess}
+            />
+            <View style={styles.centerer}>
+              <HintWordButton onHintRequested={onHintRequested} />
+            </View>
           </View>
         </View>
         <ConfettiOverlay ref={confettiRef} />
@@ -420,15 +389,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   submitButton: {
-    backgroundColor: '#7FCCB5',
     paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    paddingVertical: 8,
+    borderRadius: 15,
+    borderWidth: 2.5,
   },
   submitButtonText: {
     color: 'white',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '900',
   },
   canvas: {
     flex: 1,
@@ -448,6 +417,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  centerer: {
+    width: 70,
+    justifyContent: 'center',
     alignItems: 'center',
   },
 });

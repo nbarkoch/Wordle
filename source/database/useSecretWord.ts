@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 
 import {Correctness} from '~/utils/ui';
 
@@ -25,29 +25,32 @@ const useSecretWord = (wordLength: number) => {
     setSecretWord(newSecretWord(wordLength));
   };
 
-  const evaluateGuess = (guess: string): Correctness[] => {
-    const evaluation: Correctness[] = Array(wordLength).fill('notInUse');
-    const secretLetters: (string | null)[] = secretWord.split('');
-    const guessLetters: (string | null)[] = guess.split('');
+  const evaluateGuess = useCallback(
+    (guess: string): Correctness[] => {
+      const evaluation: Correctness[] = Array(wordLength).fill('notInUse');
+      const secretLetters: (string | null)[] = secretWord.split('');
+      const guessLetters: (string | null)[] = guess.split('');
 
-    // First pass: Identify correct letters
-    for (let i = 0; i < wordLength; i++) {
-      if (guessLetters[i] === secretLetters[i]) {
-        evaluation[i] = 'correct';
-        secretLetters[i] = guessLetters[i] = null;
+      // First pass: Identify correct letters
+      for (let i = 0; i < wordLength; i++) {
+        if (guessLetters[i] === secretLetters[i]) {
+          evaluation[i] = 'correct';
+          secretLetters[i] = guessLetters[i] = null;
+        }
       }
-    }
 
-    // Second pass: Identify misplaced letters
-    for (let i = 0; i < wordLength; i++) {
-      if (guessLetters[i] && secretLetters.includes(guessLetters[i])) {
-        evaluation[i] = 'exists';
-        secretLetters[secretLetters.indexOf(guessLetters[i])] = null; // Mark as evaluated
+      // Second pass: Identify misplaced letters
+      for (let i = 0; i < wordLength; i++) {
+        if (guessLetters[i] && secretLetters.includes(guessLetters[i])) {
+          evaluation[i] = 'exists';
+          secretLetters[secretLetters.indexOf(guessLetters[i])] = null; // Mark as evaluated
+        }
       }
-    }
 
-    return evaluation;
-  };
+      return evaluation;
+    },
+    [secretWord, wordLength],
+  );
 
   return {
     secretWord,

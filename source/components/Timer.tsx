@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {memo, useEffect} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import {useTimerStore} from '~/store/useTimerStore';
 
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Timer;
+export default memo(Timer);
