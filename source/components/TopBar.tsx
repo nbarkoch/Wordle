@@ -1,14 +1,55 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
 import Timer from './Timer';
 import {useScoreStore} from '~/store/useScore';
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 const TopBar: React.FC = () => {
   const {userScore} = useScoreStore();
+  const scaleAnimation = useSharedValue(1);
+  const lastUserScore = useRef<number>(userScore);
+
+  const [textScoreColor, setTextScoreColor] = useState<string>('#F9B12F');
+
+  useEffect(() => {
+    scaleAnimation.value = withTiming(1.25, {duration: 50}, () => {
+      scaleAnimation.value = withTiming(1, {duration: 200});
+      runOnJS(setTextScoreColor)('#F9B12F');
+    });
+    setTextScoreColor(
+      lastUserScore.current <= userScore ? '#7FCCB5' : '#F47A89',
+    );
+    lastUserScore.current = userScore;
+  }, [scaleAnimation, userScore]);
+
+  const scoreAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: scaleAnimation.value}],
+    };
+  });
+
   return (
     <View style={styles.topBar}>
       <Timer />
-      <Text style={styles.topBarScore}>Score: {userScore}</Text>
+      <View style={[styles.topBarScore]}>
+        <Animated.Text
+          style={[styles.topBarScoreText, {color: textScoreColor}]}>
+          Score:
+        </Animated.Text>
+        <Animated.Text
+          style={[
+            styles.topBarScoreText,
+            scoreAnimatedStyle,
+            {color: textScoreColor},
+          ]}>
+          {userScore}
+        </Animated.Text>
+      </View>
     </View>
   );
 };
@@ -21,7 +62,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
   },
-  topBarScore: {fontSize: 18, fontWeight: '900', color: '#7FCCB5'},
+  topBarScore: {flexDirection: 'row-reverse'},
+  topBarScoreText: {fontSize: 18, fontWeight: '900', color: '#7FCCB5'},
 });
 
 export default TopBar;
