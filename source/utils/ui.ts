@@ -73,16 +73,39 @@ export function mergeHints(
     return hint1;
   }
 
-  const mergedCorrectness = hint1.correctness.map((c, i) =>
-    c === 'correct'
-      ? c
-      : hint2.correctness[i] === 'correct'
-      ? hint2.correctness[i]
-      : c ?? hint2.correctness[i],
-  );
+  const mergedCorLet: {letter: string; correctness: Correctness}[] =
+    hint1.correctness.map((c, i) => {
+      if (c === 'correct') {
+        return {letter: hint1.letters[i], correctness: 'correct'};
+      } else if (hint2.correctness[i] === 'correct') {
+        return {letter: hint2.letters[i], correctness: 'correct'};
+      }
+      if (c === 'exists') {
+        return {letter: hint1.letters[i], correctness: 'exists'};
+      } else if (hint2.correctness[i] === 'exists') {
+        return {letter: hint2.letters[i], correctness: 'exists'};
+      }
+      if (c === 'notInUse') {
+        return {letter: hint1.letters[i], correctness: 'notInUse'};
+      } else if (hint2.correctness[i] === 'notInUse') {
+        return {letter: hint2.letters[i], correctness: 'notInUse'};
+      }
+      return {letter: '', correctness: null};
+    });
+
+  if (mergedCorLet.filter(cor => cor.correctness === 'exists').length === 1) {
+    const index = mergedCorLet.findIndex(cor => cor.correctness === 'exists');
+    if (
+      mergedCorLet.filter(cor => cor.letter === mergedCorLet[index].letter)
+        .length === 1
+    ) {
+      mergedCorLet[index].correctness = 'correct';
+    }
+  }
+
   return {
-    letters: hint1.letters.map((l, i) => (l !== '' ? l : hint2.letters[i])),
-    correctness: mergedCorrectness,
+    letters: mergedCorLet.map(cor => cor.letter),
+    correctness: mergedCorLet.map(cor => cor.correctness),
   };
 }
 

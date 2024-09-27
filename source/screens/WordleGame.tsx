@@ -32,8 +32,8 @@ import ConfettiOverlay, {
 import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import HintWordButton from '~/components/HintWordsButton';
-import HomeButton from '~/components/HomeButton';
 import SubmitButton from '~/components/SubmitButton';
+import SearchWordsButton from '~/components/SearchWordsButton';
 
 const {width, height} = Dimensions.get('window');
 
@@ -77,6 +77,8 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     LetterCellLocation | undefined
   >();
   const [lineHint, setLineHint] = useState<LineHint | undefined>();
+  const [lineSearch, setLineSearch] = useState<LineHint | undefined>();
+  const [searchActive, setSearchActive] = useState<boolean>(false);
 
   const previousCorrectLetters = useRef<Set<string>>(new Set());
 
@@ -89,6 +91,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     stop();
     setSelectedLetter(undefined);
     setLineHint(undefined);
+    setLineSearch(undefined);
     setGameStatus(status);
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
@@ -116,9 +119,9 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     setGuesses(initialGuessesState);
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess('');
+    setSearchActive(false);
     setGameEnd(false);
     setGameStatus('PLAYING');
-
     reset();
     start();
     generateSecretWord();
@@ -161,22 +164,36 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
     });
   }, [secretWord, guesses, lineHint, removeFromUserScore]);
 
+  const finalLineHint = useMemo(() => {
+    return mergeHints(lineSearch, lineHint);
+  }, [lineSearch, lineHint]);
+
   const $setSelectedLetter = useCallback(
     async ($selectedLetter: LetterCellLocation | undefined) => {
+      if (!searchActive) {
+        setSelectedLetter(undefined);
+        setLineSearch(undefined);
+        return;
+      }
       setSelectedLetter($selectedLetter);
-
       if ($selectedLetter) {
-        const $lineHint = await calculateHintForLetter(
+        const $lineSearch = await calculateHintForLetter(
           guesses,
           $selectedLetter,
         );
-        setLineHint($lineHint);
+        setLineSearch($lineSearch);
       } else {
-        setLineHint(undefined);
+        setLineSearch(undefined);
       }
     },
-    [guesses],
+    [guesses, searchActive],
   );
+
+  const onSearchRequested = useCallback(async () => {
+    removeFromUserScore(5);
+    setSearchActive(true);
+    $setSelectedLetter({colIndex: 0, rowIndex: 0});
+  }, [$setSelectedLetter, removeFromUserScore]);
 
   const handleDelete = useCallback(() => {
     setCurrentGuess(prev => prev.slice(0, -1));
@@ -238,6 +255,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
         return endGame('FAILURE');
       }
       setLineHint(undefined);
+      setLineSearch(undefined);
       setCurrentAttempt(prev => prev + 1);
       setCurrentGuess('');
     } else {
@@ -311,7 +329,7 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
               numberOfSavedRows={numberOfSavedRows}
               selectedLetter={selectedLetter}
               onLetterSelected={$setSelectedLetter}
-              lineHint={lineHint}
+              lineHint={finalLineHint}
             />
           </Animated.View>
         </View>
@@ -319,14 +337,20 @@ const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
           {memoizedKeyboard}
           <View style={styles.footer}>
             <View style={styles.centerer}>
-              <HomeButton onClick={handleGoHome} />
+              <SearchWordsButton
+                onSearchRequested={onSearchRequested}
+                scoreCost={5}
+              />
             </View>
             <SubmitButton
               handleSubmit={handleSubmit}
               isValidGuess={isValidGuess}
             />
             <View style={styles.centerer}>
-              <HintWordButton onHintRequested={onHintRequested} />
+              <HintWordButton
+                onHintRequested={onHintRequested}
+                scoreCost={10}
+              />
             </View>
           </View>
         </View>

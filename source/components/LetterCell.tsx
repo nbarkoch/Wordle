@@ -190,7 +190,10 @@ function LetterCell({
   }, [selected, onLetterSelected, colIndex, rowIndex, cellScale]);
 
   return (
-    <Pressable style={[styles.cell, styles.pressable]} onPress={handlePress}>
+    <Pressable
+      style={[styles.cell, styles.pressable]}
+      disabled={viewed === null}
+      onPress={handlePress}>
       <Animated.View style={[styles.cell, letterCellStyle]}>
         <Animated.Text style={[styles.letter, letterStyle]}>
           {letterValue ?? hint?.letter}

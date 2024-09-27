@@ -23,7 +23,7 @@ export const useScoreStore = create<ScoreState>((set, get) => ({
       userScore: state.userScore + newScore,
     })),
   getScore: () => get().score,
-  userScore: 0,
+  userScore: 1000,
   resetUserScore: () => set({userScore: 0}),
   removeFromUserScore: scoreRemove =>
     set(state => ({userScore: state.userScore - scoreRemove})),

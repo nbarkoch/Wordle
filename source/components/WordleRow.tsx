@@ -5,6 +5,11 @@ import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
 import LetterCell from './LetterCell';
 import RowOverlay, {RowOverlayRef} from './RowOverlay';
 import {LETTER_CELL_DISPLAY_DELAY} from '~/utils/consts';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface WordleRowProps {
   rowIndex: number;
@@ -29,8 +34,10 @@ const WordleRow: React.FC<WordleRowProps> = ({
   selectedLetter,
   onLetterSelected,
   lineHint,
+  isCurrentRow,
 }) => {
   const rowOverlayRef = useRef<RowOverlayRef>(null);
+  const scaleAnimation = useSharedValue(1);
 
   useEffect(() => {
     if (shouldShowOverlay) {
@@ -38,9 +45,24 @@ const WordleRow: React.FC<WordleRowProps> = ({
     }
   }, [delay, shouldShowOverlay]);
 
+  useEffect(() => {
+    scaleAnimation.value = withTiming(isCurrentRow ? 1.05 : 1, {
+      duration: 500,
+    });
+  }, [isCurrentRow, scaleAnimation]);
+
+  const rowAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: scaleAnimation.value}],
+      borderWidth: (scaleAnimation.value - 1) * 20,
+      borderColor: 'white',
+      borderRadius: 17.5,
+    };
+  });
+
   return (
     <View style={styles.rowContainer}>
-      <View style={[styles.row]}>
+      <Animated.View style={[styles.row, rowAnimatedStyle]}>
         {Array(wordLength)
           .fill(0)
           .map((_, colIndex) => (
@@ -56,7 +78,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
               lineHint={lineHint}
             />
           ))}
-      </View>
+      </Animated.View>
       <RowOverlay ref={rowOverlayRef} aspect={1.3} />
     </View>
   );
@@ -68,6 +90,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   row: {
+    zIndex: 10,
     flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
   },
   overlayContainer: {

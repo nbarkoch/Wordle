@@ -28,7 +28,6 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     setInternalIsValidGuess(isValidGuess);
   }, [isValidGuess]);
 
-  console.log('a', isValidGuess);
   useEffect(() => {
     submitColorAnimation.value = withTiming(
       isValidGuess === null ? 0 : 1,
