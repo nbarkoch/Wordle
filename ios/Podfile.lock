@@ -246,6 +246,8 @@ PODS:
   - React-jsinspector (0.70.10)
   - React-logger (0.70.10):
     - glog
+  - react-native-safe-area-context (3.4.1):
+    - React-Core
   - react-native-skia (1.0.6):
     - React
     - React-callinvoker
@@ -349,7 +351,10 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (12.4.4):
+  - RNScreens (3.22.1):
+    - React-Core
+    - React-RCTImage
+  - RNSVG (15.7.1):
     - React-Core
   - Yoga (1.14.0)
 
@@ -379,6 +384,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -395,6 +401,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -452,6 +459,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   react-native-skia:
     :path: "../node_modules/@shopify/react-native-skia"
   react-native-sqlite-storage:
@@ -484,6 +493,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-google-mobile-ads"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -517,6 +528,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 1457c7bb2f08f257e6b5ece8b62348da43c4ccf2
   React-jsinspector: 2a1985769123b199c195a96f46478b35db139712
   React-logger: 7fbdc3576b2ed3834360c8ea3c1c2ec54ac3043a
+  react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   react-native-skia: 813ac39118975591bfe4b8bfe492e8846bff76d4
   react-native-sqlite-storage: f6d515e1c446d1e6d026aa5352908a25d4de3261
   React-perflogger: f86e85eb59151d09e9b44b8931f5c088e4f08bbc
@@ -533,7 +545,8 @@ SPEC CHECKSUMS:
   ReactCommon: a29dac86d7219579db079cef8f380ebffe1ba545
   RNGoogleMobileAds: a94e3a53aad36abcf0869d202c1c19a381db0954
   RNReanimated: 34ffdce9b09d4c6fc03f03e8939a423cc86284c6
-  RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
+  RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
+  RNSVG: 4590aa95758149fa27c5c83e54a6a466349a1688
   Yoga: 0518155cfbcc68c56223422f6a20a71b82e307d2
 
 PODFILE CHECKSUM: 8fc82264acde540834e5289f8fb339d0a2ede3f7

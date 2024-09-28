@@ -34,6 +34,7 @@ import {ROW_SAVED_DELAY} from '~/utils/consts';
 import HintWordButton from '~/components/HintWordsButton';
 import SubmitButton from '~/components/SubmitButton';
 import SearchWordsButton from '~/components/SearchWordsButton';
+import {WordGameScreenProps} from '~/navigation/types';
 
 const {width, height} = Dimensions.get('window');
 
@@ -53,11 +54,11 @@ const GameBannerAd = () => {
   );
 };
 
-interface WordleGameProps {
-  maxAttempts: number;
-  wordLength: number;
-}
-const WordleGame: React.FC<WordleGameProps> = ({maxAttempts, wordLength}) => {
+const WordleGame: React.FC<WordGameScreenProps> = ({
+  route: {
+    params: {maxAttempts, wordLength},
+  },
+}) => {
   const {evaluateGuess, secretWord, generateSecretWord} =
     useSecretWord(wordLength);
 

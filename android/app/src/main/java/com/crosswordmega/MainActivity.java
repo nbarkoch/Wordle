@@ -4,6 +4,11 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -13,6 +18,15 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "CrossWordMega";
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
+    Window window = getWindow();
+    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    window.setNavigationBarColor(Color.parseColor("#3A4F6C")); // Change to the desired color
+
   }
 
   /**

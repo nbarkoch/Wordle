@@ -1,14 +1,13 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  // StyleSheet,
-  useColorScheme,
-} from 'react-native';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {StatusBar} from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
-import WordGame from './source/screens/WordleGame';
+import GameScreen from './source/screens/WordleGame';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import HomeScreen from '~/screens/Home';
+import {RootStackParamList} from '~/navigation/types';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 mobileAds()
   .initialize()
@@ -17,20 +16,20 @@ mobileAds()
   });
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: '#343D4E',
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <WordGame maxAttempts={6} wordLength={5} />
-    </SafeAreaView>
+    <NavigationContainer>
+      <StatusBar backgroundColor={backgroundStyle.backgroundColor} />
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="WordGame" component={GameScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
