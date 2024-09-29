@@ -79,7 +79,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   >();
   const [lineHint, setLineHint] = useState<LineHint | undefined>();
   const [lineSearch, setLineSearch] = useState<LineHint | undefined>();
-  const [searchActive, setSearchActive] = useState<boolean>(false);
 
   const previousCorrectLetters = useRef<Set<string>>(new Set());
 
@@ -120,7 +119,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setGuesses(initialGuessesState);
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess('');
-    setSearchActive(false);
     setGameEnd(false);
     setGameStatus('PLAYING');
     reset();
@@ -171,11 +169,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const $setSelectedLetter = useCallback(
     async ($selectedLetter: LetterCellLocation | undefined) => {
-      if (!searchActive) {
-        setSelectedLetter(undefined);
-        setLineSearch(undefined);
-        return;
-      }
       setSelectedLetter($selectedLetter);
       if ($selectedLetter) {
         const $lineSearch = await calculateHintForLetter(
@@ -187,12 +180,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         setLineSearch(undefined);
       }
     },
-    [guesses, searchActive],
+    [guesses],
   );
 
   const onSearchRequested = useCallback(async () => {
     removeFromUserScore(5);
-    setSearchActive(true);
     $setSelectedLetter({colIndex: 0, rowIndex: 0});
   }, [$setSelectedLetter, removeFromUserScore]);
 

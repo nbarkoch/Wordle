@@ -9,7 +9,12 @@ import Animated, {
   interpolateColor,
   runOnJS,
 } from 'react-native-reanimated';
-import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
+import {
+  Correctness,
+  LetterCellLocation,
+  lightenColor,
+  LineHint,
+} from '~/utils/ui';
 
 interface LetterCellProps {
   letter: string | undefined;
@@ -104,19 +109,13 @@ function LetterCell({
       [0, 89, 90, 180],
       [defaultColor, defaultColor, color, color],
     );
-
-    const hintColor =
-      hint?.correctness === 'correct'
-        ? '#c7fce6'
-        : hint?.correctness === 'exists'
-        ? '#ffd593'
-        : hint?.correctness === 'notInUse'
-        ? '#e5b7bc'
-        : '#e5e5e5';
+    const $backgroundColor =
+      letterValue === undefined && hint
+        ? lightenColor(color, 20)
+        : backgroundColor;
 
     return {
-      backgroundColor:
-        letterValue === undefined && hint ? hintColor : backgroundColor,
+      backgroundColor: $backgroundColor,
       borderWidth: selected ? 3 : 0,
       borderColor: '#2993d1',
       transform: [{scale: cellScale.value}, {rotateX: `${flipValue.value}deg`}],
@@ -131,8 +130,9 @@ function LetterCell({
       [0, 89, 90, 180],
       [textColor, textColor, '#ffffff', '#ffffff'],
     );
+
     return {
-      color: letterValue === undefined && hint ? '#bfbfbf' : color,
+      color: color,
       transform: [
         {rotateX: `${-flipValue.value}deg`},
         {scale: hint ? 1 : letterScale.value},
@@ -189,13 +189,16 @@ function LetterCell({
     }
   }, [selected, onLetterSelected, colIndex, rowIndex, cellScale]);
 
+  const $letterStyle =
+    letterValue === undefined && hint ? {color: '#bfbfbf'} : letterStyle;
+
   return (
     <Pressable
       style={[styles.cell, styles.pressable]}
       disabled={viewed === null}
       onPress={handlePress}>
       <Animated.View style={[styles.cell, letterCellStyle]}>
-        <Animated.Text style={[styles.letter, letterStyle]}>
+        <Animated.Text style={[styles.letter, $letterStyle]}>
           {letterValue ?? hint?.letter}
         </Animated.Text>
       </Animated.View>
