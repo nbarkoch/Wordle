@@ -20,6 +20,8 @@ import {
 import {colors} from '~/utils/colors';
 import CloseIcon from './CloseIcon';
 import RowMockUp from './MockUpRow';
+import HintWordButton from '../HintWordsButton';
+import AboutButton from '../AboutButton';
 
 const {width, height} = Dimensions.get('window');
 
@@ -198,6 +200,26 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                     ]}
                   />
                 </View>
+                <View style={styles.divider} />
+                <Text style={styles.text}>{'Special hints buttons are:'}</Text>
+                <View style={{flexDirection: 'row', padding: 10}}>
+                  <HintWordButton onHintRequested={() => {}} scoreCost={0} />
+                  <View style={{width: 30}} />
+                  <AboutButton onInfoRequested={() => {}} scoreCost={0} />
+                </View>
+                <Text style={styles.text}>
+                  {'Each one costs score for every usage'}
+                </Text>
+                <Text style={styles.text}>
+                  {
+                    'The Info Button is used to get more information about the secret word '
+                  }
+                </Text>
+                <Text style={styles.text}>
+                  {
+                    'The Hint Button is reveal some of the letters in the secret word'
+                  }
+                </Text>
               </Animated.View>
             </ScrollView>
           </View>
@@ -263,11 +285,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.lightGrey,
     paddingVertical: 4,
+    textAlign: 'center',
   },
   divider: {
-    height: 1,
-    marginVertical: 10,
+    height: 2,
+    width: '100%',
     backgroundColor: colors.gold,
+    marginHorizontal: 10,
+    marginVertical: 10,
   },
   title: {
     color: colors.lightYellow,
