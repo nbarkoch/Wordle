@@ -9,6 +9,7 @@ import Animated, {
   interpolateColor,
   runOnJS,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
 
 interface LetterCellProps {
@@ -94,30 +95,30 @@ function LetterCell({
     const getColor = (status: Correctness | undefined) => {
       switch (status) {
         case 'correct':
-          return '#7FCCB5';
+          return colors.green;
         case 'exists':
-          return '#F9B033';
+          return colors.yellow;
         case 'notInUse':
-          return '#F47A89';
+          return colors.red;
         default:
-          return '#e5e5e5';
+          return colors.lightGrey;
       }
     };
 
     const getHintColor = (status: Correctness | undefined) => {
       switch (status) {
         case 'correct':
-          return '#c7fce6';
+          return colors.lightGreen;
         case 'exists':
-          return '#ffd593';
+          return colors.lightYellow;
         case 'notInUse':
-          return '#e5b7bc';
+          return colors.lightRed;
         default:
-          return '#e5e5e5';
+          return colors.lightGrey;
       }
     };
 
-    const defaultColor = letterValue ? '#e5e5e5' : '#EDEFEC';
+    const defaultColor = letterValue ? colors.lightGrey : '#EDEFEC';
     const viewedColor = getColor(letterViewed);
     const hintColor = getHintColor(hint?.correctness);
 
@@ -132,18 +133,18 @@ function LetterCell({
     return {
       backgroundColor: backgroundColor,
       borderWidth: selected ? 3 : 0,
-      borderColor: '#2993d1',
+      borderColor: colors.blue,
       transform: [{scale: cellScale.value}, {rotateX: `${flipValue.value}deg`}],
     };
   });
 
   const letterStyle = useAnimatedStyle(() => {
-    const textColor = !letter ? 'transparent' : '#6a6a6a';
+    const textColor = !letter ? 'transparent' : colors.darkGrey;
 
     const color = interpolateColor(
       flipValue.value,
       [0, 89, 90, 180],
-      [textColor, textColor, '#ffffff', '#ffffff'],
+      [textColor, textColor, colors.white, colors.white],
     );
 
     return {

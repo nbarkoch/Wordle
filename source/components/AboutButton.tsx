@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -32,7 +33,7 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const {userScore} = useScoreStore();
   const timesLeft = Math.floor(userScore / scoreCost);
   const $disabled = timesLeft === 0 || disabled;
-  const color = $disabled ? '#F47A89' : '#7FCCB5';
+  const color = $disabled ? colors.red : colors.green;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {

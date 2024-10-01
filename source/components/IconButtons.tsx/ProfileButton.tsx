@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 30,
     borderWidth: 3,
-    borderColor: '#7FCCB5',
+    borderColor: colors.green,
   },
   text: {
     fontWeight: '900',

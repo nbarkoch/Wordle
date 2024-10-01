@@ -1,5 +1,6 @@
 import React, {useState, useMemo} from 'react';
 import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
+import {colors} from '~/utils/colors';
 
 import {Correctness, darkenColor} from '~/utils/ui';
 
@@ -25,13 +26,13 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
   const baseColor = useMemo(() => {
     switch (correctness) {
       case 'correct':
-        return '#7FCCB5';
+        return colors.green;
       case 'exists':
-        return '#F9B033';
+        return colors.yellow;
       case 'notInUse':
-        return '#999999';
+        return colors.grey;
       default:
-        return '#e0e0e0';
+        return colors.lightGrey;
     }
   }, [correctness]);
 

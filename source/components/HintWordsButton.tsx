@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -33,7 +34,7 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
   const {userScore} = useScoreStore();
   const hintsLeft = Math.floor(userScore / scoreCost);
   const disabled = hintsLeft === 0;
-  const color = disabled ? '#F47A89' : '#F9B131';
+  const color = disabled ? colors.red : colors.yellow;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {

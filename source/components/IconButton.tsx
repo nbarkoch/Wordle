@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -38,7 +39,7 @@ const IconButton: React.FC<IconButtonProps> = ({onPress}) => {
       style={[buttonStyle, styles.container]}>
       <Canvas style={{width, height}}>
         <Group transform={[{scale: width / 29}]}>
-          <Path path={magnifierPath} color={'#7FCCB5'} />
+          <Path path={magnifierPath} color={colors.green} />
         </Group>
       </Canvas>
     </AnimatedPressable>

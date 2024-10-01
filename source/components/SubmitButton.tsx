@@ -9,6 +9,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -47,7 +48,7 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     const validGuess = isValidGuess ?? internalIsValidGuess;
 
     const finalColor =
-      validGuess === null ? '#A0A0A0' : validGuess ? '#7FCCB5' : '#F47A89';
+      validGuess === null ? '#A0A0A0' : validGuess ? colors.green : colors.red;
     const finalBorderColor =
       validGuess === null ? '#898989' : validGuess ? '#5eb299' : '#c9505e';
     const backgroundColor = interpolateColor(

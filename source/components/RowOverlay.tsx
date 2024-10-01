@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useScoreStore} from '~/store/useScore';
+import {colors} from '~/utils/colors';
 
 const vibrate = () => {
   Vibration.vibrate([0, 70]);
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderColor: '#7FCCB5',
+    borderColor: colors.green,
     borderWidth: 4,
     borderRadius: 10,
   },

@@ -1,6 +1,7 @@
 import React, {memo, useEffect} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import {useTimerStore} from '~/store/useTimerStore';
+import {colors} from '~/utils/colors';
 
 export const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#F47A89',
+    color: colors.red,
     paddingLeft: 20,
   },
 });

@@ -19,6 +19,7 @@ import Animated, {
 import confettiSpark from '~/assets/lottie/confetti_1.json';
 import confettiParty from '~/assets/lottie/confetti_2.json';
 import {OutlinedText} from './CartoonText';
+import {colors} from '~/utils/colors';
 
 const {width, height} = Dimensions.get('window');
 
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
   feedbackText: {
     fontSize: 40,
     fontWeight: '900',
-    color: '#ffffff',
+    color: colors.white,
     fontStyle: 'italic',
   },
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import Svg, {Text} from 'react-native-svg';
+import {colors} from '~/utils/colors';
 
 interface OutlinedTextProps {
   text: string;
@@ -16,8 +17,8 @@ export const OutlinedText: React.FC<OutlinedTextProps> = ({
   fontSize,
   width,
   height,
-  fillColor = '#ffffff',
-  strokeColor = '#4a90e2',
+  fillColor = colors.white,
+  strokeColor = colors.blue,
   strokeWidth = 8,
 }) => {
   return (

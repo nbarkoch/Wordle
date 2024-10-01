@@ -8,21 +8,22 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {colors} from '~/utils/colors';
 
 const TopBar: React.FC = () => {
   const {userScore} = useScoreStore();
   const scaleAnimation = useSharedValue(1);
   const lastUserScore = useRef<number>(userScore);
 
-  const [textScoreColor, setTextScoreColor] = useState<string>('#F9B12F');
+  const [textScoreColor, setTextScoreColor] = useState<string>(colors.yellow);
 
   useEffect(() => {
     scaleAnimation.value = withTiming(1.25, {duration: 50}, () => {
       scaleAnimation.value = withTiming(1, {duration: 200});
-      runOnJS(setTextScoreColor)('#F9B12F');
+      runOnJS(setTextScoreColor)(colors.yellow);
     });
     setTextScoreColor(
-      lastUserScore.current <= userScore ? '#7FCCB5' : '#F47A89',
+      lastUserScore.current <= userScore ? colors.green : colors.red,
     );
     lastUserScore.current = userScore;
   }, [scaleAnimation, userScore]);
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   topBarScore: {flexDirection: 'row-reverse'},
-  topBarScoreText: {fontSize: 18, fontWeight: '900', color: '#7FCCB5'},
+  topBarScoreText: {fontSize: 18, fontWeight: '900', color: colors.green},
 });
 
 export default TopBar;

@@ -21,6 +21,7 @@ import ChevronRight from '~/assets/icons/chevron-right.svg';
 import StarRating from './StarRating';
 import {useTimerStore} from '~/store/useTimerStore';
 import {formatTime} from './Timer';
+import {colors} from '~/utils/colors';
 
 const {width, height} = Dimensions.get('window');
 interface GameResultDialogProps {
@@ -274,17 +275,17 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   nextButton: {
-    backgroundColor: '#7FCCB5',
+    backgroundColor: colors.green,
     justifyContent: 'center',
     alignItems: 'center',
   },
   homeButton: {
-    backgroundColor: '#2993d1',
+    backgroundColor: colors.blue,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
