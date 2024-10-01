@@ -25,7 +25,7 @@ public class MainActivity extends ReactActivity {
     super.onCreate(null);
     Window window = getWindow();
     window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-    window.setNavigationBarColor(Color.parseColor("#3A4F6C")); // Change to the desired color
+    window.setNavigationBarColor(Color.parseColor("#33556E")); // Change to the desired color
 
   }
 

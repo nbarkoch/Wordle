@@ -9,12 +9,7 @@ import Animated, {
   interpolateColor,
   runOnJS,
 } from 'react-native-reanimated';
-import {
-  Correctness,
-  LetterCellLocation,
-  lightenColor,
-  LineHint,
-} from '~/utils/ui';
+import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
 
 interface LetterCellProps {
   letter: string | undefined;
@@ -96,26 +91,46 @@ function LetterCell({
   }, [flipValue, viewed, delay, resetLetter, letterViewed]);
 
   const letterCellStyle = useAnimatedStyle(() => {
-    const color =
-      letterViewed === 'correct'
-        ? '#7FCCB5'
-        : letterViewed === 'exists'
-        ? '#F9B033'
-        : '#F47A89';
+    const getColor = (status: Correctness | undefined) => {
+      switch (status) {
+        case 'correct':
+          return '#7FCCB5';
+        case 'exists':
+          return '#F9B033';
+        case 'notInUse':
+          return '#F47A89';
+        default:
+          return '#e5e5e5';
+      }
+    };
+
+    const getHintColor = (status: Correctness | undefined) => {
+      switch (status) {
+        case 'correct':
+          return '#c7fce6';
+        case 'exists':
+          return '#ffd593';
+        case 'notInUse':
+          return '#e5b7bc';
+        default:
+          return '#e5e5e5';
+      }
+    };
 
     const defaultColor = letterValue ? '#e5e5e5' : '#EDEFEC';
-    const backgroundColor = interpolateColor(
-      flipValue.value,
-      [0, 89, 90, 180],
-      [defaultColor, defaultColor, color, color],
-    );
-    const $backgroundColor =
-      letterValue === undefined && hint
-        ? lightenColor(color, 20)
-        : backgroundColor;
+    const viewedColor = getColor(letterViewed);
+    const hintColor = getHintColor(hint?.correctness);
 
+    const backgroundColor =
+      letterValue === undefined && hint
+        ? hintColor
+        : interpolateColor(
+            flipValue.value,
+            [0, 89, 90, 180],
+            [defaultColor, defaultColor, viewedColor, viewedColor],
+          );
     return {
-      backgroundColor: $backgroundColor,
+      backgroundColor: backgroundColor,
       borderWidth: selected ? 3 : 0,
       borderColor: '#2993d1',
       transform: [{scale: cellScale.value}, {rotateX: `${flipValue.value}deg`}],
@@ -208,9 +223,9 @@ function LetterCell({
 
 const styles = StyleSheet.create({
   cell: {
-    width: 40,
-    height: 40,
-    borderRadius: 15,
+    width: 45,
+    height: 45,
+    borderRadius: 17,
     marginVertical: 4,
     marginHorizontal: 5,
     alignItems: 'center',
@@ -220,7 +235,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   letter: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '900',
     includeFontPadding: false,
     textAlignVertical: 'center',

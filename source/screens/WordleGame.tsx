@@ -23,7 +23,6 @@ import {
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/GameResultDialog';
-import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
 import TopBar from '~/components/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
 import ConfettiOverlay, {
@@ -33,10 +32,15 @@ import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import HintWordButton from '~/components/HintWordsButton';
 import SubmitButton from '~/components/SubmitButton';
-import SearchWordsButton from '~/components/SearchWordsButton';
-import {WordGameScreenProps} from '~/navigation/types';
+import AboutButton from '~/components/AboutButton';
+import {
+  WordGameScreenProps,
+  WordleGameNavigationProp,
+} from '~/navigation/types';
+import {useNavigation} from '@react-navigation/native';
+import CanvasBackground from '~/utils/canvas';
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const GameBannerAd = () => {
   const adUnitId = __DEV__
@@ -93,6 +97,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setLineHint(undefined);
     setLineSearch(undefined);
     setGameStatus(status);
+    const delayConfetti = setTimeout(() => {
+      confettiRef.current?.triggerFeedback('party');
+      clearTimeout(delayConfetti);
+    }, 750);
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       checkSavedRows();
@@ -128,11 +136,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setScore(0);
   }, [initialGuessesState, reset, start, generateSecretWord, setScore]);
 
+  const navigation = useNavigation<WordleGameNavigationProp>();
+
   const handleGoHome = useCallback(() => {
-    // Implement the logic to navigate to the home screen
-    // This might involve using a navigation library or state management
-    // console.log('Navigate to home screen');
-  }, []);
+    navigation.navigate('Home');
+  }, [navigation]);
 
   const [guesses, setGuesses] = useState<WordGuess[]>(initialGuessesState);
   const [keyboardLetters, setKeyboardLetters] = useState(
@@ -183,10 +191,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     [guesses],
   );
 
-  const onSearchRequested = useCallback(async () => {
+  const onInfoRequested = useCallback(async () => {
     removeFromUserScore(5);
-    $setSelectedLetter({colIndex: 0, rowIndex: 0});
-  }, [$setSelectedLetter, removeFromUserScore]);
+  }, [removeFromUserScore]);
 
   const handleDelete = useCallback(() => {
     setCurrentGuess(prev => prev.slice(0, -1));
@@ -241,7 +248,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       );
       addScore(newCorrectLetters.length);
       if (secretWordRevealed) {
-        confettiRef.current?.triggerFeedback('party');
         return endGame('SUCCESS');
       }
       if (currentAttempt + 1 === maxAttempts) {
@@ -279,29 +285,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     }
   }, [isValidWord, currentGuess, wordLength]);
 
-  const memoizedKeyboard = useMemo(
-    () => (
-      <Keyboard
-        handleKeyPress={handleKeyPress}
-        handleDelete={handleDelete}
-        keyboardLetters={keyboardLetters}
-        currentGuessLength={currentGuess.length}
-      />
-    ),
-    [handleKeyPress, handleDelete, keyboardLetters, currentGuess.length],
-  );
-
   return (
     <View style={styles.container}>
-      <Canvas style={styles.canvas}>
-        <Rect x={0} y={0} width={width} height={height}>
-          <LinearGradient
-            start={vec(0, 0)}
-            end={vec(0, height)}
-            colors={['#343D4E', '#384555', '#3A4F6C']}
-          />
-        </Rect>
-      </Canvas>
+      <CanvasBackground />
       <View style={styles.content}>
         <GameBannerAd />
         <View>
@@ -327,13 +313,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           </Animated.View>
         </View>
         <View style={styles.bottomContainer}>
-          {memoizedKeyboard}
+          <Keyboard
+            handleKeyPress={handleKeyPress}
+            handleDelete={handleDelete}
+            keyboardLetters={keyboardLetters}
+            currentGuessLength={currentGuess.length}
+          />
           <View style={styles.footer}>
             <View style={styles.centerer}>
-              <SearchWordsButton
-                onSearchRequested={onSearchRequested}
-                scoreCost={5}
-              />
+              <AboutButton onInfoRequested={onInfoRequested} scoreCost={5} />
             </View>
             <SubmitButton
               handleSubmit={handleSubmit}
@@ -372,8 +360,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,
-    backgroundColor: '#343E4F',
-    elevation: 6,
+    borderColor: 'white',
+    // borderWidth: 2,
     borderRadius: 20,
   },
   bottomContainer: {
@@ -415,14 +403,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: '900',
-  },
-  canvas: {
-    flex: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: width,
-    height: height,
   },
   content: {
     flex: 1,

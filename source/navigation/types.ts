@@ -1,4 +1,7 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -17,4 +20,9 @@ export type WordGameScreenProps = NativeStackScreenProps<
 export type DetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'UserInfo'
+>;
+
+export type WordleGameNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'WordGame'
 >;

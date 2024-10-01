@@ -28,9 +28,9 @@ const WordleParagraph = ({width, height}: WordleParagraphProps) => {
         {x: 0, y: 0},
         256,
         [
-          Skia.Color('#74BAC2'),
-          Skia.Color('#9FA5C5'),
-          Skia.Color('#DE91BD'),
+          Skia.Color('#75B8C2'),
+          Skia.Color('#8997C8'),
+          Skia.Color('#DD90BB'),
           Skia.Color('#6A60AB'),
         ],
         null,
@@ -45,7 +45,7 @@ const WordleParagraph = ({width, height}: WordleParagraphProps) => {
       .pushStyle(
         {
           fontFamilies: ['Roboto'],
-          fontSize: 48,
+          fontSize: 60,
           color: Skia.Color('black'),
         },
         foregroundPaint,

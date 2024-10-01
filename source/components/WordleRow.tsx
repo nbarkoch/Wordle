@@ -8,7 +8,7 @@ import {LETTER_CELL_DISPLAY_DELAY} from '~/utils/consts';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
+  withSpring,
 } from 'react-native-reanimated';
 
 interface WordleRowProps {
@@ -46,19 +46,12 @@ const WordleRow: React.FC<WordleRowProps> = ({
   }, [delay, shouldShowOverlay]);
 
   useEffect(() => {
-    scaleAnimation.value = withTiming(isCurrentRow ? 1.05 : 1, {
-      duration: 500,
-    });
+    scaleAnimation.value = withSpring(isCurrentRow ? 1 : 0);
   }, [isCurrentRow, scaleAnimation]);
 
-  const rowAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scaleAnimation.value}],
-      borderWidth: (scaleAnimation.value - 1) * 20,
-      borderColor: 'white',
-      borderRadius: 17.5,
-    };
-  });
+  const rowAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{scale: 1 + scaleAnimation.value * 0.05}],
+  }));
 
   return (
     <View style={styles.rowContainer}>

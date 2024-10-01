@@ -39,7 +39,7 @@ const TopBar: React.FC = () => {
       <View style={[styles.topBarScore]}>
         <Animated.Text
           style={[styles.topBarScoreText, {color: textScoreColor}]}>
-          Score:
+          {'Score: '}
         </Animated.Text>
         <Animated.Text
           style={[

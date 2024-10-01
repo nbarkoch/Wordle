@@ -4,12 +4,11 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import {View, StyleSheet, Dimensions, Text} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import LottieView from 'lottie-react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withTiming,
   Easing,
   runOnJS,
@@ -19,6 +18,7 @@ import Animated, {
 
 import confettiSpark from '~/assets/lottie/confetti_1.json';
 import confettiParty from '~/assets/lottie/confetti_2.json';
+import {OutlinedText} from './CartoonText';
 
 const {width, height} = Dimensions.get('window');
 
@@ -26,9 +26,9 @@ interface ConfettiOverlayProps {}
 
 type ConfettiType = 'spark' | 'party';
 
-const SPRING_DELAY = 300;
+const SPRING_DELAY = 200;
 const TEXT_DISPLAY_DUR = 2000;
-const OPACITY_DUR = 600;
+const OPACITY_DUR = 400;
 const SCALE_DUR = 500;
 export interface ConfettiOverlayRef {
   triggerFeedback: (type: ConfettiType) => void;
@@ -41,6 +41,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
 
     const textScale = useSharedValue(0);
     const textOpacity = useSharedValue(0);
+    const rotation = useSharedValue(-270);
 
     const animateFeedbackIn = useCallback(
       (text: string, confettiType: ConfettiType) => {
@@ -48,12 +49,27 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
         setShowText(text);
 
         textScale.value = withSequence(
-          withSpring(1, {damping: 5, stiffness: 80}),
+          withTiming(1.2, {duration: OPACITY_DUR - SPRING_DELAY}),
+          withTiming(1, {duration: SPRING_DELAY}),
           withDelay(
-            TEXT_DISPLAY_DUR,
+            TEXT_DISPLAY_DUR + SPRING_DELAY,
             withTiming(0, {
               duration: SCALE_DUR,
               easing: Easing.out(Easing.cubic),
+            }),
+          ),
+        );
+
+        rotation.value = withSequence(
+          withTiming(0, {
+            duration: OPACITY_DUR,
+            easing: Easing.out(Easing.cubic),
+          }),
+          withDelay(
+            TEXT_DISPLAY_DUR + SPRING_DELAY,
+            withTiming(-270, {
+              duration: OPACITY_DUR,
+              easing: Easing.in(Easing.cubic),
             }),
           ),
         );
@@ -80,7 +96,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
           ),
         );
       },
-      [textOpacity, textScale],
+      [rotation, textOpacity, textScale],
     );
 
     useImperativeHandle(ref, () => ({
@@ -97,7 +113,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
     }));
 
     const animatedTextStyle = useAnimatedStyle(() => ({
-      transform: [{scale: textScale.value}],
+      transform: [{scale: textScale.value}, {rotate: `${rotation.value}deg`}],
       opacity: textOpacity.value,
     }));
 
@@ -117,7 +133,15 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
             />
             {showText && (
               <Animated.View style={[styles.feedbackView, animatedTextStyle]}>
-                <Text style={styles.feedbackText}> {showText}</Text>
+                <OutlinedText
+                  text={showText}
+                  fontSize={42}
+                  width={250}
+                  height={70}
+                  fillColor="#ffffff"
+                  strokeColor="#2f6dbf"
+                  strokeWidth={12}
+                />
               </Animated.View>
             )}
           </View>
@@ -135,6 +159,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
     justifyContent: 'center',
     alignItems: 'center',
+    transform: [{translateY: -50}],
   },
   confetti: {
     width: width,
@@ -143,11 +168,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   feedbackView: {
-    textShadowColor: '#353f4f',
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 20,
-    borderRadius: 27,
-    backgroundColor: '#5c92ffd0',
     padding: 17,
   },
   feedbackText: {
