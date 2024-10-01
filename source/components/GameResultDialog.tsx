@@ -269,12 +269,12 @@ const styles = StyleSheet.create({
   scoreLabel: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#F9F3AC',
+    color: colors.lightGold,
   },
   scoreValue: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#F9F3AC',
+    color: colors.lightGold,
   },
   buttonContainer: {
     marginTop: 10,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     marginVertical: 10,
-    backgroundColor: '#e0b87f',
+    backgroundColor: colors.gold,
   },
   secretWordWas: {
     color: '#758082',
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   secretWord: {
     fontWeight: '900',
     fontSize: 16,
-    color: '#e0b87f',
+    color: colors.gold,
   },
 });
 

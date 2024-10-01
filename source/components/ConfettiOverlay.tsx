@@ -140,7 +140,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
                   width={250}
                   height={70}
                   fillColor="#ffffff"
-                  strokeColor="#2f6dbf"
+                  strokeColor={colors.blue}
                   strokeWidth={12}
                 />
               </Animated.View>

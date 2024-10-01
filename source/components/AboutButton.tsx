@@ -18,8 +18,6 @@ interface AboutButtonProps {
   disabled?: boolean;
 }
 
-const SCORE_THRESHOLD = 5;
-
 const AboutButton: React.FC<AboutButtonProps> = ({
   onInfoRequested,
   scoreCost,
@@ -33,19 +31,14 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const {userScore} = useScoreStore();
   const timesLeft = Math.floor(userScore / scoreCost);
   const $disabled = timesLeft === 0 || disabled;
-  const color = $disabled ? colors.red : colors.green;
+  const color = $disabled ? colors.lightRed : colors.lightGrey;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scaleAnimation.value}],
-      borderColor: color,
-    };
-  });
-
-  const textStyle = useAnimatedStyle(() => {
-    return {
-      color: color,
+      borderColor: $disabled ? colors.darkRed : colors.darkGreen,
+      backgroundColor: $disabled ? colors.red : colors.green,
     };
   });
 
@@ -59,9 +52,6 @@ const AboutButton: React.FC<AboutButtonProps> = ({
         });
       }}
       style={[styles.container, buttonStyle]}>
-      <Animated.Text style={[styles.text, textStyle]}>
-        {timesLeft > SCORE_THRESHOLD ? `${SCORE_THRESHOLD}+` : timesLeft}
-      </Animated.Text>
       <Canvas style={{width, height}}>
         <Group transform={[{scale: width / 29}]}>
           <Path path={magnifierPath} color={color} opacity={0.85} />
@@ -73,10 +63,9 @@ const AboutButton: React.FC<AboutButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 15,
+    borderRadius: 25,
     borderWidth: 2.5,
-    padding: 2,
-    paddingLeft: 10,
+    padding: 3,
     flexDirection: 'row',
     alignItems: 'center',
   },

@@ -359,6 +359,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   gridContainer: {
+    marginTop: 30,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,

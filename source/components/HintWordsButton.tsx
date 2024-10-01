@@ -17,8 +17,6 @@ interface HintWordButtonProps {
   scoreCost: number;
 }
 
-const HINT_THRESHOLD = 5;
-
 const HintWordButton: React.FC<HintWordButtonProps> = ({
   onHintRequested,
   scoreCost,
@@ -34,18 +32,12 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
   const {userScore} = useScoreStore();
   const hintsLeft = Math.floor(userScore / scoreCost);
   const disabled = hintsLeft === 0;
-  const color = disabled ? colors.red : colors.yellow;
+  const color = disabled ? colors.red : colors.lightGold;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scaleAnimation.value}],
-    };
-  });
-
-  const textStyle = useAnimatedStyle(() => {
-    return {
-      color: color,
     };
   });
 
@@ -58,12 +50,17 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
           runOnJS(onHintRequested)();
         });
       }}
-      style={[styles.container, buttonStyle, {borderColor: color}]}>
-      <Animated.Text style={[styles.text, textStyle]}>
-        {hintsLeft > HINT_THRESHOLD ? `${HINT_THRESHOLD}+` : hintsLeft}
-      </Animated.Text>
+      style={[
+        styles.container,
+        buttonStyle,
+        {
+          borderColor: disabled ? colors.red : colors.darkYellow,
+          backgroundColor: disabled ? colors.red : colors.yellow,
+        },
+      ]}>
       <Canvas style={{width, height}}>
-        <Group transform={[{scale: width / 32}, {translateY: 2}]}>
+        <Group
+          transform={[{scale: width / 35}, {translateY: 3}, {translateX: 3}]}>
           {disabled ? (
             <Path path={magnifierDisabledPath} color={color} style="fill" />
           ) : (
@@ -80,10 +77,9 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 15,
+    borderRadius: 25,
     borderWidth: 2.5,
-    padding: 2,
-    paddingLeft: 10,
+    padding: 3,
     flexDirection: 'row',
     alignItems: 'center',
   },

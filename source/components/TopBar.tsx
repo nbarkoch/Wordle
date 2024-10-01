@@ -15,12 +15,12 @@ const TopBar: React.FC = () => {
   const scaleAnimation = useSharedValue(1);
   const lastUserScore = useRef<number>(userScore);
 
-  const [textScoreColor, setTextScoreColor] = useState<string>(colors.yellow);
+  const [textScoreColor, setTextScoreColor] = useState<string>(colors.gold);
 
   useEffect(() => {
     scaleAnimation.value = withTiming(1.25, {duration: 50}, () => {
       scaleAnimation.value = withTiming(1, {duration: 200});
-      runOnJS(setTextScoreColor)(colors.yellow);
+      runOnJS(setTextScoreColor)(colors.gold);
     });
     setTextScoreColor(
       lastUserScore.current <= userScore ? colors.green : colors.red,
@@ -57,14 +57,11 @@ const TopBar: React.FC = () => {
 
 const styles = StyleSheet.create({
   topBar: {
-    paddingTop: 20,
-    paddingBottom: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
   },
   topBarScore: {flexDirection: 'row-reverse'},
-  topBarScoreText: {fontSize: 18, fontWeight: '900', color: colors.green},
+  topBarScoreText: {fontSize: 18, fontWeight: '900'},
 });
 
 export default TopBar;

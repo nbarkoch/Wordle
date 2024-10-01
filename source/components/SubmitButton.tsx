@@ -87,14 +87,14 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
 
 const styles = StyleSheet.create({
   submitButton: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     paddingVertical: 8,
-    borderRadius: 15,
+    borderRadius: 20,
     borderWidth: 2.5,
   },
   submitButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '900',
   },
 });
