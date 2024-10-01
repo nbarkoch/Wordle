@@ -25,7 +25,12 @@ const App = () => {
       <StatusBar backgroundColor={backgroundStyle.backgroundColor} />
       <Stack.Navigator
         initialRouteName="Home"
-        screenOptions={{headerShown: false}}>
+        screenOptions={{
+          headerShown: false,
+          contentStyle: backgroundStyle,
+          animation: 'fade',
+          gestureDirection: 'horizontal',
+        }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="WordGame" component={GameScreen} />
       </Stack.Navigator>

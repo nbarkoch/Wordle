@@ -97,10 +97,12 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setLineHint(undefined);
     setLineSearch(undefined);
     setGameStatus(status);
-    const delayConfetti = setTimeout(() => {
-      confettiRef.current?.triggerFeedback('party');
-      clearTimeout(delayConfetti);
-    }, 750);
+    if (status === 'SUCCESS') {
+      const delayConfetti = setTimeout(() => {
+        confettiRef.current?.triggerFeedback('party');
+        clearTimeout(delayConfetti);
+      }, 750);
+    }
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       checkSavedRows();

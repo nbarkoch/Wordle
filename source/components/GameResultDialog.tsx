@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Pressable, Dimensions} from 'react-native';
 import Animated, {
   useSharedValue,
@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
   withDelay,
   interpolate,
+  runOnJS,
 } from 'react-native-reanimated';
 import {
   Canvas,
@@ -44,11 +45,13 @@ const GameResultDialog = ({
   const opacity = useSharedValue(0);
   const buttonContainerAnimation = useSharedValue(0);
   const scoreWrapperAnimation = useSharedValue(0);
+  const [block, setBlock] = useState<boolean>(false);
 
   const {time} = useTimerStore();
 
   useEffect(() => {
     if (isVisible) {
+      setBlock(true);
       scale.value = withSpring(1, {damping: 12, stiffness: 100});
       opacity.value = withTiming(1, {
         duration: 300,
@@ -64,15 +67,24 @@ const GameResultDialog = ({
       );
     } else {
       scale.value = withSpring(0);
-      opacity.value = withTiming(0, {
-        duration: 300,
-        easing: Easing.in(Easing.exp),
-      });
+      opacity.value = withTiming(
+        0,
+        {
+          duration: 200,
+          easing: Easing.in(Easing.exp),
+        },
+        finish => {
+          if (finish) {
+            runOnJS(setBlock)(false);
+          }
+        },
+      );
       buttonContainerAnimation.value = 0;
       scoreWrapperAnimation.value = 0;
     }
   }, [
     isVisible,
+    block,
     scale,
     opacity,
     buttonContainerAnimation,
@@ -110,7 +122,7 @@ const GameResultDialog = ({
     opacity: scoreWrapperAnimation.value,
   }));
 
-  if (!isVisible) {
+  if (!block && !isVisible) {
     return null;
   }
 
@@ -146,21 +158,25 @@ const GameResultDialog = ({
               <Text style={styles.title}>SUMMARY</Text>
             </View>
             <StarRating width={270} height={100} rating={rating} />
-            <Text style={styles.secretWordWas}>{'Secret Word:'}</Text>
-            <Text style={styles.secretWord}>{secretWord}</Text>
-            <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
-              <View style={styles.scoreContainer}>
-                <View style={styles.scoreRow}>
-                  <Text style={styles.scoreValue}>{currentScore}</Text>
-                  <Text style={styles.scoreLabel}>Score</Text>
-                </View>
-                <View style={styles.divider} />
-                <View style={[styles.scoreRow]}>
-                  <Text style={styles.scoreValue}>{formatTime(time)}</Text>
-                  <Text style={[styles.scoreLabel]}>Time</Text>
-                </View>
-              </View>
-            </Animated.View>
+            {isVisible && (
+              <>
+                <Text style={styles.secretWordWas}>{'Secret Word:'}</Text>
+                <Text style={styles.secretWord}>{secretWord}</Text>
+                <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
+                  <View style={styles.scoreContainer}>
+                    <View style={styles.scoreRow}>
+                      <Text style={styles.scoreValue}>{currentScore}</Text>
+                      <Text style={styles.scoreLabel}>Score</Text>
+                    </View>
+                    <View style={styles.divider} />
+                    <View style={[styles.scoreRow]}>
+                      <Text style={styles.scoreValue}>{formatTime(time)}</Text>
+                      <Text style={[styles.scoreLabel]}>Time</Text>
+                    </View>
+                  </View>
+                </Animated.View>
+              </>
+            )}
           </View>
         </View>
         <Animated.View style={[styles.buttonContainer, buttonContainerStyle]}>
