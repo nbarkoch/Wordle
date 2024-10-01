@@ -37,7 +37,6 @@ function HomeScreen({navigation}: HomeScreenProps) {
       <HowToPlayDialog
         onClose={() => setHowToPlayVisible(false)}
         isVisible={howToPlayVisible}
-        secretWord={'secretWord'}
       />
     </View>
   );

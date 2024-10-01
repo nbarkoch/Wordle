@@ -1,12 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  I18nManager,
-  ScrollView,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -26,91 +19,9 @@ import {
 
 import {colors} from '~/utils/colors';
 import CloseIcon from './CloseIcon';
-import {Correctness} from '~/utils/ui';
+import RowMockUp from './MockUpRow';
 
 const {width, height} = Dimensions.get('window');
-
-interface RowMockupProps {
-  letters: string[];
-  correctness: (Correctness | undefined)[];
-}
-function RowMockUp({letters, correctness}: RowMockupProps) {
-  const getColor = (status: Correctness | undefined) => {
-    switch (status) {
-      case 'correct':
-        return colors.green;
-      case 'exists':
-        return colors.yellow;
-      case 'notInUse':
-        return colors.red;
-      case undefined:
-        return undefined;
-      default:
-        return colors.lightGrey;
-    }
-  };
-
-  const getFontColor = (status: Correctness | undefined) => {
-    switch (status) {
-      case 'correct':
-      case 'exists':
-      case 'notInUse':
-        return colors.white;
-      case undefined:
-        return 'transparent';
-      default:
-        return colors.darkGrey;
-    }
-  };
-
-  return (
-    <View style={mockUpStyle.row}>
-      {letters.map((letterValue, index) => (
-        <Animated.View
-          key={`${letterValue}-${index}`}
-          style={[
-            mockUpStyle.cell,
-            {backgroundColor: getColor(correctness[index])},
-          ]}>
-          <Animated.Text
-            style={[
-              mockUpStyle.letter,
-              {
-                color: getFontColor(correctness[index]),
-              },
-            ]}>
-            {letterValue}
-          </Animated.Text>
-        </Animated.View>
-      ))}
-    </View>
-  );
-}
-
-const mockUpStyle = StyleSheet.create({
-  row: {
-    zIndex: 10,
-    flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
-  },
-  cell: {
-    width: 45,
-    height: 45,
-    borderRadius: 17,
-    marginVertical: 4,
-    marginHorizontal: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pressable: {
-    zIndex: 10,
-  },
-  letter: {
-    fontSize: 28,
-    fontWeight: '900',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-});
 
 interface HowToPlayDialogProps {
   isVisible: boolean;
@@ -121,7 +32,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const buttonContainerAnimation = useSharedValue(0);
-  const scoreWrapperAnimation = useSharedValue(0);
+  const introductionAnimation = useSharedValue(0);
   const [block, setBlock] = useState<boolean>(false);
 
   useEffect(() => {
@@ -136,7 +47,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
         500,
         withSpring(1, {damping: 15, stiffness: 80}),
       );
-      scoreWrapperAnimation.value = withDelay(
+      introductionAnimation.value = withDelay(
         300,
         withSpring(1, {damping: 12, stiffness: 100}),
       );
@@ -155,7 +66,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
         },
       );
       buttonContainerAnimation.value = 0;
-      scoreWrapperAnimation.value = 0;
+      introductionAnimation.value = 0;
     }
   }, [
     isVisible,
@@ -163,7 +74,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
     scale,
     opacity,
     buttonContainerAnimation,
-    scoreWrapperAnimation,
+    introductionAnimation,
   ]);
 
   const overlayStyle = useAnimatedStyle(() => ({
@@ -174,13 +85,13 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
     transform: [{scale: scale.value}],
   }));
 
-  const scoreWrapperStyle = useAnimatedStyle(() => ({
+  const introductionStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        scale: interpolate(scoreWrapperAnimation.value, [0, 1], [0.5, 1]),
+        scale: interpolate(introductionAnimation.value, [0, 1], [0.5, 1]),
       },
     ],
-    opacity: scoreWrapperAnimation.value,
+    opacity: introductionAnimation.value,
   }));
 
   if (!block && !isVisible) {
@@ -216,7 +127,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
               horizontal={false}
               style={styles.scrollView}
               contentContainerStyle={styles.scrollViewContent}>
-              <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
+              <Animated.View style={[styles.introduction, introductionStyle]}>
                 <Text style={styles.text}>Guess the word in 6 tries</Text>
                 <Text style={styles.text}>
                   {
@@ -340,25 +251,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 15,
   },
-  scoreWrapper: {
+  introduction: {
     width: '100%',
     flex: 1,
     padding: 20,
     marginHorizontal: 10,
-    alignItems: 'center',
-  },
-  scoreContainer: {
-    width: '100%',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#19273040',
-    borderColor: '#77807F',
-    borderWidth: 2,
-    borderRadius: 10,
-  },
-  scoreRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   text: {
@@ -366,40 +263,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.lightGrey,
     paddingVertical: 4,
-  },
-  scoreValue: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: colors.lightGold,
-  },
-  buttonContainer: {
-    marginTop: 10,
-    flexDirection: 'row',
-    overflow: 'visible',
-    justifyContent: 'space-around',
-    width: '100%',
-    paddingHorizontal: 40,
-  },
-  button: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    elevation: 6,
-  },
-  nextButton: {
-    backgroundColor: colors.green,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  homeButton: {
-    backgroundColor: colors.blue,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   divider: {
     height: 1,
