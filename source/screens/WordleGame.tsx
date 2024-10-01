@@ -22,7 +22,7 @@ import {
   mergeHints,
   WordGuess,
 } from '~/utils/ui';
-import GameResultDialog from '~/components/GameResultDialog';
+import GameResultDialog from '~/components/dialogs/GameResultDialog';
 import TopBar from '~/components/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
 import ConfettiOverlay, {
@@ -143,6 +143,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const handleGoHome = useCallback(() => {
     navigation.navigate('Home');
   }, [navigation]);
+
+  useEffect(() => {
+    return handleNewGame;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [guesses, setGuesses] = useState<WordGuess[]>(initialGuessesState);
   const [keyboardLetters, setKeyboardLetters] = useState(

@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import {useCallback, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
@@ -7,11 +7,14 @@ import MenuButton from '~/components/MenuButton';
 import IconButton from '~/components/IconButton';
 import ProfileIconButton from '~/components/IconButtons.tsx/ProfileButton';
 import CanvasBackground from '~/utils/canvas';
+import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const onNewGame = useCallback(() => {
     navigation.navigate('WordGame', {maxAttempts: 6, wordLength: 5});
   }, [navigation]);
+
+  const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
   return (
     <View style={styles.body}>
       <CanvasBackground />
@@ -21,12 +24,21 @@ function HomeScreen({navigation}: HomeScreenProps) {
 
       <View style={styles.headerLine}>
         <ProfileIconButton onPress={onNewGame} />
-        <IconButton onPress={onNewGame} />
+        <IconButton
+          onPress={() => {
+            setHowToPlayVisible(true);
+          }}
+        />
       </View>
       <View style={styles.body}>
         <MenuButton text="New Game" onPress={onNewGame} color="#7FCCB550" />
         <MenuButton text="Daily Task" onPress={onNewGame} color="#F47A8950" />
       </View>
+      <HowToPlayDialog
+        onClose={() => setHowToPlayVisible(false)}
+        isVisible={howToPlayVisible}
+        secretWord={'secretWord'}
+      />
     </View>
   );
 }
