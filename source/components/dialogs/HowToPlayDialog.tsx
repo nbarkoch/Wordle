@@ -133,7 +133,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                 <Text style={styles.text}>Guess the word in 6 tries</Text>
                 <Text style={styles.text}>
                   {
-                    'When you press submit, the letters turns to colors for giving you hints'
+                    'When you press Submit, the letters turns to colors for giving you hints'
                   }
                 </Text>
                 <Text style={styles.text}>{'For example, for the word:'}</Text>
@@ -282,7 +282,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
-    fontWeight: 'bold',
     color: colors.lightGrey,
     paddingVertical: 4,
     textAlign: 'center',
