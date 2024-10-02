@@ -8,9 +8,9 @@ import Animated, {
   withSequence,
 } from 'react-native-reanimated';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import WordleGrid from '~/components/WordleGrid';
+import WordleGrid from '~/components/grid/WordleGrid';
 import useWordValidator from '~/database/useWordValidator';
-import Keyboard from '~/components/Keyboard';
+import Keyboard from '~/components/grid/Keyboard';
 import useSecretWord from '~/database/useSecretWord';
 import {
   calculateHintForLetter,
@@ -23,16 +23,16 @@ import {
   WordGuess,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/dialogs/GameResultDialog';
-import TopBar from '~/components/TopBar';
+import TopBar from '~/components/grid/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
 import ConfettiOverlay, {
   ConfettiOverlayRef,
 } from '~/components/ConfettiOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
-import HintWordButton from '~/components/HintWordsButton';
-import SubmitButton from '~/components/SubmitButton';
-import AboutButton from '~/components/AboutButton';
+import HintWordButton from '~/components/grid/HintWordsButton';
+import SubmitButton from '~/components/grid/SubmitButton';
+import AboutButton from '~/components/grid/AboutButton';
 import {
   WordGameScreenProps,
   WordleGameNavigationProp,

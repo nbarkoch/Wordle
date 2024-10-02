@@ -4,7 +4,7 @@ import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
 import SkiaGradientText from '~/components/WordleParagraph';
 import MenuButton from '~/components/MenuButton';
-import IconButton from '~/components/IconButton';
+import IconButton from '~/components/IconButtons.tsx/IconButton';
 import ProfileIconButton from '~/components/IconButtons.tsx/ProfileButton';
 import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
@@ -31,8 +31,8 @@ function HomeScreen({navigation}: HomeScreenProps) {
         />
       </View>
       <View style={styles.body}>
-        <MenuButton text="New Game" onPress={onNewGame} color="#7FCCB550" />
-        <MenuButton text="Daily Task" onPress={onNewGame} color="#F47A8950" />
+        <MenuButton text="New Game" onPress={onNewGame} color="#7FCCB570" />
+        <MenuButton text="Daily Task" onPress={onNewGame} color="#F47A8970" />
       </View>
       <HowToPlayDialog
         onClose={() => setHowToPlayVisible(false)}

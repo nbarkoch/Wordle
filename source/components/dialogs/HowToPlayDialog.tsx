@@ -20,8 +20,8 @@ import {
 import {colors} from '~/utils/colors';
 import CloseIcon from './CloseIcon';
 import RowMockUp from './MockUpRow';
-import HintWordButton from '../HintWordsButton';
-import AboutButton from '../AboutButton';
+import HintWordButton from '../grid/HintWordsButton';
+import AboutButton from '../grid/AboutButton';
 
 const {width, height} = Dimensions.get('window');
 

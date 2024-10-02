@@ -21,7 +21,7 @@ import ChevronRight from '~/assets/icons/chevron-right.svg';
 
 import StarRating from './StarRating';
 import {useTimerStore} from '~/store/useTimerStore';
-import {formatTime} from '../Timer';
+import {formatTime} from '../grid/Timer';
 import {colors} from '~/utils/colors';
 
 const {width, height} = Dimensions.get('window');

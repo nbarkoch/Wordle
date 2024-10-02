@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import {setColorOpacity, lightenColor} from '~/utils/ui';
 
 interface MenuButtonProps {
   onPress: () => void;
@@ -29,8 +30,15 @@ function MenuButton({onPress, text, color}: MenuButtonProps) {
   return (
     <Pressable onPress={$onPress}>
       <Animated.View
-        style={[styles.button, animatedStyle, {backgroundColor: color}]}>
-        <Text style={styles.buttonText}>{text}</Text>
+        style={[
+          styles.button,
+          animatedStyle,
+          {
+            backgroundColor: color,
+            borderColor: setColorOpacity(lightenColor(color, 10), 0.7),
+          },
+        ]}>
+        <Text style={styles.buttonText}>{text.toLocaleUpperCase()}</Text>
       </Animated.View>
     </Pressable>
   );
@@ -39,14 +47,13 @@ function MenuButton({onPress, text, color}: MenuButtonProps) {
 const styles = StyleSheet.create({
   button: {
     margin: 15,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 60,
+    borderRadius: 50,
     zIndex: 10,
-    borderColor: 'white',
-    borderWidth: 2,
+    borderWidth: 5,
   },
-  buttonText: {fontSize: 25, fontWeight: '900', color: 'white'},
+  buttonText: {fontSize: 22, fontWeight: '700', color: 'white'},
 });
 
 export default MenuButton;
