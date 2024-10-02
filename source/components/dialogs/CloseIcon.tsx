@@ -19,8 +19,8 @@ interface CloseIconProps {
 }
 
 const CloseIcon: React.FC<CloseIconProps> = ({onPress}) => {
-  const width = 30;
-  const height = 30;
+  const width = 25;
+  const height = 25;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 3,
     padding: 7,
-    borderColor: colors.darkGold,
+    borderColor: colors.darkRed,
     backgroundColor: colors.red,
   },
   text: {

@@ -29,12 +29,13 @@ export const OutlinedText: React.FC<OutlinedTextProps> = ({
         stroke={strokeColor}
         strokeWidth={strokeWidth}
         fontSize={fontSize}
-        fontWeight="bold"
+        fontWeight="900"
         x={width / 2}
         y={height / 2}
         textAnchor="middle"
         alignmentBaseline="central"
         strokeLinejoin="round"
+        fontStyle="italic"
         strokeLinecap="round">
         {text}
       </Text>
@@ -43,10 +44,11 @@ export const OutlinedText: React.FC<OutlinedTextProps> = ({
       <Text
         fill={fillColor}
         fontSize={fontSize}
-        fontWeight="bold"
+        fontWeight="900"
         x={width / 2}
         y={height / 2}
         textAnchor="middle"
+        fontStyle="italic"
         alignmentBaseline="central">
         {text}
       </Text>

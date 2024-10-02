@@ -132,21 +132,19 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
               <Animated.View style={[styles.introduction, introductionStyle]}>
                 <Text style={styles.text}>Guess the word in 6 tries</Text>
                 <Text style={styles.text}>
-                  {
-                    'When you press Submit, the letters turns to colors for giving you hints'
-                  }
+                  {'Colors show hint after each guess'}
                 </Text>
-                <Text style={styles.text}>{'For example, for the word:'}</Text>
+                <Text style={styles.text}>{'Example:'}</Text>
                 <View style={{transform: [{scale: 0.8}]}}>
                   <RowMockUp
-                    letters={['S', 'S', 'E', 'U', 'G']}
+                    letters={['S', 'D', 'R', 'O', 'W']}
                     correctness={[null, null, null, null, null]}
                   />
                 </View>
-                <Text style={styles.text}>{'And you guessed..'}</Text>
+                <Text style={styles.text}>{'Your guess:'}</Text>
                 <View style={{transform: [{scale: 0.8}]}}>
                   <RowMockUp
-                    letters={['S', 'S', 'E', 'U', 'G']}
+                    letters={['S', 'D', 'R', 'O', 'W']}
                     correctness={[
                       'correct',
                       'notInUse',
@@ -156,69 +154,19 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                     ]}
                   />
                 </View>
-                <Text style={styles.text}>{'Then the colors mean..'}</Text>
-                <Text style={styles.text}>
-                  {'Letters in the correct position:'}
-                </Text>
-                <View style={{transform: [{scale: 0.8}]}}>
-                  <RowMockUp
-                    letters={['S', 'S', 'E', 'U', 'G']}
-                    correctness={[
-                      'correct',
-                      undefined,
-                      undefined,
-                      undefined,
-                      'correct',
-                    ]}
-                  />
-                </View>
-                <Text style={styles.text}>
-                  {'Letters in the wrong position:'}
-                </Text>
-                <View style={{transform: [{scale: 0.8}]}}>
-                  <RowMockUp
-                    letters={['S', 'S', 'E', 'U', 'G']}
-                    correctness={[
-                      undefined,
-                      undefined,
-                      undefined,
-                      'exists',
-                      undefined,
-                    ]}
-                  />
-                </View>
-                <Text style={styles.text}>{'Letters not in word:'}</Text>
-                <View style={{transform: [{scale: 0.8}]}}>
-                  <RowMockUp
-                    letters={['S', 'S', 'E', 'U', 'G']}
-                    correctness={[
-                      undefined,
-                      'notInUse',
-                      'notInUse',
-                      undefined,
-                      undefined,
-                    ]}
-                  />
-                </View>
+                <Text style={styles.text}>{'Green: Correct position'}</Text>
+                <Text style={styles.text}>{'Yellow: Wrong position'}</Text>
+                <Text style={styles.text}>{'Red: Not in word'}</Text>
                 <View style={styles.divider} />
-                <Text style={styles.text}>{'Special hints buttons are:'}</Text>
-                <View style={{flexDirection: 'row', padding: 10}}>
+                <Text style={styles.text}>{'Hint buttons:'}</Text>
+                <View style={styles.row}>
                   <HintWordButton onHintRequested={() => {}} scoreCost={0} />
-                  <View style={{width: 30}} />
+                  <View style={styles.padder} />
                   <AboutButton onInfoRequested={() => {}} scoreCost={0} />
                 </View>
+                <Text style={styles.text}>{'Using hints costs points'}</Text>
                 <Text style={styles.text}>
-                  {'Each one costs score for every usage'}
-                </Text>
-                <Text style={styles.text}>
-                  {
-                    'The Info Button is used to get more information about the secret word '
-                  }
-                </Text>
-                <Text style={styles.text}>
-                  {
-                    'The Hint Button is reveal some of the letters in the secret word'
-                  }
+                  {'i: Word info, Bulb: Reveal letters'}
                 </Text>
               </Animated.View>
             </ScrollView>
@@ -266,8 +214,8 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: 'absolute',
-    top: -30,
-    width: 385,
+    top: -25,
+    width: 380,
     alignItems: 'flex-start',
     paddingHorizontal: 20,
     paddingVertical: 5,
@@ -304,6 +252,10 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     alignItems: 'center',
   },
+  padder: {
+    width: 30,
+  },
+  row: {flexDirection: 'row', padding: 10},
 });
 
 export default HowToPlayDialog;

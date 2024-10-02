@@ -44,9 +44,9 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     );
   }, [isValidGuess, submitColorAnimation, updateInternalState]);
 
-  const submitButtonStyle = useAnimatedStyle(() => {
-    const validGuess = isValidGuess ?? internalIsValidGuess;
+  const validGuess = isValidGuess ?? internalIsValidGuess;
 
+  const submitButtonStyle = useAnimatedStyle(() => {
     const finalColor =
       validGuess === null ? '#A0A0A0' : validGuess ? colors.green : colors.red;
     const finalBorderColor =
@@ -70,6 +70,24 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     };
   });
 
+  const submitTextStyle = useAnimatedStyle(() => {
+    const finalFontColor =
+      validGuess === null
+        ? colors.darkGrey
+        : validGuess
+        ? colors.white
+        : colors.darkRed;
+
+    const fontColor = interpolateColor(
+      submitColorAnimation.value,
+      [0, 1],
+      [colors.darkGrey, finalFontColor],
+    );
+
+    return {
+      color: fontColor,
+    };
+  });
   return (
     <AnimatedPressable
       disabled={isValidGuess === null}
@@ -80,7 +98,9 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
         });
         runOnJS(handleSubmit)();
       }}>
-      <Animated.Text style={styles.submitButtonText}>SUBMIT</Animated.Text>
+      <Animated.Text style={[styles.submitButtonText, submitTextStyle]}>
+        SUBMIT
+      </Animated.Text>
     </AnimatedPressable>
   );
 }

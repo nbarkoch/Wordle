@@ -32,12 +32,14 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
   const {userScore} = useScoreStore();
   const hintsLeft = Math.floor(userScore / scoreCost);
   const disabled = hintsLeft === 0;
-  const color = disabled ? colors.red : colors.lightGold;
+  const color = disabled ? colors.darkGrey : colors.lightGold;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scaleAnimation.value}],
+      borderColor: disabled ? '#898989' : colors.darkYellow,
+      backgroundColor: disabled ? colors.grey : colors.yellow,
     };
   });
 
@@ -50,14 +52,7 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
           runOnJS(onHintRequested)();
         });
       }}
-      style={[
-        styles.container,
-        buttonStyle,
-        {
-          borderColor: disabled ? colors.red : colors.darkYellow,
-          backgroundColor: disabled ? colors.red : colors.yellow,
-        },
-      ]}>
+      style={[styles.container, buttonStyle]}>
       <Canvas style={{width, height}}>
         <Group
           transform={[{scale: width / 35}, {translateY: 3}, {translateX: 3}]}>

@@ -31,14 +31,14 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const {userScore} = useScoreStore();
   const timesLeft = Math.floor(userScore / scoreCost);
   const $disabled = timesLeft === 0 || disabled;
-  const color = $disabled ? colors.lightRed : colors.lightGrey;
+  const color = $disabled ? colors.darkGrey : colors.lightGrey;
   const scaleAnimation = useSharedValue(1);
 
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scaleAnimation.value}],
-      borderColor: $disabled ? colors.darkRed : colors.darkGreen,
-      backgroundColor: $disabled ? colors.red : colors.green,
+      borderColor: $disabled ? '#898989' : colors.darkGreen,
+      backgroundColor: $disabled ? colors.grey : colors.green,
     };
   });
 
