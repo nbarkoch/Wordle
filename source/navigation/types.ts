@@ -5,6 +5,7 @@ import {
 
 export type RootStackParamList = {
   Home: undefined;
+  NewGame: undefined;
   WordGame: {maxAttempts: number; wordLength: number};
   UserInfo: {user: string};
 };
@@ -12,6 +13,10 @@ export type RootStackParamList = {
 export type HomeScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Home'
+>;
+export type NewGameProps = NativeStackScreenProps<
+  RootStackParamList,
+  'NewGame'
 >;
 export type WordGameScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -22,6 +27,7 @@ export type DetailsScreenProps = NativeStackScreenProps<
   'UserInfo'
 >;
 
+// navigation props
 export type WordleGameNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'WordGame'

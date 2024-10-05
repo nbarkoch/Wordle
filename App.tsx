@@ -6,6 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '~/screens/Home';
 import {RootStackParamList} from '~/navigation/types';
+import NewGameScreen from '~/screens/NewGame';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -32,6 +33,7 @@ const App = () => {
           gestureDirection: 'horizontal',
         }}>
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="NewGame" component={NewGameScreen} />
         <Stack.Screen name="WordGame" component={GameScreen} />
       </Stack.Navigator>
     </NavigationContainer>

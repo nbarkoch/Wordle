@@ -25,6 +25,10 @@ const IconButton: React.FC<IconButtonProps> = ({onPress}) => {
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scaleAnimation.value}],
+      borderColor: colors.lightGreen,
+      borderWidth: 3,
+      borderRadius: 30,
+      width: 50,
     };
   });
 

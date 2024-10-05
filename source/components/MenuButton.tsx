@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     zIndex: 10,
     borderWidth: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonText: {fontSize: 22, fontWeight: '700', color: 'white'},
 });
