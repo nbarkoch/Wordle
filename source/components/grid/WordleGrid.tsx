@@ -8,12 +8,12 @@ import {ROW_SAVED_DELAY} from '~/utils/consts';
 interface WordleGridProps {
   guesses: WordGuess[];
   currentAttempt: number;
-  currentGuess: string;
+  currentGuess: (string | undefined)[];
   maxAttempts: number;
   wordLength: number;
   numberOfSavedRows: number;
   selectedLetter?: LetterCellLocation;
-  onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
+  onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint;
 }
 
@@ -38,11 +38,14 @@ const WordleGrid: React.FC<WordleGridProps> = ({
           const shouldShowOverlay = rowIndex >= maxAttempts - numberOfSavedRows;
 
           const letters = isCurrentRow
-            ? currentGuess.split('')
+            ? currentGuess
             : guesses[rowIndex]?.letters || [];
           const correctness = guesses[rowIndex]?.correctness || [];
 
-          const $lineHint = isCurrentRow ? lineHint : undefined;
+          const $lineHint =
+            isCurrentRow && selectedLetter?.rowIndex !== currentAttempt
+              ? lineHint
+              : undefined;
           return (
             <WordleRow
               key={rowIndex}

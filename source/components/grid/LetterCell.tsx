@@ -19,8 +19,9 @@ interface LetterCellProps {
   rowIndex: number;
   colIndex: number;
   selectedLetter?: LetterCellLocation;
-  onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
+  onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint | undefined;
+  isCurrentRow?: boolean;
 }
 
 function LetterCell({
@@ -32,6 +33,7 @@ function LetterCell({
   selectedLetter,
   onLetterSelected,
   lineHint,
+  isCurrentRow = false,
 }: LetterCellProps) {
   const letterScale = useSharedValue(0);
   const flipValue = useSharedValue(0);
@@ -133,7 +135,7 @@ function LetterCell({
     return {
       backgroundColor: backgroundColor,
       borderWidth: selected ? 3 : 0,
-      borderColor: colors.blue,
+      borderColor: isCurrentRow ? colors.gold : colors.blue,
       transform: [{scale: cellScale.value}, {rotateX: `${flipValue.value}deg`}],
     };
   });
@@ -177,8 +179,6 @@ function LetterCell({
   const handlePress = useCallback(() => {
     if (!selected) {
       onLetterSelected({colIndex, rowIndex});
-    } else {
-      onLetterSelected(undefined);
     }
 
     if (!selected) {
@@ -211,7 +211,7 @@ function LetterCell({
   return (
     <Pressable
       style={[styles.cell, styles.pressable]}
-      disabled={viewed === null}
+      disabled={!isCurrentRow && viewed === null}
       onPress={handlePress}>
       <Animated.View style={[styles.cell, letterCellStyle]}>
         <Animated.Text style={[styles.letter, $letterStyle]}>

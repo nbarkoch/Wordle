@@ -14,12 +14,12 @@ import Animated, {
 interface WordleRowProps {
   rowIndex: number;
   wordLength: number;
-  letters: string[];
+  letters: (string | undefined)[];
   correctness: Correctness[];
   shouldShowOverlay: boolean;
   delay: number;
   selectedLetter?: LetterCellLocation;
-  onLetterSelected: (selectedLetterLocation?: LetterCellLocation) => void;
+  onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint;
   isCurrentRow: boolean;
 }
@@ -69,6 +69,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
               selectedLetter={selectedLetter}
               onLetterSelected={onLetterSelected}
               lineHint={lineHint}
+              isCurrentRow={isCurrentRow}
             />
           ))}
       </Animated.View>

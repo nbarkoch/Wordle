@@ -3,8 +3,6 @@ import KeyboardKey from './KeyboardKey';
 import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
 import {Correctness, keyboardFormat} from '~/utils/ui';
 
-const WORD_LENGTH = 5;
-
 interface KeyboardProps {
   handleKeyPress: (key: string) => void;
   handleDelete: () => void;
@@ -49,11 +47,7 @@ const Keyboard = ({
               key={key}
               letter={key === 'DELETE' ? undefined : key}
               onPress={key === 'DELETE' ? handleDelete : handleKeyPress}
-              disabled={
-                key === 'DELETE'
-                  ? currentGuessLength === 0
-                  : currentGuessLength >= WORD_LENGTH
-              }
+              disabled={key === 'DELETE' && currentGuessLength === 0}
               correctness={correctness}
               style={key === 'DELETE' ? styles.wideKey : undefined}>
               {key === 'DELETE' ? (
