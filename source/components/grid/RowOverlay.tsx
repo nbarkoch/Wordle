@@ -1,6 +1,7 @@
 import React, {useImperativeHandle, forwardRef} from 'react';
 import {StyleSheet, Vibration} from 'react-native';
 import Animated, {
+  cancelAnimation,
   Easing,
   interpolate,
   useAnimatedStyle,
@@ -35,7 +36,7 @@ const RowOverlay = forwardRef<RowOverlayRef, RowOverlayProps>(
         addScore(+1);
         clearTimeout(timeout);
       }, delay);
-
+      cancelAnimation(animation);
       animation.value = withDelay(
         delay,
         withTiming(
@@ -61,15 +62,14 @@ const RowOverlay = forwardRef<RowOverlayRef, RowOverlayProps>(
       const opacity = interpolate(
         animation.value,
         [0, 0.1, 0.5, 1],
-        [0, 0.5, 0.1, 0],
+        [0, 0.9, 0.3, 0],
       );
-      const scaleX = interpolate(animation.value, [0, 1], [1 - 0.025, 1.1]);
+      const scaleX = interpolate(animation.value, [0, 1], [0.875, 1.1]);
       const scaleY = interpolate(
         animation.value,
         [0, 1],
-        [1 - 0.025 * aspect, 1.1 * aspect],
+        [0.875 * aspect, 1.1 * aspect],
       );
-
       return {
         opacity,
         transform: [{scaleY: scaleY}, {scaleX: scaleX}],
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderColor: colors.green,
+    borderColor: colors.lightGold,
     borderWidth: 4,
     borderRadius: 10,
   },

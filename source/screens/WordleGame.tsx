@@ -95,7 +95,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   function endGame(status: 'SUCCESS' | 'FAILURE') {
     stop();
-    setSelectedLetter({rowIndex: 0, colIndex: 0});
+    setSelectedLetter({rowIndex: -1, colIndex: -1});
     setLineHint(undefined);
     setLineSearch(undefined);
     setGameStatus(status);
@@ -133,6 +133,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setCurrentGuess([]);
     setGameEnd(false);
     setGameStatus('PLAYING');
+    setSelectedLetter({rowIndex: 0, colIndex: 0});
     reset();
     start();
     generateSecretWord();
@@ -200,8 +201,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [secretWord, guesses, lineHint, removeFromUserScore]);
 
   const finalLineHint = useMemo(() => {
-    return mergeHints(lineSearch, lineHint);
-  }, [lineSearch, lineHint]);
+    return mergeHints(
+      selectedLetter?.rowIndex !== currentAttempt ? lineSearch : undefined,
+      lineHint,
+    );
+  }, [selectedLetter?.rowIndex, currentAttempt, lineSearch, lineHint]);
 
   const $setSelectedLetter = useCallback(
     async ($selectedLetter: LetterCellLocation) => {
@@ -215,7 +219,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           guesses,
           $selectedLetter,
         );
-        console.log('$lineSearch', $lineSearch);
         setLineSearch($lineSearch);
       } else {
         setLineSearch(undefined);
@@ -234,6 +237,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       updatedGuess[selectedLetter.colIndex] = undefined;
       setSelectedLetter(prevSelected => {
         if (selectedLetter.colIndex > 0) {
+          updatedGuess[selectedLetter.colIndex - 1] = undefined;
           return {...prevSelected, colIndex: selectedLetter.colIndex - 1};
         } else {
           return prevSelected;
@@ -366,7 +370,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
             handleKeyPress={handleKeyPress}
             handleDelete={handleDelete}
             keyboardLetters={keyboardLetters}
-            currentGuessLength={currentGuess.join('').length}
+            disableDelete={
+              selectedLetter.colIndex === 0 && currentGuess[0] === undefined
+            }
           />
           <View style={styles.footer}>
             <View style={styles.centerer}>

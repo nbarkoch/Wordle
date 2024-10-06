@@ -42,10 +42,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
             : guesses[rowIndex]?.letters || [];
           const correctness = guesses[rowIndex]?.correctness || [];
 
-          const $lineHint =
-            isCurrentRow && selectedLetter?.rowIndex !== currentAttempt
-              ? lineHint
-              : undefined;
+          const $lineHint = isCurrentRow ? lineHint : undefined;
           return (
             <WordleRow
               key={rowIndex}

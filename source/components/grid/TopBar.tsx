@@ -3,6 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import Timer from './Timer';
 import {useScoreStore} from '~/store/useScore';
 import Animated, {
+  cancelAnimation,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -26,6 +27,7 @@ const TopBar: React.FC = () => {
       lastUserScore.current <= userScore ? colors.green : colors.red,
     );
     lastUserScore.current = userScore;
+    return () => cancelAnimation(scaleAnimation);
   }, [scaleAnimation, userScore]);
 
   const scoreAnimatedStyle = useAnimatedStyle(() => {

@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   withSpring,
   runOnJS,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 
@@ -32,6 +33,7 @@ const ProfileIconButton: React.FC<ProfileIconButtonProps> = ({onPress}) => {
   return (
     <AnimatedPressable
       onPress={() => {
+        cancelAnimation(scaleAnimation);
         scaleAnimation.value = withSpring(0.8, {}, () => {
           scaleAnimation.value = withSpring(1);
           runOnJS(onPress)();

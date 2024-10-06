@@ -7,13 +7,13 @@ interface KeyboardProps {
   handleKeyPress: (key: string) => void;
   handleDelete: () => void;
   keyboardLetters: Record<string, Correctness>;
-  currentGuessLength: number;
+  disableDelete: boolean;
 }
 
 const Keyboard = ({
   handleKeyPress,
   keyboardLetters,
-  currentGuessLength,
+  disableDelete,
   handleDelete,
 }: KeyboardProps) => {
   const keys = Object.entries(keyboardLetters);
@@ -38,6 +38,7 @@ const Keyboard = ({
     return formattedChunks;
   };
   const formattedKeys = formatKeysInChunks();
+
   return (
     <View style={styles.keyboard}>
       {formattedKeys.map((chunk, rowIndex) => (
@@ -47,7 +48,7 @@ const Keyboard = ({
               key={key}
               letter={key === 'DELETE' ? undefined : key}
               onPress={key === 'DELETE' ? handleDelete : handleKeyPress}
-              disabled={key === 'DELETE' && currentGuessLength === 0}
+              disabled={key === 'DELETE' && disableDelete}
               correctness={correctness}
               style={key === 'DELETE' ? styles.wideKey : undefined}>
               {key === 'DELETE' ? (

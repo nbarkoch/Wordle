@@ -1,6 +1,7 @@
 import React, {memo, useCallback, useEffect, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import Animated, {
+  cancelAnimation,
   Easing,
   interpolateColor,
   runOnJS,
@@ -42,6 +43,7 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
         }
       },
     );
+    return () => cancelAnimation(submitColorAnimation);
   }, [isValidGuess, submitColorAnimation, updateInternalState]);
 
   const validGuess = isValidGuess ?? internalIsValidGuess;

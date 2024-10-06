@@ -7,7 +7,8 @@ import Animated, {
   withTiming,
   withDelay,
   interpolateColor,
-  runOnJS,
+  withSequence,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
@@ -64,16 +65,14 @@ function LetterCell({
 
   useEffect(() => {
     if (letterViewed === null || letterViewed === undefined) {
-      if (letter) {
-        letterScale.value = withSpring(1, {
-          damping: 20,
-          stiffness: 400,
-        });
-      } else {
-        letterScale.value = 0;
-      }
+      letterScale.value = letter
+        ? withSpring(1, {damping: 20, stiffness: 400})
+        : 0;
       setLetterValue(letter);
     }
+    return () => {
+      cancelAnimation(letterScale);
+    };
   }, [letterScale, letter, letterValue, letterViewed, viewed]);
 
   const resetLetter = useCallback(() => {
@@ -85,12 +84,12 @@ function LetterCell({
       setLetterViewed(viewed);
       flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
     } else if (viewed !== letterViewed) {
-      flipValue.value = withTiming(0, {duration: 500}, finished => {
-        if (finished) {
-          runOnJS(resetLetter)();
-        }
-      });
+      flipValue.value = withTiming(0, {duration: 500});
+      setTimeout(resetLetter, 500);
     }
+    return () => {
+      cancelAnimation(flipValue);
+    };
   }, [flipValue, viewed, delay, resetLetter, letterViewed]);
 
   const letterCellStyle = useAnimatedStyle(() => {
@@ -132,6 +131,7 @@ function LetterCell({
             [0, 89, 90, 180],
             [defaultColor, defaultColor, viewedColor, viewedColor],
           );
+
     return {
       backgroundColor: backgroundColor,
       borderWidth: selected ? 3 : 0,
@@ -160,50 +160,34 @@ function LetterCell({
 
   useEffect(() => {
     if (!selected) {
-      cellScale.value = 0.8;
-      cellScale.value = withSpring(
-        1.0,
-        {damping: 6, stiffness: 200},
-        $finished => {
-          if ($finished) {
-            cellScale.value = withSpring(1, {
-              damping: 15,
-              stiffness: 180,
-            });
-          }
-        },
+      cellScale.value = withSequence(
+        withTiming(0.8, {duration: 10}),
+        withSpring(1.0, {damping: 6, stiffness: 200}),
+        withSpring(1, {
+          damping: 15,
+          stiffness: 180,
+        }),
+      );
+    } else {
+      cellScale.value = withSequence(
+        withSpring(0.9, {damping: 20, stiffness: 200}),
+        withSpring(1.05, {damping: 4, stiffness: 200}),
+        withSpring(1, {
+          damping: 15,
+          stiffness: 180,
+        }),
       );
     }
+    return () => {
+      cancelAnimation(cellScale);
+    };
   }, [cellScale, selected]);
 
   const handlePress = useCallback(() => {
     if (!selected) {
       onLetterSelected({colIndex, rowIndex});
     }
-
-    if (!selected) {
-      cellScale.value = withSpring(
-        0.9,
-        {damping: 20, stiffness: 200},
-        finished => {
-          if (finished) {
-            cellScale.value = withSpring(
-              1.05,
-              {damping: 4, stiffness: 200},
-              $finished => {
-                if ($finished) {
-                  cellScale.value = withSpring(1, {
-                    damping: 15,
-                    stiffness: 180,
-                  });
-                }
-              },
-            );
-          }
-        },
-      );
-    }
-  }, [selected, onLetterSelected, colIndex, rowIndex, cellScale]);
+  }, [selected, onLetterSelected, colIndex, rowIndex]);
 
   const $letterStyle =
     letterValue === undefined && hint ? {color: '#bfbfbf'} : letterStyle;
