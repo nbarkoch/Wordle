@@ -5,7 +5,7 @@ import {NewGameProps} from '~/navigation/types';
 import MenuButton from '~/components/MenuButton';
 import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
-import IconButton from '~/components/IconButtons.tsx/IconButton';
+import IconButton from '~/components/IconButtons/IconButton';
 import {colors} from '~/utils/colors';
 import SelectNumber from '~/components/SelectorNumber';
 
