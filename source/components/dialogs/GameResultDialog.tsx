@@ -9,6 +9,7 @@ import Animated, {
   withDelay,
   interpolate,
   runOnJS,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import {
   Canvas,
@@ -82,6 +83,12 @@ const GameResultDialog = ({
       buttonContainerAnimation.value = 0;
       scoreWrapperAnimation.value = 0;
     }
+    return () => {
+      cancelAnimation(buttonContainerAnimation);
+      cancelAnimation(scoreWrapperAnimation);
+      cancelAnimation(scale);
+      cancelAnimation(opacity);
+    };
   }, [
     isVisible,
     block,

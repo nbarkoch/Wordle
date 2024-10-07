@@ -14,6 +14,7 @@ import Animated, {
   runOnJS,
   withSequence,
   withDelay,
+  cancelAnimation,
 } from 'react-native-reanimated';
 
 import confettiSpark from '~/assets/lottie/confetti_1.json';
@@ -48,7 +49,9 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
       (text: string, confettiType: ConfettiType) => {
         setShowFeedback(confettiType);
         setShowText(text);
-
+        cancelAnimation(textScale);
+        cancelAnimation(rotation);
+        cancelAnimation(textOpacity);
         textScale.value = withSequence(
           withTiming(1.2, {duration: OPACITY_DUR - SPRING_DELAY}),
           withTiming(1, {duration: SPRING_DELAY}),

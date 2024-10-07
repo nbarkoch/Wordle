@@ -11,7 +11,6 @@ import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const onNewGame = useCallback(() => {
-    // navigation.navigate('WordGame', {maxAttempts: 6, wordLength: 5});
     navigation.navigate('NewGame');
   }, [navigation]);
 

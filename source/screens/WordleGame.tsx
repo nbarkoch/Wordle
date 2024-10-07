@@ -304,10 +304,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       setLineHint(undefined);
       setLineSearch(undefined);
       setCurrentAttempt(prev => prev + 1);
-      setSelectedLetter(prev => ({
-        rowIndex: prev.rowIndex + 1,
+      setSelectedLetter({
+        rowIndex: currentAttempt + 1,
         colIndex: 0,
-      }));
+      });
       setCurrentGuess([]);
     } else {
       // New shake animation
