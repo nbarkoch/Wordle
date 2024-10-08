@@ -8,6 +8,7 @@ interface KeyboardProps {
   handleDelete: () => void;
   keyboardLetters: Record<string, Correctness>;
   disableDelete: boolean;
+  disabled?: boolean;
 }
 
 const Keyboard = ({
@@ -15,6 +16,7 @@ const Keyboard = ({
   keyboardLetters,
   disableDelete,
   handleDelete,
+  disabled = false,
 }: KeyboardProps) => {
   const keys = Object.entries(keyboardLetters);
 
@@ -48,7 +50,7 @@ const Keyboard = ({
               key={key}
               letter={key === 'DELETE' ? undefined : key}
               onPress={key === 'DELETE' ? handleDelete : handleKeyPress}
-              disabled={key === 'DELETE' && disableDelete}
+              disabled={disabled || (key === 'DELETE' && disableDelete)}
               correctness={correctness}
               style={key === 'DELETE' ? styles.wideKey : undefined}>
               {key === 'DELETE' ? (

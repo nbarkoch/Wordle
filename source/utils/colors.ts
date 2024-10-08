@@ -17,5 +17,6 @@ export const colors = {
   darkYellow: '#bc8223',
   darkGreen: '#428470',
   darkGold: '#775a31',
+  darkBlue: '#2676a5',
   darkGrey: '#6a6a6a',
 };

@@ -7304,10 +7304,10 @@ react-native-asset@^2.1.1:
     sha1-file "^1.0.4"
     xcode "^2.0.0"
 
-react-native-google-mobile-ads@14.2.4:
-  version "14.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-google-mobile-ads/-/react-native-google-mobile-ads-14.2.4.tgz#3ddfec997d4718fd34f45ae1412865a5bd1bd338"
-  integrity sha512-ctGDtegcwi6GeZ9Igszj/F23wUudOpTg6krhkfRWVxRtC9H4zoerY2vAgR2Ip7RvuZE3nVvdaG2RCijU5ZuQ5A==
+react-native-google-mobile-ads@14.2.3:
+  version "14.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-google-mobile-ads/-/react-native-google-mobile-ads-14.2.3.tgz#70d122732b8e75e635783757737516769ec61937"
+  integrity sha512-sPrjUlX1yLCWvf4klma9IgVLrvBrqTk4aib/04Zdf6qYv6T7qqxR1Kaewv6YrooQZ5/NrN3bQLyKpZDkph4H+A==
   dependencies:
     "@iabtcf/core" "^1.5.3"
     use-deep-compare-effect "^1.8.1"

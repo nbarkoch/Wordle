@@ -37,8 +37,8 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const buttonStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scaleAnimation.value}],
-      borderColor: $disabled ? '#898989' : colors.darkGreen,
-      backgroundColor: $disabled ? colors.grey : colors.green,
+      borderColor: $disabled ? '#898989' : colors.darkBlue,
+      backgroundColor: $disabled ? colors.grey : colors.blue,
     };
   });
 

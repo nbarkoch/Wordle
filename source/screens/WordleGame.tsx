@@ -103,7 +103,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       const delayConfetti = setTimeout(() => {
         confettiRef.current?.triggerFeedback('party');
         clearTimeout(delayConfetti);
-      }, 750);
+      }, 400);
     }
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
@@ -139,6 +139,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     generateSecretWord();
     setNumberOfSavedRows(0);
     setScore(0);
+    global.gc?.();
   }, [initialGuessesState, reset, start, generateSecretWord, setScore]);
 
   const navigation = useNavigation<WordleGameNavigationProp>();
@@ -268,9 +269,14 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         previousCorrectLetters.current.add(letter),
       );
 
+      const secretWordRevealed = correctness.every(
+        letter => letter === 'correct',
+      );
+
       if (
         newCorrectLetters.length >= 3 &&
-        newCorrectLetters.length < wordLength
+        newCorrectLetters.length < wordLength &&
+        !secretWordRevealed
       ) {
         confettiRef.current?.triggerFeedback('spark');
       }
@@ -291,9 +297,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         return newState;
       });
 
-      const secretWordRevealed = correctness.every(
-        letter => letter === 'correct',
-      );
       addScore(newCorrectLetters.length);
       if (secretWordRevealed) {
         return endGame('SUCCESS');
@@ -367,6 +370,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         </View>
         <View style={styles.bottomContainer}>
           <Keyboard
+            disabled={selectedLetter.rowIndex !== currentAttempt}
             handleKeyPress={handleKeyPress}
             handleDelete={handleDelete}
             keyboardLetters={keyboardLetters}
