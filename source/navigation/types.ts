@@ -6,7 +6,7 @@ import {
 export type RootStackParamList = {
   Home: undefined;
   NewGame: undefined;
-  WordGame: {maxAttempts: number; wordLength: number};
+  WordGame: {maxAttempts: number; wordLength: number; enableTimer?: boolean};
   UserInfo: {user: string};
 };
 

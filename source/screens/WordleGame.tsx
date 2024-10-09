@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -60,7 +60,7 @@ const GameBannerAd = () => {
 
 const WordleGame: React.FC<WordGameScreenProps> = ({
   route: {
-    params: {maxAttempts, wordLength},
+    params: {maxAttempts, wordLength, enableTimer = false},
   },
 }) => {
   const {evaluateGuess, secretWord, generateSecretWord} =
@@ -122,9 +122,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [currentAttempt, maxAttempts]);
 
   useEffect(() => {
-    start();
+    if (enableTimer) {
+      start();
+    }
     return () => stop();
-  }, [start, stop]);
+  }, [start, enableTimer, stop]);
 
   const handleNewGame = useCallback(() => {
     setCurrentAttempt(0);
@@ -134,8 +136,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setGameEnd(false);
     setGameStatus('PLAYING');
     setSelectedLetter({rowIndex: 0, colIndex: 0});
-    reset();
-    start();
+    if (enableTimer) {
+      reset();
+      start();
+    }
     generateSecretWord();
     setNumberOfSavedRows(0);
     setScore(0);
@@ -346,8 +350,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       <CanvasBackground />
       <View style={styles.content}>
         <GameBannerAd />
-        <View>
-          <TopBar />
+        <TopBar displayTimer={enableTimer} />
+        <ScrollView>
           <Animated.View
             style={[
               styles.gridContainer,
@@ -367,7 +371,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               lineHint={finalLineHint}
             />
           </Animated.View>
-        </View>
+        </ScrollView>
         <View style={styles.bottomContainer}>
           <Keyboard
             disabled={selectedLetter.rowIndex !== currentAttempt}
@@ -467,7 +471,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   footer: {
     width: width,

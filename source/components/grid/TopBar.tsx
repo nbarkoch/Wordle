@@ -11,7 +11,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 
-const TopBar: React.FC = () => {
+interface TopBarProps {
+  displayTimer?: boolean;
+}
+
+const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
   const {userScore} = useScoreStore();
   const scaleAnimation = useSharedValue(1);
   const lastUserScore = useRef<number>(userScore);
@@ -38,7 +42,7 @@ const TopBar: React.FC = () => {
 
   return (
     <View style={styles.topBar}>
-      <Timer />
+      {displayTimer && <Timer />}
       <View style={[styles.topBarScore]}>
         <Animated.Text
           style={[styles.topBarScoreText, {color: textScoreColor}]}>
