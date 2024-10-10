@@ -239,19 +239,27 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const handleDelete = useCallback(() => {
     setCurrentGuess(prev => {
       const updatedGuess = [...prev];
-      updatedGuess[selectedLetter.colIndex] = undefined;
-      setSelectedLetter(prevSelected => {
-        if (selectedLetter.colIndex > 0) {
-          updatedGuess[selectedLetter.colIndex - 1] = undefined;
-          return {...prevSelected, colIndex: selectedLetter.colIndex - 1};
-        } else {
-          return prevSelected;
-        }
-      });
+      let newColIndex = selectedLetter.colIndex;
+
+      // If there's a letter at the current position, delete it
+      if (updatedGuess[newColIndex] !== undefined) {
+        updatedGuess[newColIndex] = undefined;
+      }
+      // Otherwise, move left and delete (if not at the start)
+      else if (newColIndex > 0) {
+        newColIndex--;
+        updatedGuess[newColIndex] = undefined;
+      }
+
+      // Update the selected letter position
+      setSelectedLetter(prevSelected => ({
+        ...prevSelected,
+        colIndex: newColIndex,
+      }));
+
       return updatedGuess;
     });
   }, [selectedLetter.colIndex]);
-
   const handleSubmit = useCallback(() => {
     if (isValidGuess && currentGuess.every(letter => letter !== undefined)) {
       const correctness = evaluateGuess(currentGuess.join(''));
