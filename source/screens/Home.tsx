@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
 import SkiaGradientText from '~/components/WordleParagraph';
@@ -8,6 +8,9 @@ import IconButton from '~/components/IconButtons/IconButton';
 import ProfileIconButton from '~/components/IconButtons/ProfileButton';
 import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
+import StripePattern from '~/components/StripePattern';
+
+const {width, height} = Dimensions.get('window');
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const onNewGame = useCallback(() => {
@@ -21,7 +24,6 @@ function HomeScreen({navigation}: HomeScreenProps) {
       <View style={styles.header}>
         <SkiaGradientText width={300} height={50} />
       </View>
-
       <View style={styles.headerLine}>
         <ProfileIconButton onPress={onNewGame} />
         <IconButton

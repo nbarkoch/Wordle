@@ -39,6 +39,8 @@ import {
 } from '~/navigation/types';
 import {useNavigation} from '@react-navigation/native';
 import CanvasBackground from '~/utils/canvas';
+import GradientOverlayScrollView from '~/components/GridScrollView';
+import {colors} from '~/utils/colors';
 
 const {width} = Dimensions.get('window');
 
@@ -359,7 +361,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       <View style={styles.content}>
         <GameBannerAd />
         <TopBar displayTimer={enableTimer} />
-        <ScrollView>
+        <GradientOverlayScrollView
+          upperColor={'#343D4E'}
+          bottomColor={'#3A4F6C'}
+          gradientHeight={20}>
           <Animated.View
             style={[
               styles.gridContainer,
@@ -379,7 +384,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               lineHint={finalLineHint}
             />
           </Animated.View>
-        </ScrollView>
+        </GradientOverlayScrollView>
         <View style={styles.bottomContainer}>
           <Keyboard
             disabled={selectedLetter.rowIndex !== currentAttempt}
