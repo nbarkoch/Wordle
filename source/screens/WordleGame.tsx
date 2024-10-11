@@ -170,34 +170,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const shakeAnimation = useSharedValue(0);
 
-  const handleKeyPress = useCallback(
-    (key: string) => {
-      if (currentGuess.length <= wordLength) {
-        if (selectedLetter.rowIndex === currentAttempt) {
-          setCurrentGuess(prev => {
-            const newGuess = [...prev];
-            newGuess[selectedLetter.colIndex] = key;
-            return newGuess;
-          });
-          setSelectedLetter(prev => {
-            if (selectedLetter.colIndex < wordLength - 1) {
-              return {...prev, colIndex: prev.colIndex + 1};
-            } else {
-              return prev;
-            }
-          });
-        }
-      }
-    },
-    [
-      currentGuess.length,
-      wordLength,
-      selectedLetter,
-      currentAttempt,
-      setSelectedLetter,
-    ],
-  );
-
   const onHintRequested = useCallback(async () => {
     giveHint(secretWord, guesses, lineHint).then($lineHint => {
       removeFromUserScore(10);
@@ -238,6 +210,33 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     removeFromUserScore(5);
   }, [removeFromUserScore]);
 
+  const handleKeyPress = useCallback(
+    (key: string) => {
+      if (currentGuess.length <= wordLength) {
+        if (selectedLetter.rowIndex === currentAttempt) {
+          setCurrentGuess(prev => {
+            const newGuess = [...prev];
+            newGuess[selectedLetter.colIndex] = key;
+            return newGuess;
+          });
+          setSelectedLetter(prev => {
+            if (selectedLetter.colIndex < wordLength - 1) {
+              return {...prev, colIndex: prev.colIndex + 1};
+            } else {
+              return prev;
+            }
+          });
+        }
+      }
+    },
+    [
+      currentGuess.length,
+      wordLength,
+      selectedLetter,
+      currentAttempt,
+      setSelectedLetter,
+    ],
+  );
   const handleDelete = useCallback(() => {
     setCurrentGuess(prev => {
       const updatedGuess = [...prev];
@@ -336,7 +335,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isValidGuess,
     evaluateGuess,

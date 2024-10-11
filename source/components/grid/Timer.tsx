@@ -15,18 +15,13 @@ const Timer: React.FC = () => {
   const {time, isActive, resetKey, increment} = useTimerStore();
 
   useEffect(() => {
-    let intervalId: number | null = null;
+    let intervalId: NodeJS.Timeout;
     if (isActive) {
       intervalId = setInterval(() => {
         increment();
       }, 1000);
     }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
+    return () => clearInterval(intervalId);
   }, [isActive, increment, resetKey]);
 
   return <Text style={styles.timerText}>Time: {formatTime(time)}</Text>;

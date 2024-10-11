@@ -6,7 +6,7 @@
 
     /* Completeness */
     "skipLibCheck": true,                               /* Skip type checking all .d.ts files. */
-    
+    "types": ["jest"],
     "resolveJsonModule": true,  // Enable JSON imports
     "esModuleInterop": true,     // Ensure compatibility for default exports
     "baseUrl": ".",

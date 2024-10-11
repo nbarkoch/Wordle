@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
 import {colors} from '~/utils/colors';
 
@@ -58,13 +58,15 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
     return baseStyle;
   }, [style, baseColor, disabled, isPressed]);
 
+  const $onPress = useCallback(() => onPress(letter ?? ''), [onPress]);
+
   return (
     <Pressable
       disabled={disabled}
       style={keyStyle}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={() => onPress(letter ?? '')}>
+      onPress={$onPress}>
       {children ?? (
         <Text style={[styles.keyText, {color: baseColor}]}>{letter}</Text>
       )}
