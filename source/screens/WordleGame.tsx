@@ -73,8 +73,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [secretWord]);
 
   const {start, stop, reset} = useTimerStore();
-  const {setScore, addScore, getScore, setUserScore, removeFromUserScore} =
-    useScoreStore();
+  const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
 
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
@@ -341,7 +340,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     currentGuess,
     currentAttempt,
     shakeAnimation,
-    setUserScore,
   ]);
 
   useEffect(() => {
