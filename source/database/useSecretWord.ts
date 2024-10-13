@@ -21,6 +21,8 @@ const useSecretWord = (wordLength: number) => {
   const [secretWord, setSecretWord] = useState<string>(
     newSecretWord(wordLength),
   );
+  const hint = 'bla bla bla';
+
   const generateSecretWord = () => {
     setSecretWord(newSecretWord(wordLength));
   };
@@ -54,6 +56,7 @@ const useSecretWord = (wordLength: number) => {
 
   return {
     secretWord,
+    hint,
     evaluateGuess,
     generateSecretWord,
   };

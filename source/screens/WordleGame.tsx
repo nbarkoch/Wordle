@@ -41,6 +41,7 @@ import {useNavigation} from '@react-navigation/native';
 import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import {colors} from '~/utils/colors';
+import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 
 const {width} = Dimensions.get('window');
 
@@ -65,8 +66,12 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     params: {maxAttempts, wordLength, enableTimer = false},
   },
 }) => {
-  const {evaluateGuess, secretWord, generateSecretWord} =
-    useSecretWord(wordLength);
+  const {
+    evaluateGuess,
+    secretWord,
+    generateSecretWord,
+    hint: aboutWord,
+  } = useSecretWord(wordLength);
 
   useEffect(() => {
     console.log('secretWord', secretWord);
@@ -76,6 +81,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
 
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
+  const [aboutShown, setAboutShow] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
   const [numberOfSavedRows, setNumberOfSavedRows] = useState<number>(0);
   const initialGuessesState = guessesInitialGridState(maxAttempts, wordLength);
@@ -206,6 +212,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   );
 
   const onInfoRequested = useCallback(async () => {
+    setAboutShow(true);
     removeFromUserScore(5);
   }, [removeFromUserScore]);
 
@@ -408,6 +415,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           </View>
         </View>
         <ConfettiOverlay ref={confettiRef} />
+        <AboutWordDialog
+          isVisible={aboutShown && !isGameEnd}
+          onClose={() => setAboutShow(false)}
+          hint={aboutWord}
+        />
         <GameResultDialog
           isVisible={isGameEnd}
           isSuccess={gameStatus === 'SUCCESS'}

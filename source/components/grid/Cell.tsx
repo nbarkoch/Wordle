@@ -72,15 +72,15 @@ function Cell({
     };
   }, [hint, viewed, selected]);
 
-  const latterStyle = useMemo(() => {
-    return {
-      color: viewed
-        ? colors.white
-        : hint && !letter
-        ? colors.grey
-        : colors.darkGrey,
-    };
-  }, [hint, viewed, selected]);
+  const letterStyle = useMemo(() => {
+    if (viewed) {
+      return {color: colors.white};
+    }
+    if (hint && !letter) {
+      return {color: colors.grey};
+    }
+    return {color: colors.darkGrey};
+  }, [hint, viewed, letter]);
 
   return (
     <Pressable
@@ -88,7 +88,7 @@ function Cell({
       disabled={!isCurrentRow && viewed === null}
       onPress={onLetterSelected}>
       <View style={[styles.cell, animatedStyle]}>
-        <Text style={[styles.letter, latterStyle]}>
+        <Text style={[styles.letter, letterStyle]}>
           {letter || hint?.letter}
         </Text>
       </View>
