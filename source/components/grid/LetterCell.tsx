@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -39,7 +39,6 @@ function LetterCell({
 }: LetterCellProps) {
   const flipValue = useSharedValue(0);
   const cellScale = useSharedValue(1);
-  // const viewedState = useSharedValue<Correctness | undefined>(viewed);
   const [viewedState, setViewedState] = useState<Correctness | undefined>(
     viewed,
   );
@@ -63,7 +62,7 @@ function LetterCell({
   useEffect(() => {
     if (!selected) {
       cellScale.value = withSequence(
-        withTiming(0.8, {duration: 10}),
+        withTiming(0.9, {duration: 10}),
         withSpring(1.0, {damping: 6, stiffness: 200}),
         withSpring(1, {
           damping: 15,
@@ -111,6 +110,10 @@ function LetterCell({
     };
   });
 
+  const $onLetterSelected = useCallback(() => {
+    onLetterSelected({colIndex, rowIndex});
+  }, [colIndex, rowIndex]);
+
   return (
     <Animated.View style={animatedStyle}>
       <Cell
@@ -119,9 +122,7 @@ function LetterCell({
         selected={selected}
         isCurrentRow={isCurrentRow}
         hint={hint}
-        rowIndex={rowIndex}
-        colIndex={colIndex}
-        onLetterSelected={onLetterSelected}
+        onLetterSelected={$onLetterSelected}
       />
     </Animated.View>
   );

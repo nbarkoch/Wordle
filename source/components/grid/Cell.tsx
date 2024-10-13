@@ -1,15 +1,12 @@
 import React, {memo, useCallback, useMemo} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
-import {Correctness, LetterCellLocation} from '~/utils/ui';
+import {Correctness} from '~/utils/ui';
 
 interface CellProps {
   letter: string | undefined;
   viewed: Correctness | undefined;
-  rowIndex: number;
-  colIndex: number;
-  onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
+  onLetterSelected: () => void;
   isCurrentRow?: boolean;
   hint?: HintInfo;
   selected?: boolean;
@@ -53,8 +50,6 @@ type HintInfo =
 function Cell({
   letter,
   viewed,
-  colIndex,
-  rowIndex,
   onLetterSelected,
   isCurrentRow = false,
   selected = false,
@@ -87,17 +82,11 @@ function Cell({
     };
   }, [hint, viewed, selected]);
 
-  const handlePress = useCallback(() => {
-    if (!selected) {
-      onLetterSelected({colIndex, rowIndex});
-    }
-  }, [selected, onLetterSelected, colIndex, rowIndex]);
-
   return (
     <Pressable
       style={styles.pressable}
       disabled={!isCurrentRow && viewed === null}
-      onPress={handlePress}>
+      onPress={onLetterSelected}>
       <View style={[styles.cell, animatedStyle]}>
         <Text style={[styles.letter, latterStyle]}>
           {letter || hint?.letter}
