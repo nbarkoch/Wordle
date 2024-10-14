@@ -1,6 +1,6 @@
-import Animated from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import StarCoin from '../StarCoin';
+import {Text, View} from 'react-native';
 
 interface CoinCostOverlayProps {
   scoreCost: number;
@@ -8,30 +8,30 @@ interface CoinCostOverlayProps {
 
 function CoinCostOverlay({scoreCost}: CoinCostOverlayProps) {
   return (
-    <Animated.View
+    <View
       style={{
         position: 'absolute',
         padding: 2,
         backgroundColor: colors.white,
         bottom: -5,
-        left: 28,
+        left: 40,
         zIndex: 1,
         borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-      <Animated.Text
+      <Text
         style={{
           fontSize: 12,
           fontWeight: '900',
           color: colors.darkYellow,
-        }}>{` ${scoreCost} `}</Animated.Text>
+        }}>{` ${scoreCost} `}</Text>
       <StarCoin
         size={13}
         outerRingColor={colors.yellow}
         innerCircleColor={colors.lightYellow}
       />
-    </Animated.View>
+    </View>
   );
 }
 

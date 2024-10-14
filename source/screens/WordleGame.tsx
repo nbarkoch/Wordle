@@ -82,6 +82,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const [isGameEnd, setGameEnd] = useState<boolean>(false);
   const [aboutShown, setAboutShow] = useState<boolean>(false);
+  const [aboutWasShown, setAboutWasShow] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
   const [numberOfSavedRows, setNumberOfSavedRows] = useState<number>(0);
   const initialGuessesState = guessesInitialGridState(maxAttempts, wordLength);
@@ -141,6 +142,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setKeyboardLetters(keyboardInitialKeysState);
     setCurrentGuess([]);
     setGameEnd(false);
+    setAboutWasShow(false);
     setGameStatus('PLAYING');
     setSelectedLetter({rowIndex: 0, colIndex: 0});
     if (enableTimer) {
@@ -213,8 +215,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const onInfoRequested = useCallback(async () => {
     setAboutShow(true);
-    removeFromUserScore(5);
-  }, [removeFromUserScore]);
+    if (!aboutWasShown) {
+      setAboutWasShow(true);
+      removeFromUserScore(5);
+    }
+  }, [removeFromUserScore, aboutWasShown]);
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -400,7 +405,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           />
           <View style={styles.footer}>
             <View style={styles.centerer}>
-              <AboutButton onInfoRequested={onInfoRequested} scoreCost={5} />
+              <AboutButton
+                displayOverlay={!aboutWasShown}
+                onInfoRequested={onInfoRequested}
+                scoreCost={5}
+              />
             </View>
             <SubmitButton
               handleSubmit={handleSubmit}
@@ -408,6 +417,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
             />
             <View style={styles.centerer}>
               <HintWordButton
+                displayOverlay={true}
                 onHintRequested={onHintRequested}
                 scoreCost={10}
               />
