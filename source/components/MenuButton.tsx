@@ -1,13 +1,8 @@
-import {useCallback} from 'react';
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react-native';
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+
 import {setColorOpacity, lightenColor} from '~/utils/ui';
+import BasePressable from './BasePressable';
 
 interface MenuButtonProps {
   onPress: () => void;
@@ -15,32 +10,19 @@ interface MenuButtonProps {
   color: string;
 }
 function MenuButton({onPress, text, color}: MenuButtonProps) {
-  const scaleAnimation = useSharedValue<number>(1);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{scale: scaleAnimation.value}],
-  }));
-
-  const $onPress = useCallback(() => {
-    scaleAnimation.value = withSpring(0.8, {}, () => {
-      scaleAnimation.value = withSpring(1);
-      runOnJS(onPress)();
-    });
-  }, [onPress, scaleAnimation]);
-
   return (
-    <Pressable onPress={$onPress}>
-      <Animated.View
+    <BasePressable onPress={onPress}>
+      <View
         style={[
           styles.button,
-          animatedStyle,
           {
             backgroundColor: color,
             borderColor: setColorOpacity(lightenColor(color, 10), 0.7),
           },
         ]}>
         <Text style={styles.buttonText}>{text.toLocaleUpperCase()}</Text>
-      </Animated.View>
-    </Pressable>
+      </View>
+    </BasePressable>
   );
 }
 

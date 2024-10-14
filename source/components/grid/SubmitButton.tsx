@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useEffect, useState} from 'react';
-import {Pressable, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -7,12 +7,10 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import BasePressable from '../BasePressable';
 
 interface SubmitButtonProps {
   handleSubmit: () => void;
@@ -20,7 +18,6 @@ interface SubmitButtonProps {
 }
 
 function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
-  const submitScaleAnimation = useSharedValue(1);
   const submitColorAnimation = useSharedValue(0);
   const [internalIsValidGuess, setInternalIsValidGuess] = useState<
     boolean | null
@@ -68,7 +65,6 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     return {
       backgroundColor,
       borderColor,
-      transform: [{scale: submitScaleAnimation.value}],
     };
   });
 
@@ -91,19 +87,13 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     };
   });
   return (
-    <AnimatedPressable
-      disabled={isValidGuess === null}
-      style={[styles.submitButton, submitButtonStyle]}
-      onPress={() => {
-        submitScaleAnimation.value = withSpring(0.8, {}, () => {
-          submitScaleAnimation.value = withSpring(1);
-        });
-        runOnJS(handleSubmit)();
-      }}>
-      <Animated.Text style={[styles.submitButtonText, submitTextStyle]}>
-        SUBMIT
-      </Animated.Text>
-    </AnimatedPressable>
+    <BasePressable disabled={isValidGuess === null} onPress={handleSubmit}>
+      <Animated.View style={[styles.submitButton, submitButtonStyle]}>
+        <Animated.Text style={[styles.submitButtonText, submitTextStyle]}>
+          SUBMIT
+        </Animated.Text>
+      </Animated.View>
+    </BasePressable>
   );
 }
 

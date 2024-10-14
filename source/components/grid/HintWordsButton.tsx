@@ -1,17 +1,10 @@
 import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
-import {Pressable, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useScoreStore} from '~/store/useScore';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import CoinCostOverlay from './CoinCostOverlay';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import BasePressable from '../BasePressable';
 
 interface HintWordButtonProps {
   onHintRequested: () => void;
@@ -34,42 +27,50 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
   const hintsLeft = Math.floor(userScore / scoreCost);
   const disabled = hintsLeft === 0;
   const color = disabled ? colors.darkGrey : colors.lightGold;
-  const scaleAnimation = useSharedValue(1);
-
-  const buttonStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scaleAnimation.value}],
-      borderColor: disabled ? '#898989' : colors.darkYellow,
-      backgroundColor: disabled ? colors.grey : colors.yellow,
-    };
-  });
 
   return (
-    <AnimatedPressable
-      disabled={disabled}
-      onPress={() => {
-        scaleAnimation.value = withSpring(0.8, {}, () => {
-          scaleAnimation.value = withSpring(1);
-          runOnJS(onHintRequested)();
-        });
-      }}>
+    <>
       <CoinCostOverlay scoreCost={scoreCost} />
-      <Animated.View style={[styles.container, buttonStyle]}>
-        <Canvas style={{width, height}}>
-          <Group
-            transform={[{scale: width / 35}, {translateY: 3}, {translateX: 3}]}>
-            {disabled ? (
-              <Path path={magnifierDisabledPath} color={color} style="fill" />
-            ) : (
-              <>
-                <Path path={magnifierActivePath1} color={color} style="fill" />
-                <Path path={magnifierActivePath2} color={color} style="fill" />
-              </>
-            )}
-          </Group>
-        </Canvas>
-      </Animated.View>
-    </AnimatedPressable>
+      <BasePressable
+        style={{zIndex: 0}}
+        disabled={disabled}
+        onPress={onHintRequested}>
+        <View
+          style={[
+            styles.container,
+            {
+              borderColor: disabled ? '#898989' : colors.darkYellow,
+              backgroundColor: disabled ? colors.grey : colors.yellow,
+            },
+          ]}>
+          <Canvas style={{width, height}}>
+            <Group
+              transform={[
+                {scale: width / 35},
+                {translateY: 3},
+                {translateX: 3},
+              ]}>
+              {disabled ? (
+                <Path path={magnifierDisabledPath} color={color} style="fill" />
+              ) : (
+                <>
+                  <Path
+                    path={magnifierActivePath1}
+                    color={color}
+                    style="fill"
+                  />
+                  <Path
+                    path={magnifierActivePath2}
+                    color={color}
+                    style="fill"
+                  />
+                </>
+              )}
+            </Group>
+          </Canvas>
+        </View>
+      </BasePressable>
+    </>
   );
 };
 

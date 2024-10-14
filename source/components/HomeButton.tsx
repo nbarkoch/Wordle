@@ -1,15 +1,8 @@
 import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
-import {Pressable, StyleSheet} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-} from 'react-native-reanimated';
+import {StyleSheet, View} from 'react-native';
 import {colors} from '~/utils/colors';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import BasePressable from './BasePressable';
 
 interface HomeButtonProps {
   onClick: () => void;
@@ -21,30 +14,17 @@ const HomeButton: React.FC<HomeButtonProps> = ({onClick}) => {
   const width = 34;
   const height = 34;
   const color = colors.green;
-  const scaleAnimation = useSharedValue(1);
-
-  const buttonStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scaleAnimation.value}],
-      borderColor: color,
-    };
-  });
 
   return (
-    <AnimatedPressable
-      onPress={() => {
-        scaleAnimation.value = withSpring(0.8, {}, () => {
-          scaleAnimation.value = withSpring(1);
-          runOnJS(onClick)();
-        });
-      }}
-      style={[styles.container, buttonStyle]}>
-      <Canvas style={{width, height}}>
-        <Group transform={[{scale: width / 29}]}>
-          <Path path={magnifierPath} color={color} style="fill" />
-        </Group>
-      </Canvas>
-    </AnimatedPressable>
+    <BasePressable onPress={onClick}>
+      <View style={[styles.container, {borderColor: color}]}>
+        <Canvas style={{width, height}}>
+          <Group transform={[{scale: width / 29}]}>
+            <Path path={magnifierPath} color={color} style="fill" />
+          </Group>
+        </Canvas>
+      </View>
+    </BasePressable>
   );
 };
 

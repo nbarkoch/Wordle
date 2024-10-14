@@ -1,17 +1,10 @@
 import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
-import {Pressable, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useScoreStore} from '~/store/useScore';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import CoinCostOverlay from './CoinCostOverlay';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import BasePressable from '../BasePressable';
 
 interface AboutButtonProps {
   onInfoRequested: () => void;
@@ -33,34 +26,30 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const timesLeft = Math.floor(userScore / scoreCost);
   const $disabled = timesLeft === 0 || disabled;
   const color = $disabled ? colors.darkGrey : colors.lightGrey;
-  const scaleAnimation = useSharedValue(1);
-
-  const buttonStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scaleAnimation.value}],
-      borderColor: $disabled ? '#898989' : colors.darkBlue,
-      backgroundColor: $disabled ? colors.grey : colors.blue,
-    };
-  });
 
   return (
-    <AnimatedPressable
-      disabled={$disabled}
-      onPress={() => {
-        scaleAnimation.value = withSpring(0.8, {}, () => {
-          scaleAnimation.value = withSpring(1);
-          runOnJS(onInfoRequested)();
-        });
-      }}>
+    <>
       <CoinCostOverlay scoreCost={scoreCost} />
-      <Animated.View style={[styles.container, buttonStyle]}>
-        <Canvas style={{width, height}}>
-          <Group transform={[{scale: width / 29}]}>
-            <Path path={magnifierPath} color={color} opacity={0.85} />
-          </Group>
-        </Canvas>
-      </Animated.View>
-    </AnimatedPressable>
+      <BasePressable
+        style={{zIndex: 0}}
+        disabled={$disabled}
+        onPress={onInfoRequested}>
+        <View
+          style={[
+            styles.container,
+            {
+              borderColor: $disabled ? '#898989' : colors.darkBlue,
+              backgroundColor: $disabled ? colors.grey : colors.blue,
+            },
+          ]}>
+          <Canvas style={{width, height}}>
+            <Group transform={[{scale: width / 29}]}>
+              <Path path={magnifierPath} color={color} opacity={0.85} />
+            </Group>
+          </Canvas>
+        </View>
+      </BasePressable>
+    </>
   );
 };
 

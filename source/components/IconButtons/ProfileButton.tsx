@@ -1,16 +1,8 @@
 import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
-import {Pressable, StyleSheet} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-  cancelAnimation,
-} from 'react-native-reanimated';
+import {StyleSheet, View} from 'react-native';
 import {colors} from '~/utils/colors';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import BasePressable from '../BasePressable';
 
 interface ProfileIconButtonProps {
   onPress: () => void;
@@ -22,35 +14,22 @@ const ProfileIconButton: React.FC<ProfileIconButtonProps> = ({onPress}) => {
 
   const width = 50;
   const height = 50;
-  const scaleAnimation = useSharedValue(1);
-
-  const buttonStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scaleAnimation.value}],
-    };
-  });
 
   return (
-    <AnimatedPressable
-      onPress={() => {
-        cancelAnimation(scaleAnimation);
-        scaleAnimation.value = withSpring(0.8, {}, () => {
-          scaleAnimation.value = withSpring(1);
-          runOnJS(onPress)();
-        });
-      }}
-      style={[buttonStyle, styles.container]}>
-      <Canvas style={{width, height}}>
-        <Group
-          transform={[
-            {scale: width / 25},
-            {translateX: -1.5},
-            {translateY: -1.5},
-          ]}>
-          <Path path={p2} color={'#7FCCB550'} />
-        </Group>
-      </Canvas>
-    </AnimatedPressable>
+    <BasePressable onPress={onPress}>
+      <View style={styles.container}>
+        <Canvas style={{width, height}}>
+          <Group
+            transform={[
+              {scale: width / 25},
+              {translateX: -1.5},
+              {translateY: -1.5},
+            ]}>
+            <Path path={p2} color={'#7FCCB550'} />
+          </Group>
+        </Canvas>
+      </View>
+    </BasePressable>
   );
 };
 

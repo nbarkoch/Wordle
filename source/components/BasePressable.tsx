@@ -10,8 +10,9 @@ import Animated, {
 
 interface BasePressableProps {
   onPress?: () => void;
+  disabled?: boolean;
   children: ReactNode;
-  style: any;
+  style?: any;
 }
 
 function BasePressable(props: BasePressableProps) {
