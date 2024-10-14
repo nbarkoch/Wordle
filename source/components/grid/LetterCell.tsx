@@ -112,7 +112,7 @@ function LetterCell({
 
   const $onLetterSelected = useCallback(() => {
     onLetterSelected({colIndex, rowIndex});
-  }, [colIndex, rowIndex]);
+  }, [colIndex, rowIndex, onLetterSelected]);
 
   return (
     <Animated.View style={animatedStyle}>
