@@ -9,6 +9,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
+import CoinCostOverlay from './CoinCostOverlay';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -51,21 +52,23 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
           scaleAnimation.value = withSpring(1);
           runOnJS(onHintRequested)();
         });
-      }}
-      style={[styles.container, buttonStyle]}>
-      <Canvas style={{width, height}}>
-        <Group
-          transform={[{scale: width / 35}, {translateY: 3}, {translateX: 3}]}>
-          {disabled ? (
-            <Path path={magnifierDisabledPath} color={color} style="fill" />
-          ) : (
-            <>
-              <Path path={magnifierActivePath1} color={color} style="fill" />
-              <Path path={magnifierActivePath2} color={color} style="fill" />
-            </>
-          )}
-        </Group>
-      </Canvas>
+      }}>
+      <CoinCostOverlay scoreCost={scoreCost} />
+      <Animated.View style={[styles.container, buttonStyle]}>
+        <Canvas style={{width, height}}>
+          <Group
+            transform={[{scale: width / 35}, {translateY: 3}, {translateX: 3}]}>
+            {disabled ? (
+              <Path path={magnifierDisabledPath} color={color} style="fill" />
+            ) : (
+              <>
+                <Path path={magnifierActivePath1} color={color} style="fill" />
+                <Path path={magnifierActivePath2} color={color} style="fill" />
+              </>
+            )}
+          </Group>
+        </Canvas>
+      </Animated.View>
     </AnimatedPressable>
   );
 };

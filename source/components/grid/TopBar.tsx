@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
+import StarCoin from '../StarCoin';
 
 interface TopBarProps {
   displayTimer?: boolean;
@@ -44,17 +45,15 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
     <View style={styles.topBar}>
       {displayTimer && <Timer />}
       <View style={[styles.topBarScore]}>
-        <Animated.Text
-          style={[styles.topBarScoreText, {color: textScoreColor}]}>
-          {'Score: '}
-        </Animated.Text>
+        <StarCoin outerRingColor={textScoreColor} />
         <Animated.Text
           style={[
             styles.topBarScoreText,
             scoreAnimatedStyle,
             {color: textScoreColor},
           ]}>
-          {userScore}
+          {' '}
+          {userScore}{' '}
         </Animated.Text>
       </View>
     </View>
@@ -65,8 +64,9 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    padding: 10,
   },
-  topBarScore: {flexDirection: 'row-reverse'},
+  topBarScore: {flexDirection: 'row-reverse', alignItems: 'center'},
   topBarScoreText: {fontSize: 18, fontWeight: '900'},
 });
 

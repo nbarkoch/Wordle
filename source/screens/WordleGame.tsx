@@ -441,12 +441,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   gridContainer: {
-    marginTop: 30,
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,
     borderColor: 'white',
-    // borderWidth: 2,
     borderRadius: 20,
   },
   bottomContainer: {

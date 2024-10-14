@@ -23,7 +23,7 @@ function BasePressable(props: BasePressableProps) {
 
   const $onPress = useCallback(() => {
     if (onPress !== undefined) {
-      scaleAnimation.value = withSpring(0.8, {}, () => {
+      scaleAnimation.value = withSpring(0.9, {}, () => {
         scaleAnimation.value = withSpring(1);
         runOnJS(onPress)();
       });

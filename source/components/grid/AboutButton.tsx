@@ -9,6 +9,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
+import CoinCostOverlay from './CoinCostOverlay';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -50,13 +51,15 @@ const AboutButton: React.FC<AboutButtonProps> = ({
           scaleAnimation.value = withSpring(1);
           runOnJS(onInfoRequested)();
         });
-      }}
-      style={[styles.container, buttonStyle]}>
-      <Canvas style={{width, height}}>
-        <Group transform={[{scale: width / 29}]}>
-          <Path path={magnifierPath} color={color} opacity={0.85} />
-        </Group>
-      </Canvas>
+      }}>
+      <CoinCostOverlay scoreCost={scoreCost} />
+      <Animated.View style={[styles.container, buttonStyle]}>
+        <Canvas style={{width, height}}>
+          <Group transform={[{scale: width / 29}]}>
+            <Path path={magnifierPath} color={color} opacity={0.85} />
+          </Group>
+        </Canvas>
+      </Animated.View>
     </AnimatedPressable>
   );
 };
