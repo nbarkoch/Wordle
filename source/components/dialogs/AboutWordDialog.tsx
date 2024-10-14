@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -102,52 +109,56 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
   }
 
   return (
-    <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
-      <Animated.View style={[styles.overlayDialog, animatedStyle]}>
-        <View style={styles.dialogWrapper}>
-          <Canvas style={styles.canvas}>
-            <RoundedRect
-              x={0}
-              y={0}
-              width={dialogWidth}
-              height={dialogHeight}
-              r={20}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(dialogWidth, dialogHeight)}
-                colors={['#BBB6A6', '#e0b87f', '#BBB6A6']}
-              />
-            </RoundedRect>
-            <RoundedRect
-              x={5}
-              y={5}
-              width={dialogWidth - 10}
-              height={dialogHeight - 10}
-              r={15}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(0, dialogHeight)}
-                colors={['#224d66', '#3B4457']}
-              />
-            </RoundedRect>
-          </Canvas>
-          <View style={styles.dialog}>
-            <View style={styles.titleContainer}>
-              <CloseIcon onPress={onClose} />
+    <Pressable style={{position: 'absolute', width, height}} onPress={onClose}>
+      <Animated.View
+        style={[styles.overlay, overlayStyle]}
+        pointerEvents="auto">
+        <Animated.View style={[styles.overlayDialog, animatedStyle]}>
+          <View style={styles.dialogWrapper}>
+            <Canvas style={styles.canvas}>
+              <RoundedRect
+                x={0}
+                y={0}
+                width={dialogWidth}
+                height={dialogHeight}
+                r={20}>
+                <LinearGradient
+                  start={vec(0, 0)}
+                  end={vec(dialogWidth, dialogHeight)}
+                  colors={['#BBB6A6', '#e0b87f', '#BBB6A6']}
+                />
+              </RoundedRect>
+              <RoundedRect
+                x={5}
+                y={5}
+                width={dialogWidth - 10}
+                height={dialogHeight - 10}
+                r={15}>
+                <LinearGradient
+                  start={vec(0, 0)}
+                  end={vec(0, dialogHeight)}
+                  colors={['#224d66', '#3B4457']}
+                />
+              </RoundedRect>
+            </Canvas>
+            <View style={styles.dialog}>
+              <View style={styles.titleContainer}>
+                <CloseIcon onPress={onClose} />
+              </View>
+              <Text style={styles.title}>{'About Word'}</Text>
+              <ScrollView
+                horizontal={false}
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollViewContent}>
+                <Animated.View style={[styles.introduction, introductionStyle]}>
+                  <Text style={styles.text}>{hint}</Text>
+                </Animated.View>
+              </ScrollView>
             </View>
-            <Text style={styles.title}>{'About Word'}</Text>
-            <ScrollView
-              horizontal={false}
-              style={styles.scrollView}
-              contentContainerStyle={styles.scrollViewContent}>
-              <Animated.View style={[styles.introduction, introductionStyle]}>
-                <Text style={styles.text}>{hint}</Text>
-              </Animated.View>
-            </ScrollView>
           </View>
-        </View>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </Pressable>
   );
 };
 
