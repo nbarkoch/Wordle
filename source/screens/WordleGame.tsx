@@ -1,5 +1,11 @@
-import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
-import {View, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import React, {
+  useReducer,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -21,6 +27,7 @@ import {
   LineHint,
   mergeHints,
   WordGuess,
+  Correctness,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/dialogs/GameResultDialog';
 import TopBar from '~/components/grid/TopBar';
@@ -40,8 +47,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
-import {colors} from '~/utils/colors';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
+import gameReducer, {GameState} from '~/gameReducer';
 
 const {width} = Dimensions.get('window');
 
@@ -66,68 +73,35 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     params: {maxAttempts, wordLength, enableTimer = false},
   },
 }) => {
+  const initialState: GameState = {
+    currentAttempt: 0,
+    selectedLetter: {rowIndex: 0, colIndex: 0},
+    currentGuess: [],
+    guesses: guessesInitialGridState(maxAttempts, wordLength),
+    keyboardLetters: keyboardInitialKeysState,
+    isGameEnd: false,
+    aboutShown: false,
+    aboutWasShown: false,
+    numberOfSavedRows: 0,
+    gameStatus: 'PLAYING',
+    isValidGuess: null,
+  };
+
+  const [gameState, dispatch] = useReducer(gameReducer, initialState);
+
   const {
     evaluateGuess,
     secretWord,
     generateSecretWord,
     hint: aboutWord,
   } = useSecretWord(wordLength);
-
-  useEffect(() => {
-    console.log('secretWord', secretWord);
-  }, [secretWord]);
-
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
-
-  const [isGameEnd, setGameEnd] = useState<boolean>(false);
-  const [aboutShown, setAboutShow] = useState<boolean>(false);
-  const [aboutWasShown, setAboutWasShow] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
-  const [numberOfSavedRows, setNumberOfSavedRows] = useState<number>(0);
-  const initialGuessesState = guessesInitialGridState(maxAttempts, wordLength);
-  const [selectedLetter, setSelectedLetter] = useState<LetterCellLocation>({
-    rowIndex: 0,
-    colIndex: 0,
-  });
-  const [lineHint, setLineHint] = useState<LineHint | undefined>();
-  const [lineSearch, setLineSearch] = useState<LineHint | undefined>();
-
   const previousCorrectLetters = useRef<Set<string>>(new Set());
-
-  const [currentAttempt, setCurrentAttempt] = useState(0);
-
-  const [gameStatus, setGameStatus] = useState<
-    'PLAYING' | 'SUCCESS' | 'FAILURE'
-  >('PLAYING');
-
-  function endGame(status: 'SUCCESS' | 'FAILURE') {
-    stop();
-    setSelectedLetter({rowIndex: -1, colIndex: -1});
-    setLineHint(undefined);
-    setLineSearch(undefined);
-    setGameStatus(status);
-    if (status === 'SUCCESS') {
-      const delayConfetti = setTimeout(() => {
-        confettiRef.current?.triggerFeedback('party');
-        clearTimeout(delayConfetti);
-      }, 400);
-    }
-    const timeout = setTimeout(() => {
-      clearTimeout(timeout);
-      checkSavedRows();
-    }, 2000);
-    previousCorrectLetters.current.clear();
-  }
-
-  const checkSavedRows = useCallback(() => {
-    const savedRows = maxAttempts - currentAttempt - 1;
-    setNumberOfSavedRows(savedRows);
-    const timeout = setTimeout(() => {
-      clearTimeout(timeout);
-      setGameEnd(true);
-    }, ROW_SAVED_DELAY * savedRows + 500);
-  }, [currentAttempt, maxAttempts]);
+  const {isValidWord} = useWordValidator(wordLength);
+  const navigation = useNavigation<WordleGameNavigationProp>();
+  const shakeAnimation = useSharedValue(0);
 
   useEffect(() => {
     if (enableTimer) {
@@ -137,25 +111,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [start, enableTimer, stop]);
 
   const handleNewGame = useCallback(() => {
-    setCurrentAttempt(0);
-    setGuesses(initialGuessesState);
-    setKeyboardLetters(keyboardInitialKeysState);
-    setCurrentGuess([]);
-    setGameEnd(false);
-    setAboutWasShow(false);
-    setGameStatus('PLAYING');
-    setSelectedLetter({rowIndex: 0, colIndex: 0});
+    dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
     if (enableTimer) {
       reset();
       start();
     }
     generateSecretWord();
-    setNumberOfSavedRows(0);
     setScore(0);
     global.gc?.();
-  }, [initialGuessesState, reset, start, generateSecretWord, setScore]);
-
-  const navigation = useNavigation<WordleGameNavigationProp>();
+  }, [enableTimer, reset, start, generateSecretWord, setScore]);
 
   const handleGoHome = useCallback(() => {
     navigation.navigate('Home');
@@ -163,126 +127,79 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   useEffect(() => {
     return handleNewGame;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [guesses, setGuesses] = useState<WordGuess[]>(initialGuessesState);
-  const [keyboardLetters, setKeyboardLetters] = useState(
-    keyboardInitialKeysState,
-  );
-
-  const [currentGuess, setCurrentGuess] = useState<(string | undefined)[]>([]);
-  const {isValidWord} = useWordValidator(wordLength);
-  const [isValidGuess, setIsValidGuess] = useState<boolean | null>(null);
-
-  const shakeAnimation = useSharedValue(0);
-
   const onHintRequested = useCallback(async () => {
-    giveHint(secretWord, guesses, lineHint).then($lineHint => {
-      removeFromUserScore(10);
-      setLineHint(prev => {
-        return mergeHints(prev, $lineHint);
-      });
-    });
-  }, [secretWord, guesses, lineHint, removeFromUserScore]);
+    giveHint(secretWord, gameState.guesses, gameState.lineHint).then(
+      $lineHint => {
+        removeFromUserScore(10);
+        dispatch({
+          type: 'SET_LINE_HINT',
+          hint: mergeHints(gameState.lineHint, $lineHint),
+        });
+      },
+    );
+  }, [secretWord, gameState.guesses, gameState.lineHint, removeFromUserScore]);
 
   const finalLineHint = useMemo(() => {
     return mergeHints(
-      selectedLetter?.rowIndex !== currentAttempt ? lineSearch : undefined,
-      lineHint,
+      gameState.selectedLetter?.rowIndex !== gameState.currentAttempt
+        ? gameState.lineSearch
+        : undefined,
+      gameState.lineHint,
     );
-  }, [selectedLetter?.rowIndex, currentAttempt, lineSearch, lineHint]);
+  }, [
+    gameState.selectedLetter?.rowIndex,
+    gameState.currentAttempt,
+    gameState.lineSearch,
+    gameState.lineHint,
+  ]);
 
   const $setSelectedLetter = useCallback(
     async ($selectedLetter: LetterCellLocation) => {
-      setSelectedLetter($selectedLetter);
-      if (currentAttempt === $selectedLetter?.rowIndex) {
-        setLineSearch(undefined);
+      dispatch({type: 'SET_SELECTED_LETTER', location: $selectedLetter});
+      if (gameState.currentAttempt === $selectedLetter?.rowIndex) {
+        dispatch({type: 'SET_LINE_SEARCH', search: undefined});
         return;
       }
       if ($selectedLetter) {
         const $lineSearch = await calculateHintForLetter(
-          guesses,
+          gameState.guesses,
           $selectedLetter,
         );
-        setLineSearch($lineSearch);
+        dispatch({type: 'SET_LINE_SEARCH', search: $lineSearch});
       } else {
-        setLineSearch(undefined);
+        dispatch({type: 'SET_LINE_SEARCH', search: undefined});
       }
     },
-    [guesses, currentAttempt],
+    [gameState.guesses, gameState.currentAttempt],
   );
 
   const onInfoRequested = useCallback(async () => {
-    setAboutShow(true);
-    if (!aboutWasShown) {
-      setAboutWasShow(true);
+    dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
+    if (!gameState.aboutWasShown) {
+      dispatch({type: 'SET_ABOUT_WAS_SHOWN'});
       removeFromUserScore(5);
     }
-  }, [removeFromUserScore, aboutWasShown]);
+  }, [removeFromUserScore, gameState.aboutWasShown]);
 
-  const handleKeyPress = useCallback(
-    (key: string) => {
-      if (currentGuess.length <= wordLength) {
-        if (selectedLetter.rowIndex === currentAttempt) {
-          setCurrentGuess(prev => {
-            const newGuess = [...prev];
-            newGuess[selectedLetter.colIndex] = key;
-            return newGuess;
-          });
-          setSelectedLetter(prev => {
-            if (selectedLetter.colIndex < wordLength - 1) {
-              return {...prev, colIndex: prev.colIndex + 1};
-            } else {
-              return prev;
-            }
-          });
-        }
-      }
-    },
-    [
-      currentGuess.length,
-      wordLength,
-      selectedLetter,
-      currentAttempt,
-      setSelectedLetter,
-    ],
-  );
+  const handleKeyPress = useCallback((key: string) => {
+    dispatch({type: 'KEY_PRESS', key});
+  }, []);
+
   const handleDelete = useCallback(() => {
-    setCurrentGuess(prev => {
-      const updatedGuess = [...prev];
-      let newColIndex = selectedLetter.colIndex;
+    dispatch({type: 'DELETE_LETTER'});
+  }, []);
 
-      // If there's a letter at the current position, delete it
-      if (updatedGuess[newColIndex] !== undefined) {
-        updatedGuess[newColIndex] = undefined;
-      }
-      // Otherwise, move left and delete (if not at the start)
-      else if (newColIndex > 0) {
-        newColIndex--;
-        updatedGuess[newColIndex] = undefined;
-      }
-
-      // Update the selected letter position
-      setSelectedLetter(prevSelected => ({
-        ...prevSelected,
-        colIndex: newColIndex,
-      }));
-
-      return updatedGuess;
-    });
-  }, [selectedLetter.colIndex]);
   const handleSubmit = useCallback(() => {
-    if (isValidGuess && currentGuess.every(letter => letter !== undefined)) {
-      const correctness = evaluateGuess(currentGuess.join(''));
-      const currentLetters = [...currentGuess];
-      setGuesses(prev =>
-        prev.map((guess, index) =>
-          index === currentAttempt
-            ? {letters: currentLetters, correctness}
-            : guess,
-        ),
-      );
+    if (
+      gameState.isValidGuess &&
+      gameState.currentGuess.every(letter => letter !== undefined)
+    ) {
+      const correctness = evaluateGuess(gameState.currentGuess.join(''));
+      const currentLetters = [...gameState.currentGuess] as string[];
+
+      dispatch({type: 'SUBMIT_GUESS', correctness, letters: currentLetters});
 
       const newCorrectLetters = currentLetters.filter(
         (letter, index) =>
@@ -305,39 +222,19 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         confettiRef.current?.triggerFeedback('spark');
       }
 
-      setKeyboardLetters(prev => {
-        const newState = {...prev};
-        currentLetters.forEach((letter, index) => {
-          const letterCorrectness = correctness[index];
-          if (
-            letterCorrectness === 'correct' ||
-            (letterCorrectness === 'exists' &&
-              newState[letter] !== 'correct') ||
-            (letterCorrectness === 'notInUse' && !newState[letter])
-          ) {
-            newState[letter] = letterCorrectness;
-          }
-        });
-        return newState;
-      });
-
       addScore(newCorrectLetters.length);
       if (secretWordRevealed) {
-        return endGame('SUCCESS');
+        dispatch({type: 'END_GAME', status: 'SUCCESS'});
+        stop();
+        const delayConfetti = setTimeout(() => {
+          confettiRef.current?.triggerFeedback('party');
+          clearTimeout(delayConfetti);
+        }, 400);
+      } else if (gameState.currentAttempt + 1 === maxAttempts) {
+        dispatch({type: 'END_GAME', status: 'FAILURE'});
+        stop();
       }
-      if (currentAttempt + 1 === maxAttempts) {
-        return endGame('FAILURE');
-      }
-      setLineHint(undefined);
-      setLineSearch(undefined);
-      setCurrentAttempt(prev => prev + 1);
-      setSelectedLetter({
-        rowIndex: currentAttempt + 1,
-        colIndex: 0,
-      });
-      setCurrentGuess([]);
     } else {
-      // New shake animation
       shakeAnimation.value = withSequence(
         withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
         withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
@@ -347,21 +244,36 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       );
     }
   }, [
-    isValidGuess,
+    gameState,
     evaluateGuess,
-    currentGuess,
-    currentAttempt,
+    wordLength,
+    maxAttempts,
+    addScore,
+    stop,
     shakeAnimation,
   ]);
 
   useEffect(() => {
-    const guessStr = currentGuess.join('');
+    const guessStr = gameState.currentGuess.join('');
     if (guessStr.length === wordLength) {
-      setIsValidGuess(isValidWord(guessStr));
+      dispatch({type: 'SET_VALID_GUESS', isValid: isValidWord(guessStr)});
     } else {
-      setIsValidGuess(null);
+      dispatch({type: 'SET_VALID_GUESS', isValid: null});
     }
-  }, [isValidWord, currentGuess, wordLength]);
+  }, [isValidWord, gameState.currentGuess, wordLength]);
+  useEffect(() => {
+    if (gameState.gameStatus !== 'PLAYING') {
+      const timeout = setTimeout(() => {
+        const savedRows = maxAttempts - gameState.currentAttempt - 1;
+        dispatch({type: 'SET_NUMBER_OF_SAVED_ROWS', number: savedRows});
+        const endTimeout = setTimeout(() => {
+          dispatch({type: 'SET_GAME_END', isEnd: true});
+          clearTimeout(endTimeout);
+        }, ROW_SAVED_DELAY * savedRows + 500);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [gameState.gameStatus, gameState.currentAttempt, maxAttempts]);
 
   return (
     <View style={styles.container}>
@@ -381,13 +293,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               })),
             ]}>
             <WordleGrid
-              guesses={guesses}
-              currentAttempt={currentAttempt}
-              currentGuess={currentGuess}
+              guesses={gameState.guesses}
+              currentAttempt={gameState.currentAttempt}
+              currentGuess={gameState.currentGuess}
               maxAttempts={maxAttempts}
               wordLength={wordLength}
-              numberOfSavedRows={numberOfSavedRows}
-              selectedLetter={selectedLetter}
+              numberOfSavedRows={gameState.numberOfSavedRows}
+              selectedLetter={gameState.selectedLetter}
               onLetterSelected={$setSelectedLetter}
               lineHint={finalLineHint}
             />
@@ -395,25 +307,28 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         </GradientOverlayScrollView>
         <View style={styles.bottomContainer}>
           <Keyboard
-            disabled={selectedLetter.rowIndex !== currentAttempt}
+            disabled={
+              gameState.selectedLetter.rowIndex !== gameState.currentAttempt
+            }
             handleKeyPress={handleKeyPress}
             handleDelete={handleDelete}
-            keyboardLetters={keyboardLetters}
+            keyboardLetters={gameState.keyboardLetters}
             disableDelete={
-              selectedLetter.colIndex === 0 && currentGuess[0] === undefined
+              gameState.selectedLetter.colIndex === 0 &&
+              gameState.currentGuess[0] === undefined
             }
           />
           <View style={styles.footer}>
             <View style={styles.centerer}>
               <AboutButton
-                displayOverlay={!aboutWasShown}
+                displayOverlay={!gameState.aboutWasShown}
                 onInfoRequested={onInfoRequested}
                 scoreCost={5}
               />
             </View>
             <SubmitButton
               handleSubmit={handleSubmit}
-              isValidGuess={isValidGuess}
+              isValidGuess={gameState.isValidGuess}
             />
             <View style={styles.centerer}>
               <HintWordButton
@@ -426,13 +341,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         </View>
         <ConfettiOverlay ref={confettiRef} />
         <AboutWordDialog
-          isVisible={aboutShown && !isGameEnd}
-          onClose={() => setAboutShow(false)}
+          isVisible={gameState.aboutShown && !gameState.isGameEnd}
+          onClose={() => dispatch({type: 'SET_ABOUT_SHOWN', shown: false})}
           hint={aboutWord}
         />
         <GameResultDialog
-          isVisible={isGameEnd}
-          isSuccess={gameStatus === 'SUCCESS'}
+          isVisible={gameState.isGameEnd}
+          isSuccess={gameState.gameStatus === 'SUCCESS'}
           onNewGame={handleNewGame}
           onGoHome={handleGoHome}
           currentScore={getScore()}
@@ -462,41 +377,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingBottom: 20,
-  },
-  keyboard: {
-    flexDirection: 'row-reverse',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginBottom: 20,
-    marginHorizontal: 5,
-  },
-  key: {
-    width: 32,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 3,
-    marginVertical: 5,
-
-    borderRadius: 5,
-  },
-  wideKey: {
-    width: 65,
-  },
-  keyText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  submitButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 15,
-    borderWidth: 2.5,
-  },
-  submitButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '900',
   },
   content: {
     flex: 1,
