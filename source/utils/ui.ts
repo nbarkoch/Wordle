@@ -30,6 +30,32 @@ export const darkenColor = (color: string, percent: number) => {
   );
 };
 
+export function rgbaToHex(rgba: string) {
+  // Use a regular expression to extract the rgba values
+  const result = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+
+  if (!result) {
+    throw new Error('Invalid RGBA format');
+  }
+
+  const r = parseInt(result[1], 10);
+  const g = parseInt(result[2], 10);
+  const b = parseInt(result[3], 10);
+  const a = parseFloat(result[4]);
+
+  // Helper function to convert a number to a two-digit hex
+  const toHex = (value: number) => {
+    const hex = value.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  // Convert the alpha to a two-digit hex value (from 0-255)
+  const alpha = Math.round(a * 255);
+
+  // Return the formatted hex color
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(alpha)}`;
+}
+
 /**
  * Sets the opacity of a color string (hex or rgba).
  * @param {string} color - The color string (hex or rgba).
@@ -50,7 +76,7 @@ export function setColorOpacity(color: string, opacity: number) {
     const r = parseInt(color.substr(0, 2), 16);
     const g = parseInt(color.substr(2, 2), 16);
     const b = parseInt(color.substr(4, 2), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    return rgbaToHex(`rgba(${r}, ${g}, ${b}, ${opacity})`);
   }
 
   // Check if the color is in rgba format
@@ -59,13 +85,14 @@ export function setColorOpacity(color: string, opacity: number) {
   );
   if (rgbaMatch) {
     const [, r, g, b] = rgbaMatch;
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    return rgbaToHex(`rgba(${r}, ${g}, ${b}, ${opacity})`);
   }
 
   // If the color format is not recognized, return the original color
   console.warn('Unrecognized color format. Returning original color.');
   return color;
 }
+
 export const lightenColor = (color: string, percent: number): string => {
   // Remove the hash if it exists
   color = color.replace('#', '');

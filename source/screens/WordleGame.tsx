@@ -24,10 +24,7 @@ import {
   guessesInitialGridState,
   keyboardInitialKeysState,
   LetterCellLocation,
-  LineHint,
   mergeHints,
-  WordGuess,
-  Correctness,
 } from '~/utils/ui';
 import GameResultDialog from '~/components/dialogs/GameResultDialog';
 import TopBar from '~/components/grid/TopBar';
@@ -98,7 +95,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
   const confettiRef = useRef<ConfettiOverlayRef>(null);
-  const previousCorrectLetters = useRef<Set<string>>(new Set());
+  const previousCorrectLetters = useRef<boolean[]>(
+    Array(wordLength).fill(false),
+  );
   const {isValidWord} = useWordValidator(wordLength);
   const navigation = useNavigation<WordleGameNavigationProp>();
   const shakeAnimation = useSharedValue(0);
@@ -110,12 +109,17 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     return () => stop();
   }, [start, enableTimer, stop]);
 
+  useEffect(() => {
+    console.log(secretWord);
+  }, [secretWord]);
+
   const handleNewGame = useCallback(() => {
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
     if (enableTimer) {
       reset();
       start();
     }
+    previousCorrectLetters.current = Array(wordLength).fill(false);
     generateSecretWord();
     setScore(0);
     global.gc?.();
@@ -201,14 +205,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
       dispatch({type: 'SUBMIT_GUESS', correctness, letters: currentLetters});
 
-      const newCorrectLetters = currentLetters.filter(
-        (letter, index) =>
+      const newCorrectLetters = currentLetters.filter((_, index) => {
+        const newReveal =
           correctness[index] === 'correct' &&
-          !previousCorrectLetters.current.has(letter),
-      );
-      newCorrectLetters.forEach(letter =>
-        previousCorrectLetters.current.add(letter),
-      );
+          !previousCorrectLetters.current[index];
+        if (newReveal) {
+          previousCorrectLetters.current[index] = true;
+        }
+        return newReveal;
+      });
 
       const secretWordRevealed = correctness.every(
         letter => letter === 'correct',
@@ -264,7 +269,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   useEffect(() => {
     if (gameState.gameStatus !== 'PLAYING') {
       const timeout = setTimeout(() => {
-        const savedRows = maxAttempts - gameState.currentAttempt - 1;
+        const savedRows = maxAttempts - gameState.currentAttempt;
         dispatch({type: 'SET_NUMBER_OF_SAVED_ROWS', number: savedRows});
         const endTimeout = setTimeout(() => {
           dispatch({type: 'SET_GAME_END', isEnd: true});

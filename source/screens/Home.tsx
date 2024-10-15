@@ -8,7 +8,9 @@ import IconButton from '~/components/IconButtons/IconButton';
 import ProfileIconButton from '~/components/IconButtons/ProfileButton';
 import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
-import StripePattern from '~/components/StripePattern';
+import SpecialButton from '~/components/SpecialButton';
+import {setColorOpacity} from '~/utils/ui';
+import {colors} from '~/utils/colors';
 
 const {width, height} = Dimensions.get('window');
 
@@ -33,8 +35,16 @@ function HomeScreen({navigation}: HomeScreenProps) {
         />
       </View>
       <View style={styles.body}>
-        <MenuButton text="New Game" onPress={onNewGame} color="#7FCCB570" />
-        <MenuButton text="Daily Task" onPress={onNewGame} color="#F47A8970" />
+        <MenuButton
+          text="New Game"
+          onPress={onNewGame}
+          color={setColorOpacity(colors.green, 0.7)}
+        />
+        <SpecialButton
+          text="Daily Task"
+          onPress={onNewGame}
+          color={setColorOpacity(colors.blue, 0.5)}
+        />
       </View>
       <HowToPlayDialog
         onClose={() => setHowToPlayVisible(false)}
