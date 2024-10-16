@@ -24,6 +24,30 @@ import {colors} from '~/utils/colors';
 
 const {width, height} = Dimensions.get('window');
 
+const partyStrings = [
+  'מצויין',
+  'כל הכבוד',
+  'איחוליי',
+  'שאפו',
+  'מדהים',
+  'תם ונשלם',
+  'יפה מאוד',
+  'נצחון',
+  'אליפות',
+  'שיחקת אותה',
+];
+const strikeStrings = [
+  'סטרייק',
+  'מגניב',
+  'קומבו',
+  'ירוק בעיניים',
+  'סחטיין',
+  'על הכיפ-אק',
+  'מטורף',
+  'איזה מהלך',
+  'עף לי הפוני',
+];
+
 interface ConfettiOverlayProps {}
 
 type ConfettiType = 'spark' | 'party';
@@ -107,10 +131,20 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
       triggerFeedback: (type: ConfettiType) => {
         switch (type) {
           case 'party':
-            animateFeedbackIn('Congrats!', type);
+            animateFeedbackIn(
+              `${
+                partyStrings[Math.floor(Math.random() * partyStrings.length)]
+              }!`,
+              type,
+            );
             break;
           case 'spark':
-            animateFeedbackIn('Strike!', type);
+            animateFeedbackIn(
+              `${
+                strikeStrings[Math.floor(Math.random() * strikeStrings.length)]
+              }!`,
+              type,
+            );
             break;
         }
       },
@@ -140,7 +174,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
                 <OutlinedText
                   text={showText}
                   fontSize={42}
-                  width={250}
+                  width={300}
                   height={70}
                   fillColor="#ffffff"
                   strokeColor={colors.blue}

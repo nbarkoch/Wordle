@@ -11,6 +11,11 @@ import GameBannerAd from '~/components/ads/GameBannerAd';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// add achievement screen
+// best time
+// best score
+// revealed words
+
 mobileAds()
   .initialize()
   .then(_ => {

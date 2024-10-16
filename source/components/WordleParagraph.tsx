@@ -7,15 +7,11 @@ import {
   Paragraph,
   TileMode,
 } from '@shopify/react-native-skia';
+import {colors} from '~/utils/colors';
 
-interface WordleParagraphProps {
-  width: number;
-  height: number;
-}
-
-const WordleParagraph = ({width, height}: WordleParagraphProps) => {
+const WordleParagraph = () => {
   const customFontMgr = useFonts({
-    Roboto: [require('~/assets/fonts/AnkaCLM-Bold.otf')],
+    Roboto: [require('~/assets/fonts/luckiestguy.ttf')],
   });
 
   const paragraph = useMemo(() => {
@@ -28,10 +24,10 @@ const WordleParagraph = ({width, height}: WordleParagraphProps) => {
         {x: 0, y: 0},
         256,
         [
-          Skia.Color('#75B8C2'),
-          Skia.Color('#8997C8'),
-          Skia.Color('#DD90BB'),
-          Skia.Color('#6A60AB'),
+          Skia.Color(colors.blue),
+          Skia.Color(colors.lightBlue),
+          Skia.Color(colors.green),
+          Skia.Color(colors.lightYellow),
         ],
         null,
         TileMode.Clamp,
@@ -45,20 +41,20 @@ const WordleParagraph = ({width, height}: WordleParagraphProps) => {
       .pushStyle(
         {
           fontFamilies: ['Roboto'],
-          fontSize: 40,
+          fontSize: 50,
           fontStyle: {weight: 500},
           color: Skia.Color('black'),
         },
         foregroundPaint,
       )
-      .addText('ווארדל')
+      .addText('WORDLE')
       .pop()
       .build();
     return para;
   }, [customFontMgr]);
 
   return (
-    <Canvas style={{width, height}}>
+    <Canvas style={{width: 300, height: 80}}>
       <Paragraph paragraph={paragraph} x={0} y={0} width={300} />
     </Canvas>
   );

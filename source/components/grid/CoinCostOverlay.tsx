@@ -12,7 +12,7 @@ function CoinCostOverlay({scoreCost}: CoinCostOverlayProps) {
       style={{
         position: 'absolute',
         padding: 2,
-        backgroundColor: colors.white,
+        backgroundColor: '#FFFFFF60',
         bottom: -5,
         left: 40,
         zIndex: 1,
@@ -24,7 +24,7 @@ function CoinCostOverlay({scoreCost}: CoinCostOverlayProps) {
         style={{
           fontSize: 12,
           fontWeight: '900',
-          color: colors.darkYellow,
+          color: colors.white,
         }}>{` ${scoreCost} `}</Text>
       <StarCoin
         size={13}

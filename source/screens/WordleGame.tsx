@@ -45,6 +45,7 @@ import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
+import showAppOpenAd from '~/components/ads/fullScreenAd';
 
 const {width} = Dimensions.get('window');
 
@@ -86,30 +87,30 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const shakeAnimation = useSharedValue(0);
 
   useEffect(() => {
-    start();
-    return () => stop();
-  }, [start, enableTimer, stop]);
-
-  useEffect(() => {
     console.log(secretWord);
   }, [secretWord]);
 
-  const handleNewGame = useCallback(() => {
+  const resetGame = useCallback(() => {
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
     reset();
-    start();
     previousCorrectLetters.current = Array(wordLength).fill(false);
     generateSecretWord();
     setScore(0);
     global.gc?.();
-  }, [reset, start, generateSecretWord, setScore]);
+  }, [reset, generateSecretWord, setScore]);
+
+  const handleNewGame = useCallback(() => {
+    showAppOpenAd();
+    resetGame();
+    start();
+  }, [resetGame]);
 
   const handleGoHome = useCallback(() => {
     navigation.navigate('Home');
   }, [navigation]);
 
   useEffect(() => {
-    return handleNewGame;
+    return resetGame;
   }, []);
 
   const onHintRequested = useCallback(async () => {

@@ -11,23 +11,29 @@ import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 import SpecialButton from '~/components/SpecialButton';
 import {setColorOpacity} from '~/utils/ui';
 import {colors} from '~/utils/colors';
-
-const {width, height} = Dimensions.get('window');
+import CoinCostOverlay from '~/components/grid/CoinCostOverlay';
+import {useScoreStore} from '~/store/useScore';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const onNewGame = useCallback(() => {
     navigation.navigate('NewGame');
   }, [navigation]);
 
+  const {userScore} = useScoreStore();
+
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
   return (
     <View style={styles.body}>
       <CanvasBackground />
       <View style={styles.header}>
-        <SkiaGradientText width={300} height={50} />
+        <SkiaGradientText />
       </View>
       <View style={styles.headerLine}>
-        <ProfileIconButton onPress={onNewGame} />
+        <View>
+          <CoinCostOverlay scoreCost={userScore} />
+          <ProfileIconButton onPress={() => {}} />
+        </View>
+
         <IconButton
           onPress={() => {
             setHowToPlayVisible(true);
