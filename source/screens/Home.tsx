@@ -36,12 +36,12 @@ function HomeScreen({navigation}: HomeScreenProps) {
       </View>
       <View style={styles.body}>
         <MenuButton
-          text="New Game"
+          text="משחק חדש"
           onPress={onNewGame}
           color={setColorOpacity(colors.green, 0.7)}
         />
         <SpecialButton
-          text="Daily Task"
+          text="חידה יומית"
           onPress={onNewGame}
           color={setColorOpacity(colors.blue, 0.5)}
         />

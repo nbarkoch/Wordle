@@ -96,6 +96,24 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
     opacity: introductionAnimation.value,
   }));
 
+  const LineAbout = ({
+    title,
+    info,
+    color,
+  }: {
+    title: string;
+    info: string;
+    color: string;
+  }) => {
+    return (
+      <Text>
+        <Text style={[styles.boldText, {color}]}>{title}</Text>
+        <Text style={[styles.boldText, {color}]}>{': '}</Text>
+        <Text style={styles.text}>{info}</Text>
+      </Text>
+    );
+  };
+
   if (!block && !isVisible) {
     return null;
   }
@@ -124,27 +142,27 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
             <View style={styles.titleContainer}>
               <CloseIcon onPress={onClose} />
             </View>
-            <Text style={styles.title}>{'How To Play'}</Text>
+            <Text style={styles.title}>{'איך משחקים'}</Text>
             <ScrollView
               horizontal={false}
               style={styles.scrollView}
               contentContainerStyle={styles.scrollViewContent}>
               <Animated.View style={[styles.introduction, introductionStyle]}>
-                <Text style={styles.text}>Guess the word in 6 tries</Text>
+                <Text style={styles.text}>{'נחשו את המילה ב-6 ניסיונות'}</Text>
                 <Text style={styles.text}>
-                  {'Colors show hint after each guess'}
+                  {'הצבעים מראים רמז לאחר כל ניחוש'}
                 </Text>
-                <Text style={styles.text}>{'Example:'}</Text>
+                <Text style={styles.text}>{'דוגמה:'}</Text>
                 <View style={{transform: [{scale: 0.8}]}}>
                   <RowMockUp
-                    letters={['S', 'D', 'R', 'O', 'W']}
+                    letters={['מ', 'י', 'ל', 'י', 'ם']}
                     correctness={[null, null, null, null, null]}
                   />
                 </View>
-                <Text style={styles.text}>{'Your guess:'}</Text>
+                <Text style={styles.text}>{'הניחוש שלך:'}</Text>
                 <View style={{transform: [{scale: 0.8}]}}>
                   <RowMockUp
-                    letters={['S', 'D', 'R', 'O', 'W']}
+                    letters={['מ', 'י', 'ל', 'י', 'ם']}
                     correctness={[
                       'correct',
                       'notInUse',
@@ -154,20 +172,39 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                     ]}
                   />
                 </View>
-                <Text style={styles.text}>{'Green: Correct position'}</Text>
-                <Text style={styles.text}>{'Yellow: Wrong position'}</Text>
-                <Text style={styles.text}>{'Red: Not in word'}</Text>
+                <LineAbout
+                  title={'ירוק'}
+                  color={colors.green}
+                  info={'מיקום נכון'}
+                />
+                <LineAbout
+                  title={'צהוב'}
+                  color={colors.yellow}
+                  info={'מיקום שגוי'}
+                />
+                <LineAbout
+                  title={'אדום'}
+                  color={colors.red}
+                  info={'לא במילה'}
+                />
                 <View style={styles.divider} />
-                <Text style={styles.text}>{'Hint buttons:'}</Text>
+                <Text style={styles.text}>{'כפתורי רמז:'}</Text>
                 <View style={styles.row}>
                   <HintWordButton onHintRequested={() => {}} scoreCost={0} />
                   <View style={styles.padder} />
                   <AboutButton onInfoRequested={() => {}} scoreCost={0} />
                 </View>
-                <Text style={styles.text}>{'Using hints costs points'}</Text>
-                <Text style={styles.text}>
-                  {'i: Word info, Bulb: Reveal letters'}
-                </Text>
+                <Text style={styles.text}>{'שימוש ברמזים עולה נקודות'}</Text>
+                <LineAbout
+                  title={'מידע'}
+                  color={colors.blue}
+                  info={'מילה נרדפת או רמז על המילה'}
+                />
+                <LineAbout
+                  title={'נורה'}
+                  color={colors.yellow}
+                  info={'חושפת אותיות'}
+                />
               </Animated.View>
             </ScrollView>
           </View>
@@ -233,6 +270,12 @@ const styles = StyleSheet.create({
     color: colors.lightGrey,
     paddingVertical: 4,
     textAlign: 'center',
+  },
+  boldText: {
+    fontSize: 15,
+    color: colors.lightGrey,
+    textAlign: 'center',
+    fontWeight: '900',
   },
   divider: {
     height: 2,

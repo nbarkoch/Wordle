@@ -1,6 +1,6 @@
 import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {colors} from '~/utils/colors';
 import BasePressable from '../BasePressable';
 
@@ -22,8 +22,8 @@ const IconButton: React.FC<IconButtonProps> = ({onPress}) => {
             borderWidth: 3,
             borderRadius: 30,
             width: 50,
+            height: 50,
           },
-          styles.container,
         ]}>
         <Canvas style={{width, height}}>
           <Group transform={[{scale: width / 29}]}>
@@ -34,12 +34,5 @@ const IconButton: React.FC<IconButtonProps> = ({onPress}) => {
     </BasePressable>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-  text: {
-    fontWeight: '900',
-  },
-});
 
 export default IconButton;

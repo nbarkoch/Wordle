@@ -162,23 +162,23 @@ const GameResultDialog = ({
           </Canvas>
           <View style={styles.dialog}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>SUMMARY</Text>
+              <Text style={styles.title}>{'סיכום'}</Text>
             </View>
             <StarRating width={270} height={100} rating={rating} />
             {isVisible && (
               <>
-                <Text style={styles.secretWordWas}>{'Secret Word:'}</Text>
+                <Text style={styles.secretWordWas}>{'מילה סודית:'}</Text>
                 <Text style={styles.secretWord}>{secretWord}</Text>
                 <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
                   <View style={styles.scoreContainer}>
                     <View style={styles.scoreRow}>
                       <Text style={styles.scoreValue}>{currentScore}</Text>
-                      <Text style={styles.scoreLabel}>Score</Text>
+                      <Text style={styles.scoreLabel}>{'ניקוד'}</Text>
                     </View>
                     <View style={styles.divider} />
                     <View style={[styles.scoreRow]}>
                       <Text style={styles.scoreValue}>{formatTime(time)}</Text>
-                      <Text style={[styles.scoreLabel]}>Time</Text>
+                      <Text style={[styles.scoreLabel]}>{'אורך משחק'}</Text>
                     </View>
                   </View>
                 </Animated.View>
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   scoreRow: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
   },

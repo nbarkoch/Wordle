@@ -26,27 +26,33 @@ function NewGameScreen({navigation}: NewGameProps) {
     <View style={styles.body}>
       <CanvasBackground />
       <View style={styles.header}>
-        <Text style={styles.title}>{'NEW GAME'}</Text>
+        <Text style={styles.title}>{'משחק חדש'}</Text>
       </View>
 
       <View style={styles.bodyWrap}>
         <View style={styles.buttonsContainer}>
-          <IconButton
-            onPress={() => {
-              setHowToPlayVisible(true);
-            }}
-          />
-          <Text style={styles.subjectText}>{'Word Length:'}</Text>
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'flex-end',
+            }}>
+            <IconButton
+              onPress={() => {
+                setHowToPlayVisible(true);
+              }}
+            />
+          </View>
+          <Text style={styles.subjectText}>{'אורך מילה: '}</Text>
           <SelectNumber selected={selected} setSelected={setSelected} />
-          <Text style={styles.subjectText}>{'Display Timer:'}</Text>
+          <Text style={styles.subjectText}>{'הצג שעון עצר:'}</Text>
           <View style={styles.switch}>
             <GameSwitch onToggle={setEnableTimer} />
           </View>
-          <Text style={styles.subjectText}>{'Category:'}</Text>
+          <Text style={styles.subjectText}>{'קטגוריה:'}</Text>
         </View>
       </View>
       <View style={styles.footerContainer}>
-        <MenuButton text="Start" onPress={onStartGame} color="#7FCCB570" />
+        <MenuButton text="התחל" onPress={onStartGame} color="#7FCCB570" />
       </View>
       <HowToPlayDialog
         onClose={() => setHowToPlayVisible(false)}

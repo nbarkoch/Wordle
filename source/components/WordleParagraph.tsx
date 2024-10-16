@@ -15,7 +15,7 @@ interface WordleParagraphProps {
 
 const WordleParagraph = ({width, height}: WordleParagraphProps) => {
   const customFontMgr = useFonts({
-    Roboto: [require('~/assets/fonts/luckiestguy.ttf')],
+    Roboto: [require('~/assets/fonts/AnkaCLM-Bold.otf')],
   });
 
   const paragraph = useMemo(() => {
@@ -45,12 +45,13 @@ const WordleParagraph = ({width, height}: WordleParagraphProps) => {
       .pushStyle(
         {
           fontFamilies: ['Roboto'],
-          fontSize: 60,
+          fontSize: 40,
+          fontStyle: {weight: 500},
           color: Skia.Color('black'),
         },
         foregroundPaint,
       )
-      .addText('WORDLE')
+      .addText('ווארדל')
       .pop()
       .build();
     return para;

@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import StarCoin from '../StarCoin';
+import {useTimerStore} from '~/store/useTimerStore';
 
 interface TopBarProps {
   displayTimer?: boolean;
@@ -22,6 +23,7 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
   const lastUserScore = useRef<number>(userScore);
 
   const [textScoreColor, setTextScoreColor] = useState<string>(colors.gold);
+  const {isActive, resetKey, increment} = useTimerStore();
 
   useEffect(() => {
     scaleAnimation.value = withTiming(1.25, {duration: 50}, () => {
@@ -40,6 +42,16 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
       transform: [{scale: scaleAnimation.value}],
     };
   });
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (isActive) {
+      intervalId = setInterval(() => {
+        increment();
+      }, 1000);
+    }
+    return () => clearInterval(intervalId);
+  }, [isActive, increment, resetKey]);
 
   return (
     <View style={styles.topBar}>

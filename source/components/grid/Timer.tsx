@@ -1,4 +1,4 @@
-import React, {memo, useEffect} from 'react';
+import React, {memo} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import {useTimerStore} from '~/store/useTimerStore';
 import {colors} from '~/utils/colors';
@@ -12,17 +12,7 @@ export const formatTime = (seconds: number) => {
 };
 
 const Timer: React.FC = () => {
-  const {time, isActive, resetKey, increment} = useTimerStore();
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (isActive) {
-      intervalId = setInterval(() => {
-        increment();
-      }, 1000);
-    }
-    return () => clearInterval(intervalId);
-  }, [isActive, increment, resetKey]);
+  const {time} = useTimerStore();
 
   return <Text style={styles.timerText}>Time: {formatTime(time)}</Text>;
 };

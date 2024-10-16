@@ -90,7 +90,7 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
     <BasePressable disabled={isValidGuess === null} onPress={handleSubmit}>
       <Animated.View style={[styles.submitButton, submitButtonStyle]}>
         <Animated.Text style={[styles.submitButtonText, submitTextStyle]}>
-          SUBMIT
+          {'אישור'}
         </Animated.Text>
       </Animated.View>
     </BasePressable>
