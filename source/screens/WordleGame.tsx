@@ -13,7 +13,6 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import WordleGrid from '~/components/grid/WordleGrid';
 import useWordValidator from '~/database/useWordValidator';
 import Keyboard from '~/components/grid/Keyboard';
@@ -46,24 +45,9 @@ import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
+import GameBannerAd from '~/components/ads/GameBannerAd';
 
 const {width} = Dimensions.get('window');
-
-const GameBannerAd = () => {
-  const adUnitId = __DEV__
-    ? TestIds.BANNER
-    : 'YOUR_PRODUCTION_BANNER_AD_UNIT_ID';
-
-  return (
-    <BannerAd
-      unitId={adUnitId}
-      size={BannerAdSize.BANNER}
-      requestOptions={{
-        requestNonPersonalizedAdsOnly: true,
-      }}
-    />
-  );
-};
 
 const WordleGame: React.FC<WordGameScreenProps> = ({
   route: {
@@ -284,12 +268,16 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     <View style={styles.container}>
       <CanvasBackground />
       <View style={styles.content}>
-        <GameBannerAd />
         <TopBar displayTimer={enableTimer} />
         <GradientOverlayScrollView
           upperColor={'#343D4E'}
           bottomColor={'#3A4F6C'}
-          gradientHeight={20}>
+          gradientHeight={20}
+          contentContainerStyle={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100%',
+          }}>
           <Animated.View
             style={[
               styles.gridContainer,
@@ -384,6 +372,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   content: {
+    paddingTop: 20,
     flex: 1,
     alignItems: 'center',
   },

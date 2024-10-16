@@ -7,6 +7,7 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -26,8 +27,9 @@ public class MainActivity extends ReactActivity {
     super.onCreate(null);
     Window window = getWindow();
     window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-    window.setNavigationBarColor(Color.parseColor("#33556E")); // Change to the desired color
-
+    window.setNavigationBarColor(Color.parseColor("#8033556E"));// Change to the desired color
+    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // Hide navigation bar
+                                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY); // Ensure it stays hidden (sticky immersive mode)
   }
 
   /**

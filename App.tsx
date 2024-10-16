@@ -7,6 +7,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '~/screens/Home';
 import {RootStackParamList} from '~/navigation/types';
 import NewGameScreen from '~/screens/NewGame';
+import GameBannerAd from '~/components/ads/GameBannerAd';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,21 +23,24 @@ const App = () => {
   };
 
   return (
-    <NavigationContainer>
-      <StatusBar backgroundColor={backgroundStyle.backgroundColor} />
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerShown: false,
-          contentStyle: backgroundStyle,
-          animation: 'fade',
-          gestureDirection: 'horizontal',
-        }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="NewGame" component={NewGameScreen} />
-        <Stack.Screen name="WordGame" component={GameScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <StatusBar backgroundColor={backgroundStyle.backgroundColor} />
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            headerShown: false,
+            contentStyle: backgroundStyle,
+            animation: 'fade',
+            gestureDirection: 'horizontal',
+          }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="NewGame" component={NewGameScreen} />
+          <Stack.Screen name="WordGame" component={GameScreen} />
+        </Stack.Navigator>
+        <GameBannerAd />
+      </NavigationContainer>
+    </>
   );
 };
 
