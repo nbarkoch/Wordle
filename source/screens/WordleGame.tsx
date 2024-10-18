@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
 import Animated, {
@@ -46,7 +47,6 @@ import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
 import showAppOpenAd from '~/components/ads/fullScreenAd';
-import HomeButton from '~/components/HomeButton';
 
 const {width} = Dimensions.get('window');
 
@@ -56,6 +56,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   },
 }) => {
   const initialState: GameState = {
+    correctLetters: Array(wordLength).fill(false),
     currentAttempt: 0,
     selectedLetter: {rowIndex: 0, colIndex: 0},
     currentGuess: [],
@@ -70,6 +71,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     maxAttempts,
     wordLength,
   };
+  const [recentReveals, setRecentReveals] = useState<boolean[]>(
+    Array(wordLength).fill(false),
+  );
 
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
 
@@ -82,9 +86,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
   const confettiRef = useRef<ConfettiOverlayRef>(null);
-  const previousCorrectLetters = useRef<boolean[]>(
-    Array(wordLength).fill(false),
-  );
   const {isValidWord} = useWordValidator(wordLength);
   const navigation = useNavigation<WordleGameNavigationProp>();
   const shakeAnimation = useSharedValue(0);
@@ -96,7 +97,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const resetGame = useCallback(() => {
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
     reset();
-    previousCorrectLetters.current = Array(wordLength).fill(false);
     generateSecretWord();
     setScore(0);
     global.gc?.();
@@ -185,15 +185,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     ) {
       const correctness = evaluateGuess(gameState.currentGuess.join(''));
       const currentLetters = [...gameState.currentGuess] as string[];
+      const correctLetters = [...gameState.correctLetters];
+      const reveal = Array(wordLength).fill(false);
 
-      dispatch({type: 'SUBMIT_GUESS', correctness, letters: currentLetters});
-
-      const newCorrectLetters = currentLetters.filter((_, index) => {
+      currentLetters.forEach((_, index) => {
         const newReveal =
-          correctness[index] === 'correct' &&
-          !previousCorrectLetters.current[index];
+          correctness[index] === 'correct' && !correctLetters[index];
         if (newReveal) {
-          previousCorrectLetters.current[index] = true;
+          reveal[index] = true;
+          correctLetters[index] = true;
         }
         return newReveal;
       });
@@ -201,16 +201,27 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       const secretWordRevealed = correctness.every(
         letter => letter === 'correct',
       );
+      const newRevealLength = reveal.filter(Boolean).length;
 
       if (
-        newCorrectLetters.length >= 3 &&
-        newCorrectLetters.length < wordLength &&
+        newRevealLength >= 3 &&
+        newRevealLength < wordLength &&
         !secretWordRevealed
       ) {
         confettiRef.current?.triggerFeedback('spark');
       }
 
-      addScore(newCorrectLetters.length);
+      console.log('reveal', reveal);
+      setRecentReveals(reveal);
+      addScore(newRevealLength);
+
+      dispatch({
+        type: 'SUBMIT_GUESS',
+        correctness,
+        letters: currentLetters,
+        correctLetters: correctLetters,
+      });
+
       if (secretWordRevealed) {
         dispatch({type: 'END_GAME', status: 'SUCCESS'});
         stop();
@@ -288,6 +299,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               gameState={gameState}
               onLetterSelected={$setSelectedLetter}
               lineHint={finalLineHint}
+              recentReveals={recentReveals}
             />
           </Animated.View>
         </GradientOverlayScrollView>

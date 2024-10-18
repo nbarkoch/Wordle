@@ -22,6 +22,7 @@ interface WordleRowProps {
   onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint;
   isCurrentRow: boolean;
+  reveals?: boolean[];
 }
 
 const WordleRow: React.FC<WordleRowProps> = ({
@@ -35,6 +36,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
   onLetterSelected,
   lineHint,
   isCurrentRow,
+  reveals = Array(wordLength).fill(false),
 }) => {
   const rowOverlayRef = useRef<RowOverlayRef>(null);
   const scaleAnimation = useSharedValue(1);
@@ -58,20 +60,23 @@ const WordleRow: React.FC<WordleRowProps> = ({
       <Animated.View style={[styles.row, rowAnimatedStyle]}>
         {Array(wordLength)
           .fill(0)
-          .map((_, colIndex) => (
-            <LetterCell
-              key={`${rowIndex}-${colIndex}`}
-              rowIndex={rowIndex}
-              colIndex={colIndex}
-              letter={letters[colIndex]}
-              viewed={correctness[colIndex]}
-              delay={colIndex * LETTER_CELL_DISPLAY_DELAY}
-              selectedLetter={selectedLetter}
-              onLetterSelected={onLetterSelected}
-              lineHint={lineHint}
-              isCurrentRow={isCurrentRow}
-            />
-          ))}
+          .map((_, colIndex) => {
+            return (
+              <LetterCell
+                key={`${rowIndex}-${colIndex}`}
+                rowIndex={rowIndex}
+                colIndex={colIndex}
+                letter={letters[colIndex]}
+                viewed={correctness[colIndex]}
+                delay={colIndex * LETTER_CELL_DISPLAY_DELAY}
+                selectedLetter={selectedLetter}
+                onLetterSelected={onLetterSelected}
+                lineHint={lineHint}
+                isCurrentRow={isCurrentRow}
+                revealed={reveals[colIndex]}
+              />
+            );
+          })}
       </Animated.View>
       <RowOverlay ref={rowOverlayRef} aspect={1.3} />
     </View>

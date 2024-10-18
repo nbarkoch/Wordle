@@ -10,12 +10,14 @@ interface WordleGridProps {
   gameState: GameState;
   onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint;
+  recentReveals?: boolean[];
 }
 
 const WordleGrid: React.FC<WordleGridProps> = ({
   gameState,
   onLetterSelected,
   lineHint,
+  recentReveals,
 }) => {
   const {
     guesses,
@@ -55,6 +57,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
               onLetterSelected={onLetterSelected}
               lineHint={$lineHint}
               isCurrentRow={isCurrentRow}
+              reveals={recentReveals}
             />
           );
         })}

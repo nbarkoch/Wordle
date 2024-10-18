@@ -1,4 +1,11 @@
-import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -13,6 +20,8 @@ import Animated, {
 
 import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
 import Cell from './Cell';
+import CellOverlay, {CellOverlayRef} from './CellOverlay';
+import {View} from 'react-native';
 
 interface LetterCellProps {
   letter: string | undefined;
@@ -24,6 +33,7 @@ interface LetterCellProps {
   onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint | undefined;
   isCurrentRow?: boolean;
+  revealed?: boolean;
 }
 
 function LetterCell({
@@ -36,9 +46,12 @@ function LetterCell({
   onLetterSelected,
   lineHint,
   isCurrentRow = false,
+  revealed = false,
 }: LetterCellProps) {
   const flipValue = useSharedValue(0);
   const cellScale = useSharedValue(1);
+  const cellOverlayRef = useRef<CellOverlayRef>(null);
+
   const [viewedState, setViewedState] = useState<Correctness | undefined>(
     viewed,
   );
@@ -98,11 +111,14 @@ function LetterCell({
   useEffect(() => {
     if (viewed === viewedState) return;
     if (viewed) {
+      if (revealed && viewed !== viewedState && viewed === 'correct') {
+        cellOverlayRef.current?.activateOverlay(delay + 500);
+      }
       flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
     } else {
       flipValue.value = withTiming(0, {duration: 500});
     }
-  }, [flipValue, viewed, delay, viewedState]);
+  }, [flipValue, viewed, delay, viewedState, revealed]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -115,16 +131,19 @@ function LetterCell({
   }, [colIndex, rowIndex, onLetterSelected]);
 
   return (
-    <Animated.View style={animatedStyle}>
-      <Cell
-        letter={letter}
-        viewed={viewedState}
-        selected={selected}
-        isCurrentRow={isCurrentRow}
-        hint={hint}
-        onLetterSelected={$onLetterSelected}
-      />
-    </Animated.View>
+    <View>
+      <CellOverlay ref={cellOverlayRef} />
+      <Animated.View style={animatedStyle}>
+        <Cell
+          letter={letter}
+          viewed={viewedState}
+          selected={selected}
+          isCurrentRow={isCurrentRow}
+          hint={hint}
+          onLetterSelected={$onLetterSelected}
+        />
+      </Animated.View>
+    </View>
   );
 }
 

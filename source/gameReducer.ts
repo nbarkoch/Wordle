@@ -9,6 +9,7 @@ import {
 
 // Define the state shape
 export interface GameState {
+  correctLetters: boolean[];
   currentAttempt: number;
   selectedLetter: LetterCellLocation;
   currentGuess: (string | undefined)[];
@@ -28,7 +29,12 @@ export interface GameState {
 
 // Define action types
 export type GameAction =
-  | {type: 'SUBMIT_GUESS'; correctness: Correctness[]; letters: string[]}
+  | {
+      type: 'SUBMIT_GUESS';
+      correctness: Correctness[];
+      letters: string[];
+      correctLetters: boolean[];
+    }
   | {type: 'KEY_PRESS'; key: string}
   | {type: 'DELETE_LETTER'}
   | {type: 'SET_SELECTED_LETTER'; location: LetterCellLocation}
@@ -43,6 +49,7 @@ export type GameAction =
   | {type: 'RESET_GAME'; maxAttempts: number; wordLength: number};
 
 const initialState: GameState = {
+  correctLetters: [],
   currentAttempt: 0,
   selectedLetter: {rowIndex: 0, colIndex: 0},
   currentGuess: [],
@@ -83,6 +90,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
       return {
         ...state,
+        correctLetters: action.correctLetters,
         currentAttempt: state.currentAttempt + 1,
         selectedLetter: {rowIndex: state.currentAttempt + 1, colIndex: 0},
         currentGuess: [],
@@ -152,6 +160,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...initialState,
         maxAttempts: action.maxAttempts,
         wordLength: action.wordLength,
+        correctLetters: Array(action.wordLength).fill(false),
         guesses: guessesInitialGridState(action.maxAttempts, action.wordLength),
         keyboardLetters: keyboardInitialKeysState,
       };
