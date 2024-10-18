@@ -1,6 +1,6 @@
 import {AdEventType, AppOpenAd, TestIds} from 'react-native-google-mobile-ads';
 
-const showAppOpenAd = () => {
+const showAppOpenAd = (onClose?: () => void) => {
   const appOpenAd = AppOpenAd.createForAdRequest(TestIds.APP_OPEN, {
     requestNonPersonalizedAdsOnly: true,
   });
@@ -17,7 +17,7 @@ const showAppOpenAd = () => {
   const unsubscribeClosed = appOpenAd.addAdEventListener(
     AdEventType.CLOSED,
     () => {
-      console.log('App Open Ad closed');
+      onClose?.();
       // Perform any action after the ad is closed
     },
   );

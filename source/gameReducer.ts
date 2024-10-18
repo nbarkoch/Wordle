@@ -22,6 +22,8 @@ export interface GameState {
   numberOfSavedRows: number;
   gameStatus: 'PLAYING' | 'SUCCESS' | 'FAILURE';
   isValidGuess: boolean | null;
+  maxAttempts: number;
+  wordLength: number;
 }
 
 // Define action types
@@ -52,6 +54,8 @@ const initialState: GameState = {
   numberOfSavedRows: 0,
   gameStatus: 'PLAYING',
   isValidGuess: false,
+  maxAttempts: 0,
+  wordLength: 0,
 };
 
 // Reducer function
@@ -146,6 +150,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'RESET_GAME':
       return {
         ...initialState,
+        maxAttempts: action.maxAttempts,
+        wordLength: action.wordLength,
         guesses: guessesInitialGridState(action.maxAttempts, action.wordLength),
         keyboardLetters: keyboardInitialKeysState,
       };

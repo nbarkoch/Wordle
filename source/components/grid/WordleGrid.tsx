@@ -4,30 +4,29 @@ import {View, StyleSheet, I18nManager} from 'react-native';
 import {LetterCellLocation, LineHint, WordGuess} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
+import {GameState} from '~/gameReducer';
 
 interface WordleGridProps {
-  guesses: WordGuess[];
-  currentAttempt: number;
-  currentGuess: (string | undefined)[];
-  maxAttempts: number;
-  wordLength: number;
-  numberOfSavedRows: number;
-  selectedLetter?: LetterCellLocation;
+  gameState: GameState;
   onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint;
 }
 
 const WordleGrid: React.FC<WordleGridProps> = ({
-  guesses,
-  currentAttempt,
-  currentGuess,
-  maxAttempts,
-  wordLength,
-  numberOfSavedRows,
-  selectedLetter,
+  gameState,
   onLetterSelected,
   lineHint,
 }) => {
+  const {
+    guesses,
+    currentAttempt,
+    currentGuess,
+    maxAttempts,
+    wordLength,
+    numberOfSavedRows,
+    selectedLetter,
+  } = gameState;
+
   return (
     <View style={styles.grid}>
       {Array(maxAttempts)

@@ -67,6 +67,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     numberOfSavedRows: 0,
     gameStatus: 'PLAYING',
     isValidGuess: null,
+    maxAttempts,
+    wordLength,
   };
 
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -101,9 +103,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
-    showAppOpenAd();
+    showAppOpenAd(start);
     resetGame();
-    start();
   }, [resetGame]);
 
   const handleGoHome = useCallback(() => {
@@ -284,13 +285,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               })),
             ]}>
             <WordleGrid
-              guesses={gameState.guesses}
-              currentAttempt={gameState.currentAttempt}
-              currentGuess={gameState.currentGuess}
-              maxAttempts={maxAttempts}
-              wordLength={wordLength}
-              numberOfSavedRows={gameState.numberOfSavedRows}
-              selectedLetter={gameState.selectedLetter}
+              gameState={gameState}
               onLetterSelected={$setSelectedLetter}
               lineHint={finalLineHint}
             />
