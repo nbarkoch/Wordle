@@ -12,12 +12,15 @@ import Animated, {
 import {colors} from '~/utils/colors';
 import StarCoin from '../StarCoin';
 import {useTimerStore} from '~/store/useTimerStore';
+import HomeButton from '../HomeButton';
+import IconButton from '../IconButtons/IconButton';
 
 interface TopBarProps {
   displayTimer?: boolean;
+  onGoHome: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
+const TopBar: React.FC<TopBarProps> = ({displayTimer = true, onGoHome}) => {
   const {userScore} = useScoreStore();
   const scaleAnimation = useSharedValue(1);
   const lastUserScore = useRef<number>(userScore);
@@ -55,6 +58,17 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
 
   return (
     <View style={styles.topBar}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          flexDirection: 'row',
+        }}>
+        <IconButton onPress={onGoHome} width={25} height={25} />
+        <View style={{padding: 5}} />
+        <HomeButton onClick={onGoHome} width={25} height={25} />
+      </View>
       {displayTimer && <Timer />}
       <View style={[styles.topBarScore]}>
         <StarCoin outerRingColor={textScoreColor} />
@@ -74,9 +88,12 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true}) => {
 
 const styles = StyleSheet.create({
   topBar: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
-    padding: 10,
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    gap: 10,
   },
   topBarScore: {flexDirection: 'row-reverse', alignItems: 'center'},
   topBarScoreText: {fontSize: 18, fontWeight: '900'},

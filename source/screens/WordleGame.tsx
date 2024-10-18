@@ -46,6 +46,7 @@ import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
 import showAppOpenAd from '~/components/ads/fullScreenAd';
+import HomeButton from '~/components/HomeButton';
 
 const {width} = Dimensions.get('window');
 
@@ -110,6 +111,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [navigation]);
 
   useEffect(() => {
+    start();
     return resetGame;
   }, []);
 
@@ -264,7 +266,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     <View style={styles.container}>
       <CanvasBackground />
       <View style={styles.content}>
-        <TopBar displayTimer={enableTimer} />
+        <TopBar displayTimer={enableTimer} onGoHome={handleGoHome} />
         <GradientOverlayScrollView
           upperColor={'#343D4E'}
           bottomColor={'#3A4F6C'}
@@ -368,7 +370,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   content: {
-    paddingTop: 20,
+    paddingTop: 10,
     flex: 1,
     alignItems: 'center',
   },
