@@ -64,10 +64,10 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true, onGoHome}) => {
           justifyContent: 'flex-end',
           alignItems: 'center',
           flexDirection: 'row',
+          gap: 15,
         }}>
-        <IconButton onPress={onGoHome} width={25} height={25} />
-        <View style={{padding: 5}} />
-        <HomeButton onClick={onGoHome} width={25} height={25} />
+        <IconButton onPress={onGoHome} width={30} height={30} />
+        <HomeButton onClick={onGoHome} width={30} height={30} />
       </View>
       {displayTimer && <Timer />}
       <View style={[styles.topBarScore]}>

@@ -62,8 +62,8 @@ function LetterCell({
   useEffect(() => {
     if (!selected) {
       cellScale.value = withSequence(
-        withTiming(0.9, {duration: 10}),
-        withSpring(1.0, {damping: 6, stiffness: 200}),
+        withTiming(0.97, {duration: 10}),
+        withSpring(1.0, {damping: 600, stiffness: 200}),
         withSpring(1, {
           damping: 15,
           stiffness: 180,

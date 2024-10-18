@@ -159,7 +159,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         dispatch({type: 'SET_LINE_SEARCH', search: undefined});
       }
     },
-    [gameState.guesses, gameState.currentAttempt],
+    [gameState.guesses],
   );
 
   const onInfoRequested = useCallback(async () => {
