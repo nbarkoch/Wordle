@@ -70,6 +70,8 @@ const CellOverlay = forwardRef<CellOverlayRef, CellOverlayProps>(({}, ref) => {
 
 const styles = StyleSheet.create({
   CellOverlay: {
+    zIndex: 1,
+    pointerEvents: 'none',
     position: 'absolute',
     top: 0,
     left: 0,

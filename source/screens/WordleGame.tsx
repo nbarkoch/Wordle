@@ -211,7 +211,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         confettiRef.current?.triggerFeedback('spark');
       }
 
-      console.log('reveal', reveal);
       setRecentReveals(reveal);
       addScore(newRevealLength);
 
@@ -277,7 +276,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   return (
     <View style={styles.container}>
       <CanvasBackground />
-      <View style={styles.content}>
+      <View style={[styles.content]}>
         <TopBar displayTimer={enableTimer} onGoHome={handleGoHome} />
         <GradientOverlayScrollView
           upperColor={'#343D4E'}
@@ -379,7 +378,6 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 10,
     flex: 1,
-    alignItems: 'center',
   },
   footer: {
     width: width,
