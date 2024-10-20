@@ -176,7 +176,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
                   fontSize={42}
                   width={300}
                   height={70}
-                  fillColor="#ffffff"
+                  fillColor={colors.white}
                   strokeColor={colors.blue}
                   strokeWidth={12}
                 />

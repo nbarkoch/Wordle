@@ -24,6 +24,7 @@ import StarRating from './StarRating';
 import {useTimerStore} from '~/store/useTimerStore';
 import {formatTime} from '../grid/Timer';
 import {colors} from '~/utils/colors';
+import useSound from '~/useSound';
 
 const {width, height} = Dimensions.get('window');
 interface GameResultDialogProps {
@@ -41,13 +42,15 @@ const GameResultDialog = ({
   onGoHome,
   currentScore,
   secretWord,
+  isSuccess,
 }: GameResultDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const buttonContainerAnimation = useSharedValue(0);
   const scoreWrapperAnimation = useSharedValue(0);
   const [block, setBlock] = useState<boolean>(false);
-
+  const {playSound: playSuccess} = useSound('success.mp3');
+  const {playSound: playFailure} = useSound('fail.wav');
   const {time} = useTimerStore();
 
   useEffect(() => {
@@ -97,6 +100,16 @@ const GameResultDialog = ({
     buttonContainerAnimation,
     scoreWrapperAnimation,
   ]);
+
+  useEffect(() => {
+    if (isVisible) {
+      if (isSuccess) {
+        playSuccess();
+      } else {
+        playFailure();
+      }
+    }
+  }, [isSuccess, isVisible]);
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

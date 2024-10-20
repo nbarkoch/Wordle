@@ -47,6 +47,7 @@ import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
 import showAppOpenAd from '~/components/ads/fullScreenAd';
+import useSound from '~/useSound';
 
 const {width} = Dimensions.get('window');
 
@@ -89,6 +90,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {isValidWord} = useWordValidator(wordLength);
   const navigation = useNavigation<WordleGameNavigationProp>();
   const shakeAnimation = useSharedValue(0);
+  const {playSound: playSubmit} = useSound('submit.mp3');
+  const {playSound: playWrong} = useSound('wrong.mp3');
 
   useEffect(() => {
     console.log(secretWord);
@@ -183,6 +186,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       gameState.isValidGuess &&
       gameState.currentGuess.every(letter => letter !== undefined)
     ) {
+      playSubmit();
       const correctness = evaluateGuess(gameState.currentGuess.join(''));
       const currentLetters = [...gameState.currentGuess] as string[];
       const correctLetters = [...gameState.correctLetters];
@@ -233,6 +237,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         stop();
       }
     } else {
+      playWrong();
       shakeAnimation.value = withSequence(
         withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
         withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),

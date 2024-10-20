@@ -9,6 +9,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
+import useSound from '~/useSound';
 import {colors} from '~/utils/colors';
 
 const vibrate = () => {
@@ -23,10 +24,12 @@ interface CellOverlayProps {}
 
 const CellOverlay = forwardRef<CellOverlayRef, CellOverlayProps>(({}, ref) => {
   const animation = useSharedValue(0);
+  const {playSound} = useSound('correct.wav');
 
   const activateOverlay = (delay: number) => {
     const timeout = setTimeout(() => {
       vibrate();
+      playSound();
       clearTimeout(timeout);
     }, delay);
     cancelAnimation(animation);
