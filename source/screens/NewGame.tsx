@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {StyleSheet, Switch, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react-native';
 import {NewGameProps} from '~/navigation/types';
 import MenuButton from '~/components/MenuButton';
@@ -9,18 +9,22 @@ import IconButton from '~/components/IconButtons/IconButton';
 import {colors} from '~/utils/colors';
 import SelectNumber from '~/components/SelectorNumber';
 import GameSwitch from '~/components/GameSwitch';
+import CategoryCubes from '~/components/CategoriyCubes';
+import {GameCategory} from '~/utils/types';
 
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
-  const [selected, setSelected] = useState<number>(5);
+  const [wordLength, setWordLength] = useState<number>(5);
+  const [category, setCategory] = useState<GameCategory>('ALL');
   const [enableTimer, setEnableTimer] = useState<boolean>(false);
   const onStartGame = useCallback(() => {
     navigation.replace('WordGame', {
-      maxAttempts: 11 - selected,
-      wordLength: selected,
+      maxAttempts: 11 - wordLength,
+      wordLength,
       enableTimer,
+      category,
     });
-  }, [navigation, selected, enableTimer]);
+  }, [navigation, wordLength, enableTimer, category]);
 
   return (
     <View style={styles.body}>
@@ -28,9 +32,10 @@ function NewGameScreen({navigation}: NewGameProps) {
       <View style={styles.header}>
         <Text style={styles.title}>{'משחק חדש'}</Text>
       </View>
-
       <View style={styles.bodyWrap}>
-        <View style={styles.buttonsContainer}>
+        <ScrollView
+          contentContainerStyle={styles.buttonsContainer}
+          style={styles.buttons}>
           <View
             style={{
               width: '100%',
@@ -43,13 +48,14 @@ function NewGameScreen({navigation}: NewGameProps) {
             />
           </View>
           <Text style={styles.subjectText}>{'אורך מילה: '}</Text>
-          <SelectNumber selected={selected} setSelected={setSelected} />
+          <SelectNumber selected={wordLength} setSelected={setWordLength} />
           <Text style={styles.subjectText}>{'הצג שעון עצר:'}</Text>
           <View style={styles.switch}>
             <GameSwitch onToggle={setEnableTimer} />
           </View>
           <Text style={styles.subjectText}>{'קטגוריה:'}</Text>
-        </View>
+          <CategoryCubes category={category} setCategory={setCategory} />
+        </ScrollView>
       </View>
       <View style={styles.footerContainer}>
         <MenuButton text="התחל" onPress={onStartGame} color="#7FCCB570" />
@@ -80,14 +86,18 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   buttonsContainer: {
-    flex: 1,
     width: '100%',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#19273040',
+  },
+  buttons: {
+    flex: 1,
+    width: '100%',
     borderColor: '#77807F',
+    backgroundColor: '#19273040',
     borderWidth: 2,
     borderRadius: 10,
+    overflow: 'hidden',
   },
   subjectText: {
     fontWeight: '700',

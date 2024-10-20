@@ -2,11 +2,17 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
+import {GameCategory} from '~/utils/types';
 
 export type RootStackParamList = {
   Home: undefined;
   NewGame: undefined;
-  WordGame: {maxAttempts: number; wordLength: number; enableTimer?: boolean};
+  WordGame: {
+    maxAttempts: number;
+    wordLength: number;
+    enableTimer?: boolean;
+    category: GameCategory;
+  };
   UserInfo: {user: string};
 };
 
