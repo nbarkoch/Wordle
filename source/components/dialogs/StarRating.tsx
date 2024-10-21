@@ -18,13 +18,7 @@ const StarRating = ({rating = 3, width = 300, height = 100}) => {
   const spacing = (width - starSize * 3) / 4;
 
   const stars = [0, 1, 2].map(i => (
-    <StarComponent
-      key={i}
-      i={i}
-      rating={rating}
-      starSize={starSize}
-      spacing={spacing}
-    />
+    <StarComponent key={i} i={i} rating={rating} starSize={starSize} />
   ));
 
   return <View style={[styles.container, {width, height}]}>{stars}</View>;
@@ -34,12 +28,10 @@ const StarComponent = ({
   i,
   rating,
   starSize,
-  spacing,
 }: {
   i: number;
   rating: number;
   starSize: number;
-  spacing: number;
 }) => {
   const scale = useSharedValue(0);
   const fillOpacity = useSharedValue(0);
@@ -47,7 +39,6 @@ const StarComponent = ({
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{scale: scale.value}],
-      marginLeft: i === 0 ? 0 : spacing,
     };
   });
 
@@ -85,7 +76,7 @@ const StarComponent = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'center',
     alignItems: 'center',
   },

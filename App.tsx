@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
+import {Platform, SafeAreaView, StatusBar} from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
 import GameScreen from './source/screens/WordleGame';
 import {NavigationContainer} from '@react-navigation/native';
@@ -8,6 +8,7 @@ import HomeScreen from '~/screens/Home';
 import {RootStackParamList} from '~/navigation/types';
 import NewGameScreen from '~/screens/NewGame';
 import GameBannerAd from '~/components/ads/GameBannerAd';
+import {I18nManager} from 'react-native';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,7 +20,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 mobileAds()
   .initialize()
   .then(_ => {
-    // Initialization complete
+    I18nManager.allowRTL(false);
   });
 
 const App = () => {
@@ -29,8 +30,9 @@ const App = () => {
 
   return (
     <>
+      <SafeAreaView style={backgroundStyle} />
+      <StatusBar backgroundColor={'#343D4E'} />
       <NavigationContainer>
-        <StatusBar backgroundColor={backgroundStyle.backgroundColor} />
         <Stack.Navigator
           initialRouteName="Home"
           screenOptions={{

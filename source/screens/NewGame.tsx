@@ -12,6 +12,7 @@ import GameSwitch from '~/components/GameSwitch';
 import CategoryCubes from '~/components/CategoriyCubes';
 import {Difficulty, GameCategory} from '~/utils/types';
 import SelectDifficulty from '~/components/SelectDifficulty';
+import BackButton from '~/components/IconButtons/BackButton';
 
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
@@ -33,7 +34,11 @@ function NewGameScreen({navigation}: NewGameProps) {
     <View style={styles.body}>
       <CanvasBackground />
       <View style={styles.header}>
+        <View style={{width: 50, alignItems: 'center'}}>
+          <BackButton />
+        </View>
         <Text style={styles.title}>{'משחק חדש'}</Text>
+        <View style={{width: 50, alignItems: 'center'}}></View>
       </View>
       <View style={styles.bodyWrap}>
         <ScrollView
@@ -79,7 +84,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {paddingVertical: 20},
+  header: {
+    width: '100%',
+    paddingVertical: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   title: {
     color: colors.lightYellow,
     fontSize: 23,
@@ -105,6 +115,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   subjectText: {
+    textAlign: 'right',
     fontWeight: '700',
     fontSize: 20,
     padding: 10,

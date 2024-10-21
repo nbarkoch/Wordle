@@ -252,8 +252,8 @@ const styles = StyleSheet.create({
   titleContainer: {
     position: 'absolute',
     top: -25,
-    width: 380,
-    alignItems: 'flex-start',
+    width: width + 10,
+    alignItems: 'flex-end',
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,

@@ -29,16 +29,15 @@ function HomeScreen({navigation}: HomeScreenProps) {
         <SkiaGradientText />
       </View>
       <View style={styles.headerLine}>
-        <View>
-          <CoinCostOverlay scoreCost={userScore} />
-          <ProfileIconButton onPress={() => {}} />
-        </View>
-
         <IconButton
           onPress={() => {
             setHowToPlayVisible(true);
           }}
         />
+        <View>
+          <CoinCostOverlay scoreCost={userScore} />
+          <ProfileIconButton onPress={() => {}} />
+        </View>
       </View>
       <View style={styles.body}>
         <MenuButton

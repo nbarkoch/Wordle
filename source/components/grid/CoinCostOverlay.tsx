@@ -12,25 +12,25 @@ function CoinCostOverlay({scoreCost}: CoinCostOverlayProps) {
       style={{
         position: 'absolute',
         padding: 2,
-        backgroundColor: '#FFFFFF60',
+        backgroundColor: '#aaaaaaa0',
         bottom: -5,
-        left: 40,
+        right: 40,
         zIndex: 1,
         borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
       }}>
+      <StarCoin
+        size={13}
+        outerRingColor={colors.yellow}
+        innerCircleColor={colors.lightYellow}
+      />
       <Text
         style={{
           fontSize: 12,
           fontWeight: '900',
           color: colors.white,
         }}>{` ${scoreCost} `}</Text>
-      <StarCoin
-        size={13}
-        outerRingColor={colors.yellow}
-        innerCircleColor={colors.lightYellow}
-      />
     </View>
   );
 }

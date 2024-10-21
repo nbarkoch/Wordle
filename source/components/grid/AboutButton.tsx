@@ -26,7 +26,7 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const height = 34;
   const {userScore} = useScoreStore();
   const timesLeft = Math.floor(userScore / scoreCost);
-  const $disabled = timesLeft === 0 || disabled;
+  const $disabled = (timesLeft === 0 || disabled) && !displayOverlay;
   const color = $disabled ? colors.darkGrey : colors.lightGrey;
 
   return (

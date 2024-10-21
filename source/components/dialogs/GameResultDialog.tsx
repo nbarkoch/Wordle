@@ -185,13 +185,13 @@ const GameResultDialog = ({
                 <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
                   <View style={styles.scoreContainer}>
                     <View style={styles.scoreRow}>
-                      <Text style={styles.scoreValue}>{currentScore}</Text>
                       <Text style={styles.scoreLabel}>{'ניקוד'}</Text>
+                      <Text style={styles.scoreValue}>{currentScore}</Text>
                     </View>
                     <View style={styles.divider} />
                     <View style={[styles.scoreRow]}>
+                      <Text style={[styles.scoreLabel]}>{'זמן משחק'}</Text>
                       <Text style={styles.scoreValue}>{formatTime(time)}</Text>
-                      <Text style={[styles.scoreLabel]}>{'אורך משחק'}</Text>
                     </View>
                   </View>
                 </Animated.View>
@@ -201,15 +201,14 @@ const GameResultDialog = ({
         </View>
         <Animated.View style={[styles.buttonContainer, buttonContainerStyle]}>
           <Pressable
-            style={[styles.button, styles.nextButton]}
-            onPress={onNewGame}>
-            <ChevronRight width={34} height={34} />
-          </Pressable>
-
-          <Pressable
             style={[styles.button, styles.homeButton]}
             onPress={onGoHome}>
             <HomeIcon width={34} height={34} />
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.nextButton]}
+            onPress={onNewGame}>
+            <ChevronRight width={34} height={34} />
           </Pressable>
         </Animated.View>
       </Animated.View>

@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleLocalizationType</key>
+	<string>LTR</string>
 	<key>CFBundleDisplayName</key>
 	<string>CrossWordMega</string>
 	<key>CFBundleExecutable</key>

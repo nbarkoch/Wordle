@@ -71,9 +71,7 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
   });
 
   const ballStyle = useAnimatedStyle(() => ({
-    transform: [
-      {translateX: ballPosition.value - width + height - borderWidth},
-    ],
+    transform: [{translateX: ballPosition.value - borderWidth}],
     backgroundColor: ballColor.value,
   }));
 

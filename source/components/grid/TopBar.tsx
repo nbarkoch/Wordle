@@ -58,20 +58,7 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true, onGoHome}) => {
 
   return (
     <View style={styles.topBar}>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          flexDirection: 'row',
-          gap: 15,
-        }}>
-        <IconButton onPress={onGoHome} width={30} height={30} />
-        <HomeButton onClick={onGoHome} width={30} height={30} />
-      </View>
-      {displayTimer && <Timer />}
       <View style={[styles.topBarScore]}>
-        <StarCoin outerRingColor={textScoreColor} />
         <Animated.Text
           style={[
             styles.topBarScoreText,
@@ -81,6 +68,19 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true, onGoHome}) => {
           {' '}
           {userScore}{' '}
         </Animated.Text>
+        <StarCoin outerRingColor={textScoreColor} />
+      </View>
+      {displayTimer && <Timer />}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          flexDirection: 'row',
+          gap: 15,
+        }}>
+        <HomeButton onClick={onGoHome} width={30} height={30} />
+        <IconButton onPress={onGoHome} width={30} height={30} />
       </View>
     </View>
   );

@@ -61,7 +61,7 @@ function CategoryCubes({category, setCategory}: CategoryCubesProps) {
   return (
     <View
       style={{
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
       }}>

@@ -18,8 +18,8 @@ const Timer: React.FC = () => {
   const {time} = useTimerStore();
   return (
     <View style={styles.container}>
+      <Text style={styles.timerText}>{` ${formatTime(time)} `}</Text>
       <TimerIcon size={24} fillColor={color} />
-      <Text style={styles.timerText}>{` ${formatTime(time)}`}</Text>
     </View>
   );
 };

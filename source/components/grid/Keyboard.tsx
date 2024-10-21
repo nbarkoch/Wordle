@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   keyboardRow: {
     width: '100%',
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
   },
   wideKey: {
     width: 45,
