@@ -1,5 +1,7 @@
-import React, {memo, useCallback, useMemo} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import React, {memo, useMemo} from 'react';
+import {Pressable, StyleSheet} from 'react-native';
+import {Canvas, Text, useFont, Group} from '@shopify/react-native-skia';
+import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import {Correctness} from '~/utils/ui';
 
@@ -13,7 +15,6 @@ interface CellProps {
 }
 
 const getColor = (status: Correctness | undefined) => {
-  'worklet';
   switch (status) {
     case 'correct':
       return colors.green;
@@ -27,7 +28,6 @@ const getColor = (status: Correctness | undefined) => {
 };
 
 const getHintColor = (status: Correctness | undefined) => {
-  'worklet';
   switch (status) {
     case 'correct':
       return colors.lightGreen;
@@ -47,6 +47,8 @@ type HintInfo =
     }
   | undefined;
 
+const CELL_SIZE = 45;
+
 function Cell({
   letter,
   viewed,
@@ -55,51 +57,74 @@ function Cell({
   selected = false,
   hint,
 }: CellProps) {
-  const animatedStyle = useMemo(() => {
-    const backgroundColor = viewed
-      ? getColor(viewed)
-      : hint
-      ? getHintColor(hint?.correctness)
-      : colors.lightGrey;
+  const font = useFont(require('~/assets/fonts/ganclm_bold-webfont.ttf'), 30);
 
-    const rotation = viewed ? 180 : 0;
+  const backgroundColor = viewed
+    ? getColor(viewed)
+    : hint
+    ? getHintColor(hint?.correctness)
+    : colors.lightGrey;
 
+  const textColor = viewed
+    ? colors.white
+    : hint && !letter
+    ? colors.grey
+    : colors.darkGrey;
+
+  const animatedStyle = useAnimatedStyle(() => {
     return {
       backgroundColor,
-      transform: [{rotateX: `${rotation}deg`}],
-      borderWidth: selected ? 3 : 0,
+      borderWidth: withTiming(selected ? 3 : 0, {duration: 150}),
       borderColor: isCurrentRow ? colors.gold : colors.blue,
+      transform: [
+        {
+          rotateX: viewed ? '180deg' : '0deg',
+        },
+      ],
     };
-  }, [hint, viewed, selected]);
+  }, [backgroundColor, selected, isCurrentRow, viewed]);
 
-  const letterStyle = useMemo(() => {
-    if (viewed) {
-      return {color: colors.white};
-    }
-    if (hint && !letter) {
-      return {color: colors.grey};
-    }
-    return {color: colors.darkGrey};
-  }, [hint, viewed, letter]);
+  const displayText = letter || hint?.letter || '';
+
+  const textPosition = useMemo(() => {
+    if (!font) return {x: CELL_SIZE / 2, y: CELL_SIZE / 2};
+    const measurement = font.measureText(displayText);
+    const x = (CELL_SIZE - measurement.width) / 2;
+    const y = measurement.height - 13 + (CELL_SIZE - measurement.height); // Slight adjustment for visual centering
+    return {x, y};
+  }, [font, displayText]);
+
+  if (!font) {
+    return <Animated.View style={[styles.cell, animatedStyle]} />;
+  }
 
   return (
     <Pressable
       style={styles.pressable}
       disabled={!isCurrentRow && viewed === null}
       onPress={onLetterSelected}>
-      <View style={[styles.cell, animatedStyle]}>
-        <Text style={[styles.letter, letterStyle]}>
-          {letter || hint?.letter}
-        </Text>
-      </View>
+      <Animated.View style={[styles.cell, animatedStyle]}>
+        <Canvas style={styles.canvas}>
+          <Group>
+            <Text
+              x={textPosition.x}
+              y={textPosition.y}
+              text={displayText}
+              font={font}
+              color={textColor}
+              opacity={1}
+            />
+          </Group>
+        </Canvas>
+      </Animated.View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   cell: {
-    width: 45,
-    height: 45,
+    width: CELL_SIZE,
+    height: CELL_SIZE,
     borderRadius: 17,
     marginVertical: 4,
     marginHorizontal: 5,
@@ -109,11 +134,11 @@ const styles = StyleSheet.create({
   pressable: {
     zIndex: 10,
   },
-  letter: {
-    fontSize: 28,
-    fontWeight: '900',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
+  canvas: {
+    position: 'absolute',
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    borderRadius: 17,
   },
 });
 

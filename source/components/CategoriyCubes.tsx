@@ -37,6 +37,7 @@ function GameCategoryCube({
             fontSize: 19,
             fontWeight: '900',
             color: 'white',
+            textAlign: 'right',
           }}>
           {mapCategoryName[category]}
         </Text>

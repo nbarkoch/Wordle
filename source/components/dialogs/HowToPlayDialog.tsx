@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -24,7 +31,8 @@ import HintWordButton from '../grid/HintWordsButton';
 import AboutButton from '../grid/AboutButton';
 
 const {width, height} = Dimensions.get('window');
-
+const dialogWidth = width - 60;
+const dialogHeight = height - (Platform.OS === 'ios' ? 200 : 100);
 interface HowToPlayDialogProps {
   isVisible: boolean;
   onClose: () => void;
@@ -120,17 +128,27 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
 
   return (
     <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
-      <Animated.View style={[styles.overlayDialog, animatedStyle]}>
+      <Animated.View style={[animatedStyle]}>
         <View style={styles.dialogWrapper}>
           <Canvas style={styles.canvas}>
-            <RoundedRect x={0} y={0} width={300} height={height - 100} r={20}>
+            <RoundedRect
+              x={0}
+              y={0}
+              width={dialogWidth}
+              height={dialogHeight}
+              r={20}>
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(300, 300)}
                 colors={['#BBB6A6', '#e0b87f', '#BBB6A6']}
               />
             </RoundedRect>
-            <RoundedRect x={5} y={5} width={290} height={height - 110} r={15}>
+            <RoundedRect
+              x={5}
+              y={5}
+              width={dialogWidth - 10}
+              height={dialogHeight - 10}
+              r={15}>
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(0, 300)}
@@ -153,14 +171,14 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                   {'הצבעים מראים רמז לאחר כל ניחוש'}
                 </Text>
                 <Text style={styles.text}>{'דוגמה:'}</Text>
-                <View style={{transform: [{scale: 0.8}]}}>
+                <View style={{transform: [{scale: 0.8}], padding: 5}}>
                   <RowMockUp
                     letters={['מ', 'י', 'ל', 'י', 'ם']}
                     correctness={[null, null, null, null, null]}
                   />
                 </View>
                 <Text style={styles.text}>{'הניחוש שלך:'}</Text>
-                <View style={{transform: [{scale: 0.8}]}}>
+                <View style={{transform: [{scale: 0.8}], padding: 5}}>
                   <RowMockUp
                     letters={['מ', 'י', 'ל', 'י', 'ם']}
                     correctness={[
@@ -191,7 +209,6 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                 <Text style={styles.text}>{'כפתורי רמז:'}</Text>
                 <View style={styles.row}>
                   <HintWordButton onHintRequested={() => {}} scoreCost={0} />
-                  <View style={styles.padder} />
                   <AboutButton onInfoRequested={() => {}} scoreCost={0} />
                 </View>
                 <Text style={styles.text}>{'שימוש ברמזים עולה נקודות'}</Text>
@@ -216,46 +233,38 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
 
 const styles = StyleSheet.create({
   overlay: {
-    width,
-    height,
+    width: '100%',
+    height: '100%',
     position: 'absolute',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
   },
-  overlayDialog: {
-    width,
-    height,
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1001,
-  },
   dialogWrapper: {
-    width: 300,
-    height: height - 100,
     padding: 3,
     elevation: 6,
+    width: dialogWidth,
+    height: dialogHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   canvas: {
     position: 'absolute',
-    width: 300,
-    height: height - 100,
+    width: dialogWidth,
+    height: dialogHeight,
   },
   dialog: {
-    height: '100%',
-    borderRadius: 17,
     alignItems: 'center',
     paddingTop: 30,
+    width: dialogWidth,
+    height: dialogHeight,
   },
   titleContainer: {
     position: 'absolute',
-    top: -25,
-    width: width + 10,
+    top: -20,
+    width: dialogWidth + 35,
     alignItems: 'flex-end',
-    paddingHorizontal: 20,
-    paddingVertical: 5,
     borderRadius: 15,
   },
   introduction: {
@@ -282,7 +291,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: colors.gold,
     marginHorizontal: 10,
-    marginVertical: 10,
+    marginVertical: 20,
   },
   title: {
     color: colors.lightYellow,
@@ -295,10 +304,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     alignItems: 'center',
   },
-  padder: {
-    width: 30,
-  },
-  row: {flexDirection: 'row', padding: 10},
+  row: {flexDirection: 'row', padding: 10, gap: 30},
 });
 
 export default HowToPlayDialog;

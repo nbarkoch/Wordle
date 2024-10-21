@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: '900',
+    paddingTop: Platform.OS === 'ios' ? 3 : 0,
   },
 });
 
