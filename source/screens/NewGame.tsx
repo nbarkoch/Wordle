@@ -10,12 +10,14 @@ import {colors} from '~/utils/colors';
 import SelectNumber from '~/components/SelectorNumber';
 import GameSwitch from '~/components/GameSwitch';
 import CategoryCubes from '~/components/CategoriyCubes';
-import {GameCategory} from '~/utils/types';
+import {Difficulty, GameCategory} from '~/utils/types';
+import SelectDifficulty from '~/components/SelectDifficulty';
 
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
   const [wordLength, setWordLength] = useState<number>(5);
   const [category, setCategory] = useState<GameCategory>('ALL');
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [enableTimer, setEnableTimer] = useState<boolean>(false);
   const onStartGame = useCallback(() => {
     navigation.replace('WordGame', {
@@ -23,8 +25,9 @@ function NewGameScreen({navigation}: NewGameProps) {
       wordLength,
       enableTimer,
       category,
+      difficulty,
     });
-  }, [navigation, wordLength, enableTimer, category]);
+  }, [navigation, wordLength, enableTimer, category, difficulty]);
 
   return (
     <View style={styles.body}>
@@ -47,6 +50,8 @@ function NewGameScreen({navigation}: NewGameProps) {
               }}
             />
           </View>
+          <Text style={styles.subjectText}>{'רמת קושי: '}</Text>
+          <SelectDifficulty selected={difficulty} setSelected={setDifficulty} />
           <Text style={styles.subjectText}>{'אורך מילה: '}</Text>
           <SelectNumber selected={wordLength} setSelected={setWordLength} />
           <Text style={styles.subjectText}>{'הצג שעון עצר:'}</Text>

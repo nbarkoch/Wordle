@@ -2,7 +2,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {GameCategory} from '~/utils/types';
+import {Difficulty, GameCategory} from '~/utils/types';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -12,6 +12,7 @@ export type RootStackParamList = {
     wordLength: number;
     enableTimer?: boolean;
     category: GameCategory;
+    difficulty: Difficulty;
   };
   UserInfo: {user: string};
 };

@@ -22,35 +22,45 @@ import sports3 from '~/database/sports_3.json';
 import sports4 from '~/database/sports_4.json';
 import sports5 from '~/database/sports_5.json';
 
-import {GameCategory} from '~/utils/types';
+import {Difficulty, GameCategory} from '~/utils/types';
 
-type CategoryWords = {[key: number]: Record<string, string>};
+type DifficultySections = {
+  easy: Record<string, string>;
+  medium: Record<string, string>;
+  hard: Record<string, string>;
+};
 
-const all: {[key: number]: Record<string, string>} = {
+type CategoryWords = {
+  [key: number]: DifficultySections;
+};
+
+const all: {
+  [key: number]: DifficultySections;
+} = {
   3: all3,
   4: all4,
   5: all5,
 };
 
-const science: {[key: number]: Record<string, string>} = {
+const science: {[key: number]: DifficultySections} = {
   3: science3,
   4: science4,
   5: science5,
 };
 
-const animals: {[key: number]: Record<string, string>} = {
+const animals: {[key: number]: DifficultySections} = {
   3: animals3,
   4: animals4,
   5: animals5,
 };
 
-const geography: {[key: number]: Record<string, string>} = {
+const geography: {[key: number]: DifficultySections} = {
   3: geography3,
   4: geography4,
   5: geography5,
 };
 
-const sports: {[key: number]: Record<string, string>} = {
+const sports: {[key: number]: DifficultySections} = {
   3: sports3,
   4: sports4,
   5: sports5,
@@ -69,21 +79,26 @@ type WordHandle = {selectedWord: string; about: string};
 const newSecretWord = (
   wordLength: number,
   category: GameCategory,
+  difficulty: Difficulty,
 ): WordHandle => {
-  const validWords = wordList[category][wordLength];
+  const validWords = wordList[category][wordLength][difficulty];
   const words = Object.keys(validWords);
 
   const selectedWord = words[Math.floor(Math.random() * words.length)];
   return {selectedWord, about: validWords[selectedWord]};
 };
 
-const useSecretWord = (wordLength: number, category: GameCategory) => {
+const useSecretWord = (
+  wordLength: number,
+  category: GameCategory,
+  difficulty: Difficulty,
+) => {
   const [secretWord, setSecretWord] = useState<WordHandle>(
-    newSecretWord(wordLength, category),
+    newSecretWord(wordLength, category, difficulty),
   );
 
   const generateSecretWord = () => {
-    setSecretWord(newSecretWord(wordLength, category));
+    setSecretWord(newSecretWord(wordLength, category, difficulty));
   };
 
   const evaluateGuess = useCallback(

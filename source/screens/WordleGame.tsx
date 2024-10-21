@@ -53,7 +53,13 @@ const {width} = Dimensions.get('window');
 
 const WordleGame: React.FC<WordGameScreenProps> = ({
   route: {
-    params: {maxAttempts, wordLength, enableTimer = false, category},
+    params: {
+      maxAttempts,
+      wordLength,
+      enableTimer = false,
+      category,
+      difficulty,
+    },
   },
 }) => {
   const initialState: GameState = {
@@ -83,7 +89,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     secretWord,
     generateSecretWord,
     hint: aboutWord,
-  } = useSecretWord(wordLength, category);
+  } = useSecretWord(wordLength, category, difficulty);
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
   const confettiRef = useRef<ConfettiOverlayRef>(null);

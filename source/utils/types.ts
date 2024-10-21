@@ -4,3 +4,5 @@ export type GameCategory =
   | 'SCIENCE'
   | 'SPORT'
   | 'GEOGRAPHY';
+
+export type Difficulty = 'hard' | 'medium' | 'easy';

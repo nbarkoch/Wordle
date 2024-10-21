@@ -145,7 +145,7 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
               <View style={styles.titleContainer}>
                 <CloseIcon onPress={onClose} />
               </View>
-              <Text style={styles.title}>{'About Word'}</Text>
+              <Text style={styles.title}>{'רמז על המילה'}</Text>
               <ScrollView
                 horizontal={false}
                 style={styles.scrollView}
