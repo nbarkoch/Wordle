@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
@@ -13,10 +13,28 @@ import {setColorOpacity} from '~/utils/ui';
 import {colors} from '~/utils/colors';
 import CoinCostOverlay from '~/components/grid/CoinCostOverlay';
 import {useScoreStore} from '~/store/useScore';
+import {useDailyGameStore} from '~/store/dailyGameStatus';
 
 function HomeScreen({navigation}: HomeScreenProps) {
+  const {isDone, checkDaily} = useDailyGameStore();
+
+  useEffect(() => {
+    checkDaily();
+  }, [checkDaily]);
+
   const onNewGame = useCallback(() => {
     navigation.navigate('NewGame');
+  }, [navigation]);
+
+  const onDailyGame = useCallback(() => {
+    navigation.navigate('WordGame', {
+      maxAttempts: 6,
+      wordLength: 5,
+      enableTimer: false,
+      category: 'GENERAL',
+      difficulty: 'easy',
+      type: 'DAILY',
+    });
   }, [navigation]);
 
   const onUserInfo = useCallback(() => {
@@ -50,9 +68,10 @@ function HomeScreen({navigation}: HomeScreenProps) {
           color={setColorOpacity(colors.green, 0.7)}
         />
         <SpecialButton
+          disabled={isDone}
           text="חידה יומית"
-          onPress={onNewGame}
-          color={setColorOpacity(colors.blue, 0.5)}
+          onPress={onDailyGame}
+          color={setColorOpacity(isDone ? colors.grey : colors.blue, 0.5)}
         />
       </View>
       <HowToPlayDialog

@@ -27,6 +27,7 @@ function NewGameScreen({navigation}: NewGameProps) {
       enableTimer,
       category,
       difficulty,
+      type: 'RANDOM',
     });
   }, [navigation, wordLength, enableTimer, category, difficulty]);
 

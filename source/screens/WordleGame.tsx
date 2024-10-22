@@ -49,6 +49,7 @@ import gameReducer, {GameState} from '~/gameReducer';
 import showAppOpenAd from '~/components/ads/fullScreenAd';
 import useSound from '~/useSound';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
+import {useDailyGameStore} from '~/store/dailyGameStatus';
 
 const {width} = Dimensions.get('window');
 
@@ -60,6 +61,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       enableTimer = false,
       category,
       difficulty,
+      type: gameType,
     },
   },
 }) => {
@@ -85,12 +87,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
 
-  const {
-    evaluateGuess,
-    secretWord,
-    generateSecretWord,
-    hint: aboutWord,
-  } = useSecretWord(wordLength, category, difficulty);
+  const {evaluateGuess, secretWord, generateSecretWord, aboutWord} =
+    useSecretWord(wordLength, category, difficulty, gameType);
+  const {markDone} = useDailyGameStore();
+
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
@@ -240,6 +240,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       });
 
       if (secretWordRevealed) {
+        if (gameType === 'DAILY') {
+          markDone();
+        }
         dispatch({type: 'END_GAME', status: 'SUCCESS'});
         stop();
         const delayConfetti = setTimeout(() => {
@@ -270,7 +273,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     wordLength,
     addScore,
     maxAttempts,
+    gameType,
     stop,
+    markDone,
     playWrong,
     shakeAnimation,
   ]);
@@ -380,6 +385,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           hint={aboutWord}
           category={category}
           difficulty={difficulty}
+          gameType={gameType}
         />
       </View>
     </View>

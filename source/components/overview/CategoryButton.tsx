@@ -20,16 +20,16 @@ export const CategoryButton = ({
   isActive,
 }: CategoryButtonProps) => (
   <>
-    <BasePressable style={styles.container} onPress={onPress}>
-      <Text
+    <BasePressable style={[styles.container]} onPress={onPress}>
+      <View
         style={[
-          styles.text,
-          {backgroundColor: isActive ? colors.lightGold : colors.gold},
+          styles.view,
           isFirst && styles.firstButton,
           isLast && styles.lastButton,
+          {backgroundColor: isActive ? colors.lightGold : colors.gold},
         ]}>
-        {title}
-      </Text>
+        <Text style={[styles.text]}>{title}</Text>
+      </View>
     </BasePressable>
     {!isLast && <View style={styles.divider} />}
   </>
@@ -38,6 +38,11 @@ export const CategoryButton = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  view: {
+    height: 40,
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   text: {
     textAlign: 'center',

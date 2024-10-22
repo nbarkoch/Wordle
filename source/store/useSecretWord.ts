@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 
 import {Correctness} from '~/utils/ui';
 
@@ -76,6 +76,41 @@ const wordList: Record<GameCategory, CategoryWords> = {
 
 type WordHandle = {selectedWord: string; about: string};
 
+function getDailyWord(): WordHandle {
+  // Combine easy and medium words
+  const wordPool: Record<string, string> = {
+    ...general5.easy,
+  };
+
+  // Get today's date and create a seed
+  const today = new Date();
+  const dateString = `${today.getFullYear()}-${
+    today.getMonth() + 1
+  }-${today.getDate()}`;
+
+  // Create a deterministic hash from the date string
+  let hash = 0;
+  for (let i = 0; i < dateString.length; i++) {
+    const char = dateString.charCodeAt(i);
+    // eslint-disable-next-line no-bitwise
+    hash = (hash << 5) - hash + char;
+    // eslint-disable-next-line no-bitwise
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+
+  // Get all possible words
+  const words = Object.keys(wordPool);
+
+  // Use the hash to select today's word
+  const index = Math.abs(hash) % words.length;
+  const selectedWord = words[index];
+
+  return {
+    selectedWord,
+    about: wordPool[selectedWord],
+  };
+}
+
 const newSecretWord = (
   wordLength: number,
   category: GameCategory,
@@ -92,13 +127,18 @@ const useSecretWord = (
   wordLength: number,
   category: GameCategory,
   difficulty: Difficulty,
+  type: 'DAILY' | 'RANDOM',
 ) => {
-  const [secretWord, setSecretWord] = useState<WordHandle>(
+  const [randomWord, setRandomWord] = useState<WordHandle>(
     newSecretWord(wordLength, category, difficulty),
   );
 
+  const secretWord = useMemo(() => {
+    return type === 'DAILY' ? getDailyWord() : randomWord;
+  }, [randomWord, type]);
+
   const generateSecretWord = () => {
-    setSecretWord(newSecretWord(wordLength, category, difficulty));
+    setRandomWord(newSecretWord(wordLength, category, difficulty));
   };
 
   const evaluateGuess = useCallback(
@@ -131,7 +171,7 @@ const useSecretWord = (
 
   return {
     secretWord: secretWord.selectedWord,
-    hint: secretWord.about,
+    aboutWord: secretWord.about,
     evaluateGuess,
     generateSecretWord,
   };

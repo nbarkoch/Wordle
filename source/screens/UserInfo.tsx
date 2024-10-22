@@ -60,7 +60,6 @@ export default function UserInfo() {
             onCategoryChange={setActiveCategory}
             shouldScroll={shouldScroll}
           />
-
           <ScrollView
             style={styles.wordsScroll}
             contentContainerStyle={styles.wordsContainer}>

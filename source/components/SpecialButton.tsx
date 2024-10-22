@@ -8,9 +8,15 @@ interface SpecialButtonProps {
   onPress: () => void;
   text: string;
   color: string;
+  disabled?: boolean;
 }
 
-function SpecialButton({onPress, text, color}: SpecialButtonProps) {
+function SpecialButton({
+  onPress,
+  text,
+  color,
+  disabled = false,
+}: SpecialButtonProps) {
   const [buttonDimensions, setButtonDimensions] = useState({
     width: 0,
     height: 0,
@@ -23,7 +29,7 @@ function SpecialButton({onPress, text, color}: SpecialButtonProps) {
   }, []);
 
   return (
-    <BasePressable onPress={onPress}>
+    <BasePressable disabled={disabled} onPress={onPress}>
       <View style={styles.button2}>
         {buttonDimensions.width > 0 && buttonDimensions.height > 0 && (
           <StripePattern

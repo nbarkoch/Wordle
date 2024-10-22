@@ -39,6 +39,7 @@ interface GameResultDialogProps {
   hint: string;
   category: GameCategory;
   difficulty: Difficulty;
+  gameType: 'DAILY' | 'RANDOM';
 }
 
 const GameResultDialog = ({
@@ -51,6 +52,7 @@ const GameResultDialog = ({
   hint,
   category,
   difficulty,
+  gameType,
 }: GameResultDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -222,11 +224,13 @@ const GameResultDialog = ({
             onPress={onGoHome}>
             <HomeIcon width={34} height={34} />
           </Pressable>
-          <Pressable
-            style={[styles.button, styles.nextButton]}
-            onPress={onNewGame}>
-            <ChevronRight width={34} height={34} />
-          </Pressable>
+          {gameType === 'RANDOM' && (
+            <Pressable
+              style={[styles.button, styles.nextButton]}
+              onPress={onNewGame}>
+              <ChevronRight width={34} height={34} />
+            </Pressable>
+          )}
         </Animated.View>
       </Animated.View>
     </Animated.View>

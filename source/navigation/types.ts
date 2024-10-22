@@ -13,6 +13,7 @@ export type RootStackParamList = {
     enableTimer?: boolean;
     category: GameCategory;
     difficulty: Difficulty;
+    type: 'RANDOM' | 'DAILY';
   };
   UserInfo: {user: string};
 };
