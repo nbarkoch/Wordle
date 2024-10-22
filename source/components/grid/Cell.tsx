@@ -57,7 +57,7 @@ function Cell({
   selected = false,
   hint,
 }: CellProps) {
-  const font = useFont(require('~/assets/fonts/ganclm_bold-webfont.ttf'), 30);
+  const font = useFont(require('~/assets/fonts/SecularOne-Regular.ttf'), 30);
 
   const backgroundColor = viewed
     ? getColor(viewed)

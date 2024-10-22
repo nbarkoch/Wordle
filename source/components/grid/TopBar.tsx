@@ -18,9 +18,14 @@ import IconButton from '../IconButtons/IconButton';
 interface TopBarProps {
   displayTimer?: boolean;
   onGoHome: () => void;
+  onHowToPlay: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({displayTimer = true, onGoHome}) => {
+const TopBar: React.FC<TopBarProps> = ({
+  displayTimer = true,
+  onGoHome,
+  onHowToPlay,
+}) => {
   const {userScore} = useScoreStore();
   const scaleAnimation = useSharedValue(1);
   const lastUserScore = useRef<number>(userScore);
@@ -80,7 +85,7 @@ const TopBar: React.FC<TopBarProps> = ({displayTimer = true, onGoHome}) => {
           gap: 15,
         }}>
         <HomeButton onClick={onGoHome} width={30} height={30} />
-        <IconButton onPress={onGoHome} width={30} height={30} />
+        <IconButton onPress={onHowToPlay} width={30} height={30} />
       </View>
     </View>
   );

@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -25,
     width: dialogWidth + 70,
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,

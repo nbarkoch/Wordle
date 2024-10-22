@@ -19,6 +19,10 @@ function HomeScreen({navigation}: HomeScreenProps) {
     navigation.navigate('NewGame');
   }, [navigation]);
 
+  const onUserInfo = useCallback(() => {
+    navigation.navigate('UserInfo', {user: ''});
+  }, [navigation]);
+
   const {userScore} = useScoreStore();
 
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
@@ -36,7 +40,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
         />
         <View>
           <CoinCostOverlay scoreCost={userScore} />
-          <ProfileIconButton onPress={() => {}} />
+          <ProfileIconButton onPress={onUserInfo} />
         </View>
       </View>
       <View style={styles.body}>

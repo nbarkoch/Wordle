@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform, SafeAreaView, StatusBar} from 'react-native';
+import {SafeAreaView, StatusBar} from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
 import GameScreen from './source/screens/WordleGame';
 import {NavigationContainer} from '@react-navigation/native';
@@ -9,13 +9,9 @@ import {RootStackParamList} from '~/navigation/types';
 import NewGameScreen from '~/screens/NewGame';
 import GameBannerAd from '~/components/ads/GameBannerAd';
 import {I18nManager} from 'react-native';
+import UserInfoScreen from '~/screens/UserInfo';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-// add achievement screen
-// best time
-// best score
-// revealed words
 
 mobileAds()
   .initialize()
@@ -44,6 +40,7 @@ const App = () => {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="NewGame" component={NewGameScreen} />
           <Stack.Screen name="WordGame" component={GameScreen} />
+          <Stack.Screen name="UserInfo" component={UserInfoScreen} />
         </Stack.Navigator>
         <GameBannerAd />
       </NavigationContainer>

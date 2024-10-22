@@ -25,7 +25,7 @@
     "react-native-reanimated": "3.7.0",
     "react-native-safe-area-context": "^4.11.0",
     "react-native-screens": "^3.34.0",
-    "react-native-sound": "0.11.2",
+    "react-native-sound": "^0.11.2",
     "react-native-svg": "^15.7.1",
     "react-native-svg-transformer": "0.14.3",
     "zustand": "^5.0.0-rc.2"

@@ -25,6 +25,8 @@ import {useTimerStore} from '~/store/useTimerStore';
 import {formatTime} from '../grid/Timer';
 import {colors} from '~/utils/colors';
 import useSound from '~/useSound';
+import {addToRevealedList} from '~/store/revealsStore';
+import {Difficulty, GameCategory} from '~/utils/types';
 
 const {width, height} = Dimensions.get('window');
 interface GameResultDialogProps {
@@ -34,6 +36,9 @@ interface GameResultDialogProps {
   onGoHome: () => void;
   currentScore: number;
   secretWord: string;
+  hint: string;
+  category: GameCategory;
+  difficulty: Difficulty;
 }
 
 const GameResultDialog = ({
@@ -43,6 +48,9 @@ const GameResultDialog = ({
   currentScore,
   secretWord,
   isSuccess,
+  hint,
+  category,
+  difficulty,
 }: GameResultDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -110,6 +118,19 @@ const GameResultDialog = ({
       }
     }
   }, [isSuccess, isVisible]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      addToRevealedList(
+        secretWord,
+        time,
+        currentScore,
+        hint,
+        category,
+        difficulty,
+      );
+    }
+  }, [isVisible]);
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

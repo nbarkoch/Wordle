@@ -48,6 +48,7 @@ import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
 import showAppOpenAd from '~/components/ads/fullScreenAd';
 import useSound from '~/useSound';
+import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 
 const {width} = Dimensions.get('window');
 
@@ -92,6 +93,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   } = useSecretWord(wordLength, category, difficulty);
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
+  const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
   const {isValidWord} = useWordValidator(wordLength);
   const navigation = useNavigation<WordleGameNavigationProp>();
@@ -119,6 +121,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const handleGoHome = useCallback(() => {
     navigation.navigate('Home');
   }, [navigation]);
+
+  const handleHowToPlay = useCallback(() => {
+    setHowToPlayVisible(true);
+  }, []);
 
   useEffect(() => {
     start();
@@ -288,7 +294,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     <View style={styles.container}>
       <CanvasBackground />
       <View style={[styles.content]}>
-        <TopBar displayTimer={enableTimer} onGoHome={handleGoHome} />
+        <TopBar
+          displayTimer={enableTimer}
+          onGoHome={handleGoHome}
+          onHowToPlay={handleHowToPlay}
+        />
         <GradientOverlayScrollView
           upperColor={'#343D4E'}
           bottomColor={'#3A4F6C'}
@@ -348,6 +358,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           </View>
         </View>
         <ConfettiOverlay ref={confettiRef} />
+        <HowToPlayDialog
+          onClose={() => setHowToPlayVisible(false)}
+          isVisible={howToPlayVisible}
+        />
         <AboutWordDialog
           isVisible={gameState.aboutShown && !gameState.isGameEnd}
           onClose={() => dispatch({type: 'SET_ABOUT_SHOWN', shown: false})}
@@ -360,6 +374,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           onGoHome={handleGoHome}
           currentScore={getScore()}
           secretWord={secretWord}
+          hint={aboutWord}
+          category={category}
+          difficulty={difficulty}
         />
       </View>
     </View>
