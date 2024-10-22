@@ -46,7 +46,7 @@ const StripePattern = ({
       false,
     );
     return () => cancelAnimation(offsetX);
-  }, []);
+  }, [offsetX, stripeSpeed, stripeWidth]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -55,7 +55,7 @@ const StripePattern = ({
   });
 
   const stripes = useMemo(() => {
-    const stripes = [];
+    const $stripes: JSX.Element[] = [];
 
     for (let i = -stripeWidth; i < width + compression; i += stripeWidth) {
       const path = Skia.Path.Make();
@@ -65,18 +65,19 @@ const StripePattern = ({
       path.lineTo(i + stripeWidth * compression - stripeWidth, 0);
       path.close();
 
-      stripes.push(
+      $stripes.push(
         <Path
           key={i}
           path={path}
-          color={i % 2 == 0 ? primaryColor : secondaryColor}
+          color={i % 2 === 0 ? primaryColor : secondaryColor}
         />,
       );
     }
-    return stripes;
-  }, [colors]);
+    return $stripes;
+  }, [compression, height, primaryColor, secondaryColor, stripeWidth, width]);
 
   return (
+    // eslint-disable-next-line react-native/no-inline-styles
     <View style={{backgroundColor: primaryColor, overflow: 'hidden', ...style}}>
       <Animated.View style={animatedStyle}>
         <Canvas style={{width: width, height}}>{stripes}</Canvas>

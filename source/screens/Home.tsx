@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
 import SkiaGradientText from '~/components/WordleParagraph';

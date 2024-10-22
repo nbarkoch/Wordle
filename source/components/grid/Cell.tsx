@@ -87,7 +87,9 @@ function Cell({
   const displayText = letter || hint?.letter || '';
 
   const textPosition = useMemo(() => {
-    if (!font) return {x: CELL_SIZE / 2, y: CELL_SIZE / 2};
+    if (!font) {
+      return {x: CELL_SIZE / 2, y: CELL_SIZE / 2};
+    }
     const measurement = font.measureText(displayText);
     const x = (CELL_SIZE - measurement.width) / 2;
     const y = measurement.height - 13 + (CELL_SIZE - measurement.height); // Slight adjustment for visual centering

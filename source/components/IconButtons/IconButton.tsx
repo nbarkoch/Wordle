@@ -1,6 +1,6 @@
 import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {colors} from '~/utils/colors';
 import BasePressable from '../BasePressable';
 
@@ -21,23 +21,21 @@ const IconButton: React.FC<IconButtonProps> = ({
     <BasePressable onPress={onPress}>
       <View
         style={[
+          styles.container,
           {
-            borderColor: colors.green,
             borderWidth: width / 10,
-            borderRadius: 30,
             width: width + 6,
             height: height + 6,
-            justifyContent: 'center',
-            alignItems: 'center',
           },
         ]}>
         <Canvas
-          style={{
-            width,
-            height,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={[
+            styles.canvas,
+            {
+              width,
+              height,
+            },
+          ]}>
           <Group transform={[{scale: width / 29}]}>
             <Path path={magnifierPath} color={colors.green} />
           </Group>
@@ -46,5 +44,18 @@ const IconButton: React.FC<IconButtonProps> = ({
     </BasePressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    borderColor: colors.green,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  canvas: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default IconButton;

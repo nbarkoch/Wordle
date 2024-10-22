@@ -104,8 +104,8 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
       <Animated.View
         style={[
           ballStyle,
+          styles.ball,
           {
-            position: 'absolute',
             width: height - borderWidth * 2 - ballMargin,
             height: height - borderWidth * 2 - ballMargin,
             borderRadius: (height - borderWidth * 2) / 2,
@@ -118,6 +118,8 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  ball: {position: 'absolute'},
+});
 
 export default GameSwitch;

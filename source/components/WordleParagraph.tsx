@@ -8,6 +8,7 @@ import {
   TileMode,
 } from '@shopify/react-native-skia';
 import {colors} from '~/utils/colors';
+import {StyleSheet} from 'react-native';
 
 const WordleParagraph = () => {
   const customFontMgr = useFonts({
@@ -54,10 +55,14 @@ const WordleParagraph = () => {
   }, [customFontMgr]);
 
   return (
-    <Canvas style={{width: 300, height: 80}}>
+    <Canvas style={styles.canvas}>
       <Paragraph paragraph={paragraph} x={0} y={0} width={300} />
     </Canvas>
   );
 };
+
+const styles = StyleSheet.create({
+  canvas: {width: 300, height: 80},
+});
 
 export default WordleParagraph;

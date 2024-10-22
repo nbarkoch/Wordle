@@ -1,24 +1,14 @@
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const GameBannerAd = () => {
-  const backgroundStyle = {
-    backgroundColor: '#33556E',
-  };
-
   const adUnitId = __DEV__
     ? TestIds.BANNER
     : 'YOUR_PRODUCTION_BANNER_AD_UNIT_ID';
 
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: 50,
-        backgroundColor: backgroundStyle.backgroundColor,
-      }}>
+    <View style={styles.banner}>
       <BannerAd
         unitId={adUnitId}
         size={BannerAdSize.BANNER}
@@ -29,5 +19,14 @@ const GameBannerAd = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  banner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 50,
+    backgroundColor: '#33556E',
+  },
+});
 
 export default GameBannerAd;

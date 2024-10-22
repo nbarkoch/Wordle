@@ -29,7 +29,6 @@ const GradientOverlayScrollView: React.FC<GradientOverlayScrollViewProps> = ({
               {
                 backgroundColor: upperColor,
                 opacity: 1 - index / gh,
-                flex: 1,
               },
             ]}
           />
@@ -49,7 +48,6 @@ const GradientOverlayScrollView: React.FC<GradientOverlayScrollViewProps> = ({
               {
                 backgroundColor: bottomColor,
                 opacity: index / gh,
-                flex: 1,
               },
             ]}
           />
@@ -71,6 +69,7 @@ const styles = StyleSheet.create({
   },
   gradientStep: {
     width: '100%',
+    flex: 1,
   },
   topGradient: {
     top: 0,

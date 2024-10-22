@@ -34,21 +34,17 @@ function NewGameScreen({navigation}: NewGameProps) {
     <View style={styles.body}>
       <CanvasBackground />
       <View style={styles.header}>
-        <View style={{width: 50, alignItems: 'center'}}>
+        <View style={styles.centerer}>
           <BackButton />
         </View>
         <Text style={styles.title}>{'משחק חדש'}</Text>
-        <View style={{width: 50, alignItems: 'center'}}></View>
+        <View style={styles.centerer} />
       </View>
       <View style={styles.bodyWrap}>
         <ScrollView
           contentContainerStyle={styles.buttonsContainer}
           style={styles.buttons}>
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'flex-end',
-            }}>
+          <View style={styles.iconAligner}>
             <IconButton
               onPress={() => {
                 setHowToPlayVisible(true);
@@ -129,6 +125,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 5,
     flexWrap: 'wrap',
+  },
+  centerer: {width: 50, alignItems: 'center'},
+  iconAligner: {
+    width: '100%',
+    alignItems: 'flex-end',
   },
 });
 export default NewGameScreen;

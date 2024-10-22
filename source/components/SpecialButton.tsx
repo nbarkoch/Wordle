@@ -30,11 +30,7 @@ function SpecialButton({onPress, text, color}: SpecialButtonProps) {
             width={buttonDimensions.width}
             height={buttonDimensions.height}
             colors={[color, colorOpacity]}
-            style={{
-              position: 'absolute',
-              borderRadius: 50,
-              overflow: 'hidden',
-            }}
+            style={styles.stripe}
             stripeWidth={5}
             compression={5}
           />
@@ -72,6 +68,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '900',
     color: 'white',
+  },
+  stripe: {
+    position: 'absolute',
+    borderRadius: 50,
+    overflow: 'hidden',
   },
 });
 

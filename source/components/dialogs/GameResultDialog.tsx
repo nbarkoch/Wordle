@@ -125,6 +125,7 @@ const GameResultDialog = ({
         playFailure();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isVisible]);
 
   const overlayStyle = useAnimatedStyle(() => ({

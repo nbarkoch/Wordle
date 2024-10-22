@@ -58,7 +58,7 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
     return baseStyle;
   }, [style, baseColor, disabled, isPressed]);
 
-  const $onPress = useCallback(() => onPress(letter ?? ''), [onPress]);
+  const $onPress = useCallback(() => onPress(letter ?? ''), [letter, onPress]);
 
   return (
     <Pressable

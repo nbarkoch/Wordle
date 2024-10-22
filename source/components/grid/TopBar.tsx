@@ -76,14 +76,7 @@ const TopBar: React.FC<TopBarProps> = ({
         <StarCoin outerRingColor={textScoreColor} />
       </View>
       {displayTimer && <Timer />}
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          flexDirection: 'row',
-          gap: 15,
-        }}>
+      <View style={styles.buttons}>
         <HomeButton onClick={onGoHome} width={30} height={30} />
         <IconButton onPress={onHowToPlay} width={30} height={30} />
       </View>
@@ -102,6 +95,13 @@ const styles = StyleSheet.create({
   },
   topBarScore: {flexDirection: 'row-reverse', alignItems: 'center'},
   topBarScoreText: {fontSize: 18, fontWeight: '900'},
+  buttons: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 15,
+  },
 });
 
 export default TopBar;

@@ -109,7 +109,7 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
   }
 
   return (
-    <Pressable style={{position: 'absolute', width, height}} onPress={onClose}>
+    <Pressable style={styles.pressable} onPress={onClose}>
       <Animated.View
         style={[styles.overlay, overlayStyle]}
         pointerEvents="auto">
@@ -163,6 +163,7 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
 };
 
 const styles = StyleSheet.create({
+  pressable: {position: 'absolute', width, height},
   overlay: {
     width,
     height,

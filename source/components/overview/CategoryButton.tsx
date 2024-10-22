@@ -20,7 +20,7 @@ export const CategoryButton = ({
   isActive,
 }: CategoryButtonProps) => (
   <>
-    <BasePressable style={{flex: 1}} onPress={onPress}>
+    <BasePressable style={styles.container} onPress={onPress}>
       <Text
         style={[
           styles.text,
@@ -36,6 +36,9 @@ export const CategoryButton = ({
 );
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   text: {
     textAlign: 'center',
     padding: 10,

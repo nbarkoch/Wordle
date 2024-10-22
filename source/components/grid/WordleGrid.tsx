@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
-import {LetterCellLocation, LineHint, WordGuess} from '~/utils/ui';
+import {LetterCellLocation, LineHint} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';

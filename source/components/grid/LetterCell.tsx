@@ -109,14 +109,15 @@ function LetterCell({
   );
 
   useEffect(() => {
-    if (viewed === viewedState) return;
-    if (viewed) {
-      if (revealed && viewed !== viewedState && viewed === 'correct') {
-        cellOverlayRef.current?.activateOverlay(delay + 500);
+    if (viewed !== viewedState) {
+      if (viewed) {
+        if (revealed && viewed !== viewedState && viewed === 'correct') {
+          cellOverlayRef.current?.activateOverlay(delay + 500);
+        }
+        flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
+      } else {
+        flipValue.value = withTiming(0, {duration: 500});
       }
-      flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
-    } else {
-      flipValue.value = withTiming(0, {duration: 500});
     }
   }, [flipValue, viewed, delay, viewedState, revealed]);
 

@@ -15,7 +15,6 @@ const starPath =
 
 const StarRating = ({rating = 3, width = 300, height = 100}) => {
   const starSize = height * 0.8;
-  const spacing = (width - starSize * 3) / 4;
 
   const stars = [0, 1, 2].map(i => (
     <StarComponent key={i} i={i} rating={rating} starSize={starSize} />

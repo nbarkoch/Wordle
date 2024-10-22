@@ -29,20 +29,18 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   const $disabled = (timesLeft === 0 || disabled) && !displayOverlay;
   const color = $disabled ? colors.darkGrey : colors.lightGrey;
 
+  const containerStyle = {
+    borderColor: $disabled ? '#898989' : colors.darkBlue,
+    backgroundColor: $disabled ? colors.grey : colors.blue,
+  };
+
   return (
     <>
       <BasePressable
-        style={{zIndex: 0}}
+        style={styles.pressable}
         disabled={$disabled}
         onPress={onInfoRequested}>
-        <View
-          style={[
-            styles.container,
-            {
-              borderColor: $disabled ? '#898989' : colors.darkBlue,
-              backgroundColor: $disabled ? colors.grey : colors.blue,
-            },
-          ]}>
+        <View style={[styles.container, containerStyle]}>
           <Canvas style={{width, height}}>
             <Group transform={[{scale: width / 29}]}>
               <Path path={magnifierPath} color={color} opacity={0.85} />
@@ -58,6 +56,7 @@ const AboutButton: React.FC<AboutButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
+  pressable: {zIndex: 0},
   container: {
     borderRadius: 25,
     borderWidth: 2.5,

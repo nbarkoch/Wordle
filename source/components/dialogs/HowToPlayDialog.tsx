@@ -33,6 +33,25 @@ import AboutButton from '../grid/AboutButton';
 const {width, height} = Dimensions.get('window');
 const dialogWidth = width - 60;
 const dialogHeight = height - (Platform.OS === 'ios' ? 200 : 100);
+
+const LineAbout = ({
+  title,
+  info,
+  color,
+}: {
+  title: string;
+  info: string;
+  color: string;
+}) => {
+  return (
+    <Text>
+      <Text style={[styles.boldText, {color}]}>{title}</Text>
+      <Text style={[styles.boldText, {color}]}>{': '}</Text>
+      <Text style={styles.text}>{info}</Text>
+    </Text>
+  );
+};
+
 interface HowToPlayDialogProps {
   isVisible: boolean;
   onClose: () => void;
@@ -104,24 +123,6 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
     opacity: introductionAnimation.value,
   }));
 
-  const LineAbout = ({
-    title,
-    info,
-    color,
-  }: {
-    title: string;
-    info: string;
-    color: string;
-  }) => {
-    return (
-      <Text>
-        <Text style={[styles.boldText, {color}]}>{title}</Text>
-        <Text style={[styles.boldText, {color}]}>{': '}</Text>
-        <Text style={styles.text}>{info}</Text>
-      </Text>
-    );
-  };
-
   if (!block && !isVisible) {
     return null;
   }
@@ -171,14 +172,14 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                   {'הצבעים מראים רמז לאחר כל ניחוש'}
                 </Text>
                 <Text style={styles.text}>{'דוגמה:'}</Text>
-                <View style={{transform: [{scale: 0.8}], padding: 5}}>
+                <View style={styles.adjustment}>
                   <RowMockUp
                     letters={['מ', 'י', 'ל', 'י', 'ם']}
                     correctness={[null, null, null, null, null]}
                   />
                 </View>
                 <Text style={styles.text}>{'הניחוש שלך:'}</Text>
-                <View style={{transform: [{scale: 0.8}], padding: 5}}>
+                <View style={styles.adjustment}>
                   <RowMockUp
                     letters={['מ', 'י', 'ל', 'י', 'ם']}
                     correctness={[
@@ -305,6 +306,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   row: {flexDirection: 'row', padding: 10, gap: 30},
+  adjustment: {transform: [{scale: 0.8}], padding: 5},
 });
 
 export default HowToPlayDialog;

@@ -111,13 +111,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     generateSecretWord();
     setScore(0);
     global.gc?.();
-  }, [reset, generateSecretWord, setScore]);
+  }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
     showAppOpenAd(start);
     resetGame();
-    start();
-  }, [resetGame]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleGoHome = useCallback(() => {
     navigation.navigate('Home');
@@ -130,6 +130,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   useEffect(() => {
     start();
     return resetGame;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onHintRequested = useCallback(async () => {
@@ -175,7 +176,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         dispatch({type: 'SET_LINE_SEARCH', search: undefined});
       }
     },
-    [gameState.guesses],
+    [gameState.currentAttempt, gameState.guesses],
   );
 
   const onInfoRequested = useCallback(async () => {
@@ -260,12 +261,17 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       );
     }
   }, [
-    gameState,
+    gameState.isValidGuess,
+    gameState.currentGuess,
+    gameState.correctLetters,
+    gameState.currentAttempt,
+    playSubmit,
     evaluateGuess,
     wordLength,
-    maxAttempts,
     addScore,
+    maxAttempts,
     stop,
+    playWrong,
     shakeAnimation,
   ]);
 
@@ -304,11 +310,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           upperColor={'#343D4E'}
           bottomColor={'#3A4F6C'}
           gradientHeight={20}
-          contentContainerStyle={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100%',
-          }}>
+          contentContainerStyle={styles.scrollViewContent}>
           <Animated.View
             style={[
               styles.gridContainer,
@@ -407,6 +409,11 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 10,
     flex: 1,
+  },
+  scrollViewContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100%',
   },
   footer: {
     width: width,

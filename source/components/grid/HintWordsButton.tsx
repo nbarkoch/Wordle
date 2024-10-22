@@ -30,20 +30,17 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
   const disabled = hintsLeft === 0;
   const color = disabled ? colors.darkGrey : colors.lightGold;
 
+  const containerStyle = {
+    borderColor: disabled ? '#898989' : colors.darkYellow,
+    backgroundColor: disabled ? colors.grey : colors.yellow,
+  };
   return (
     <>
       <BasePressable
-        style={{zIndex: 0}}
+        style={styles.pressable}
         disabled={disabled}
         onPress={onHintRequested}>
-        <View
-          style={[
-            styles.container,
-            {
-              borderColor: disabled ? '#898989' : colors.darkYellow,
-              backgroundColor: disabled ? colors.grey : colors.yellow,
-            },
-          ]}>
+        <View style={[styles.container, containerStyle]}>
           <Canvas style={{width, height}}>
             <Group
               transform={[
@@ -77,6 +74,7 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
+  pressable: {zIndex: 0},
   container: {
     borderRadius: 25,
     borderWidth: 2.5,
