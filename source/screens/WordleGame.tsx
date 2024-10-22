@@ -15,9 +15,9 @@ import Animated, {
   withSequence,
 } from 'react-native-reanimated';
 import WordleGrid from '~/components/grid/WordleGrid';
-import useWordValidator from '~/database/useWordValidator';
+import useWordValidator from '~/store/useWordValidator';
 import Keyboard from '~/components/grid/Keyboard';
-import useSecretWord from '~/database/useSecretWord';
+import useSecretWord from '~/store/useSecretWord';
 import {
   calculateHintForLetter,
   giveHint,
