@@ -17,7 +17,7 @@ import BackButton from '~/components/IconButtons/BackButton';
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
   const [wordLength, setWordLength] = useState<number>(5);
-  const [category, setCategory] = useState<GameCategory>('ALL');
+  const [category, setCategory] = useState<GameCategory>('GENERAL');
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [enableTimer, setEnableTimer] = useState<boolean>(false);
   const onStartGame = useCallback(() => {

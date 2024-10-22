@@ -23,7 +23,7 @@ export const WordCard = ({word, time, score, onPress}: WordCardProps) => {
             <LinearGradient
               start={vec(0, 0)}
               end={vec(0, 100)}
-              colors={['#e0b87fa0', '#bc822380']}
+              colors={['#ffffff60', '#ffffff09']}
             />
           </Rect>
         </Canvas>
@@ -32,12 +32,12 @@ export const WordCard = ({word, time, score, onPress}: WordCardProps) => {
           <StarCoin
             size={13}
             outerRingColor={colors.darkYellow}
-            innerCircleColor={colors.white}
+            innerCircleColor={colors.lightYellow}
           />
           <Text style={styles.scoreText}>{` ${score} `}</Text>
         </View>
         <View style={styles.row}>
-          <TimerIcon size={13} fillColor={colors.white} />
+          <TimerIcon size={13} fillColor={colors.lightGrey} />
           <Text style={styles.timeText}>{` ${formatTime(time)} `}</Text>
         </View>
       </View>
@@ -48,9 +48,7 @@ export const WordCard = ({word, time, score, onPress}: WordCardProps) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#e0b87fff',
+    borderRadius: 15,
     overflow: 'hidden',
     width: 90,
     height: 90,

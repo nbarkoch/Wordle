@@ -1,10 +1,10 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useState} from 'react';
 
 import {Correctness} from '~/utils/ui';
 
-import all3 from '~/database/all_3.json';
-import all4 from '~/database/all_4.json';
-import all5 from '~/database/all_5.json';
+import general3 from '~/database/all_3.json';
+import general4 from '~/database/all_4.json';
+import general5 from '~/database/all_5.json';
 
 import geography3 from '~/database/geography_3.json';
 import geography4 from '~/database/geography_4.json';
@@ -34,12 +34,12 @@ type CategoryWords = {
   [key: number]: DifficultySections;
 };
 
-const all: {
+const general: {
   [key: number]: DifficultySections;
 } = {
-  3: all3,
-  4: all4,
-  5: all5,
+  3: general3,
+  4: general4,
+  5: general5,
 };
 
 const science: {[key: number]: DifficultySections} = {
@@ -67,7 +67,7 @@ const sports: {[key: number]: DifficultySections} = {
 };
 
 const wordList: Record<GameCategory, CategoryWords> = {
-  ALL: all,
+  GENERAL: general,
   SCIENCE: science,
   GEOGRAPHY: geography,
   ANIMALS: animals,
@@ -126,7 +126,7 @@ const useSecretWord = (
 
       return evaluation;
     },
-    [secretWord, wordLength, category],
+    [secretWord, wordLength],
   );
 
   return {

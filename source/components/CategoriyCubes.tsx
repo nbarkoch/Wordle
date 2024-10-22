@@ -1,11 +1,11 @@
-import {Dispatch, SetStateAction} from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 import {Text, View} from 'react-native';
 import {colors} from '~/utils/colors';
 import BasePressable from './BasePressable';
 import {GameCategory} from '~/utils/types';
 
 const mapCategoryName: Record<GameCategory, string> = {
-  ALL: 'הכל',
+  GENERAL: 'ידע כללי',
   ANIMALS: 'בעלי חיים',
   GEOGRAPHY: 'גאוגרפיה',
   SCIENCE: 'מדעים',
@@ -53,7 +53,7 @@ interface CategoryCubesProps {
 
 function CategoryCubes({category, setCategory}: CategoryCubesProps) {
   const categories: GameCategory[] = [
-    'ALL',
+    'GENERAL',
     'ANIMALS',
     'GEOGRAPHY',
     'SCIENCE',

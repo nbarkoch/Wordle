@@ -15,7 +15,7 @@ type WordSection = {
 };
 
 type WordHierarchy = {
-  ALL: WordSection;
+  GENERAL: WordSection;
   ANIMALS: WordSection;
   SCIENCE: WordSection;
   SPORT: WordSection;
@@ -31,7 +31,7 @@ const createEmptySection = (): WordSection => ({
 });
 
 const createEmptyHierarchy = (): WordHierarchy => ({
-  ALL: createEmptySection(),
+  GENERAL: createEmptySection(),
   ANIMALS: createEmptySection(),
   SCIENCE: createEmptySection(),
   SPORT: createEmptySection(),
@@ -106,10 +106,10 @@ async function getStoredWords(): Promise<WordHierarchy> {
 
     const parsedData = JSON.parse(storedData) as Partial<WordHierarchy>;
     return {
-      ALL: {
-        easy: parsedData.ALL?.easy ?? [],
-        medium: parsedData.ALL?.medium ?? [],
-        hard: parsedData.ALL?.hard ?? [],
+      GENERAL: {
+        easy: parsedData.GENERAL?.easy ?? [],
+        medium: parsedData.GENERAL?.medium ?? [],
+        hard: parsedData.GENERAL?.hard ?? [],
       },
       ANIMALS: {
         easy: parsedData.ANIMALS?.easy ?? [],

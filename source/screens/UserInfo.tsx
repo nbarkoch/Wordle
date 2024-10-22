@@ -18,7 +18,7 @@ import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 
 export default function UserInfo() {
   const {width: windowWidth} = useWindowDimensions();
-  const [activeCategory, setActiveCategory] = useState<GameCategory>('ALL');
+  const [activeCategory, setActiveCategory] = useState<GameCategory>('GENERAL');
   const [aboutWord, setAboutWord] = useState<null | string>(null);
   const [wordsOverview, setWordsOverview] = useState<RevealedWordOverview[]>(
     [],
@@ -26,7 +26,7 @@ export default function UserInfo() {
 
   const categories = useMemo<Array<{title: string; key: GameCategory}>>(
     () => [
-      {title: 'הכל', key: 'ALL'},
+      {title: 'ידע כללי', key: 'GENERAL'},
       {title: 'חיות', key: 'ANIMALS'},
       {title: 'גאוגרפיה', key: 'GEOGRAPHY'},
       {title: 'מדעים', key: 'SCIENCE'},

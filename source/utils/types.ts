@@ -1,5 +1,5 @@
 export type GameCategory =
-  | 'ALL'
+  | 'GENERAL'
   | 'ANIMALS'
   | 'SCIENCE'
   | 'SPORT'

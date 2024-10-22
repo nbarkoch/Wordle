@@ -1,3 +1,4 @@
+import React from 'react';
 import {View} from 'react-native';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
@@ -15,6 +16,7 @@ const GameBannerAd = () => {
       style={{
         justifyContent: 'center',
         alignItems: 'center',
+        minHeight: 50,
         backgroundColor: backgroundStyle.backgroundColor,
       }}>
       <BannerAd

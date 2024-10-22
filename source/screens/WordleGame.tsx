@@ -116,6 +116,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const handleNewGame = useCallback(() => {
     showAppOpenAd(start);
     resetGame();
+    start();
   }, [resetGame]);
 
   const handleGoHome = useCallback(() => {

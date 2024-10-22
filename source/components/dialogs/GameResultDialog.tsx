@@ -113,24 +113,19 @@ const GameResultDialog = ({
     if (isVisible) {
       if (isSuccess) {
         playSuccess();
+        addToRevealedList(
+          secretWord,
+          time,
+          currentScore,
+          hint,
+          category,
+          difficulty,
+        );
       } else {
         playFailure();
       }
     }
   }, [isSuccess, isVisible]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      addToRevealedList(
-        secretWord,
-        time,
-        currentScore,
-        hint,
-        category,
-        difficulty,
-      );
-    }
-  }, [isVisible]);
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
