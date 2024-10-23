@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 10,
     fontWeight: '900',
+    color: colors.darkGrey,
   },
   firstButton: {
     borderTopLeftRadius: 8,
