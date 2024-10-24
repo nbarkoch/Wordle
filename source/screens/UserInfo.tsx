@@ -15,6 +15,7 @@ import {colors} from '~/utils/colors';
 import {CategorySelector} from '~/components/overview/CategorySelector';
 import {WordCard} from '~/components/overview/WordCard';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
+import {MAP_CATEGORY_NAME} from '~/utils/consts';
 
 export default function UserInfo() {
   const {width: windowWidth} = useWindowDimensions();
@@ -26,11 +27,11 @@ export default function UserInfo() {
 
   const categories = useMemo<Array<{title: string; key: GameCategory}>>(
     () => [
-      {title: 'ידע כללי', key: 'GENERAL'},
-      {title: 'חיות', key: 'ANIMALS'},
-      {title: 'גאוגרפיה', key: 'GEOGRAPHY'},
-      {title: 'מדעים', key: 'SCIENCE'},
-      {title: 'ספורט', key: 'SPORT'},
+      {title: MAP_CATEGORY_NAME.GENERAL, key: 'GENERAL'},
+      {title: MAP_CATEGORY_NAME.ANIMALS, key: 'ANIMALS'},
+      {title: MAP_CATEGORY_NAME.GEOGRAPHY, key: 'GEOGRAPHY'},
+      {title: MAP_CATEGORY_NAME.SCIENCE, key: 'SCIENCE'},
+      {title: MAP_CATEGORY_NAME.SPORT, key: 'SPORT'},
     ],
     [],
   );

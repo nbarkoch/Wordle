@@ -35,7 +35,6 @@ export type DetailsScreenProps = NativeStackScreenProps<
   'UserInfo'
 >;
 
-// navigation props
 export type WordleGameNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'WordGame'

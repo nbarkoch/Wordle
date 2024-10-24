@@ -37,10 +37,28 @@ const App = () => {
             animation: 'fade',
             gestureDirection: 'horizontal',
           }}>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="NewGame" component={NewGameScreen} />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              animation: 'slide_from_left',
+            }}
+          />
+          <Stack.Screen
+            name="NewGame"
+            component={NewGameScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
           <Stack.Screen name="WordGame" component={GameScreen} />
-          <Stack.Screen name="UserInfo" component={UserInfoScreen} />
+          <Stack.Screen
+            name="UserInfo"
+            component={UserInfoScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
         </Stack.Navigator>
         <GameBannerAd />
       </NavigationContainer>

@@ -4,6 +4,7 @@ import React from 'react-native';
 import {colors} from '~/utils/colors';
 import BasePressable from '~/components/BasePressable';
 import {Difficulty} from '~/utils/types';
+import {MAP_DIFFICULTY_NAME} from '~/utils/consts';
 
 const DividerVertical = () => <View style={styles.divider} />;
 
@@ -33,19 +34,19 @@ function SelectDifficulty({selected, setSelected}: SelectNumberProps) {
   return (
     <View style={styles.body}>
       <Selector
-        value={'קשה'}
+        value={MAP_DIFFICULTY_NAME.hard}
         selected={selected === 'hard'}
         onSelect={() => setSelected('hard')}
       />
       <DividerVertical />
       <Selector
-        value={'בינוני'}
+        value={MAP_DIFFICULTY_NAME.medium}
         selected={selected === 'medium'}
         onSelect={() => setSelected('medium')}
       />
       <DividerVertical />
       <Selector
-        value={'קל'}
+        value={MAP_DIFFICULTY_NAME.easy}
         selected={selected === 'easy'}
         onSelect={() => setSelected('easy')}
       />

@@ -33,7 +33,11 @@ import ConfettiOverlay, {
   ConfettiOverlayRef,
 } from '~/components/ConfettiOverlay';
 import {useScoreStore} from '~/store/useScore';
-import {ROW_SAVED_DELAY} from '~/utils/consts';
+import {
+  MAP_CATEGORY_NAME,
+  MAP_DIFFICULTY_NAME,
+  ROW_SAVED_DELAY,
+} from '~/utils/consts';
 import HintWordButton from '~/components/grid/HintWordsButton';
 import SubmitButton from '~/components/grid/SubmitButton';
 import AboutButton from '~/components/grid/AboutButton';
@@ -46,11 +50,11 @@ import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
-
 import useSound from '~/useSound';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
 import {showGameRestartAd} from '~/components/ads/fullScreenAd';
+import GameTypeIndicator from '~/components/GameTypeIndicator';
 
 const {width} = Dimensions.get('window');
 
@@ -312,6 +316,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           onGoHome={handleGoHome}
           onHowToPlay={handleHowToPlay}
         />
+        <GameTypeIndicator
+          title={
+            gameType === 'RANDOM'
+              ? `${MAP_CATEGORY_NAME[category]} (${MAP_DIFFICULTY_NAME[difficulty]})`
+              : 'חידה יומית'
+          }
+        />
         <GradientOverlayScrollView
           upperColor={'#343D4E'}
           bottomColor={'#3A4F6C'}
@@ -416,6 +427,7 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 10,
     flex: 1,
+    width: '100%',
   },
   scrollViewContent: {
     alignItems: 'center',
