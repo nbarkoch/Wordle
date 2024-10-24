@@ -5,7 +5,7 @@ import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 const GameBannerAd = () => {
   const adUnitId = __DEV__
     ? TestIds.BANNER
-    : 'YOUR_PRODUCTION_BANNER_AD_UNIT_ID';
+    : 'ca-app-pub-3655197897637289/9135063146';
 
   return (
     <View style={styles.banner}>

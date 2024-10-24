@@ -46,10 +46,11 @@ import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import gameReducer, {GameState} from '~/gameReducer';
-import showAppOpenAd from '~/components/ads/fullScreenAd';
+
 import useSound from '~/useSound';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
+import {showGameRestartAd} from '~/components/ads/fullScreenAd';
 
 const {width} = Dimensions.get('window');
 
@@ -114,7 +115,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
-    showAppOpenAd(start);
+    showGameRestartAd(start);
     resetGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

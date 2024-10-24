@@ -1,32 +1,43 @@
-import {AdEventType, AppOpenAd, TestIds} from 'react-native-google-mobile-ads';
+import {
+  RewardedInterstitialAd,
+  RewardedAdEventType,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 
-const showAppOpenAd = (onClose?: () => void) => {
-  const appOpenAd = AppOpenAd.createForAdRequest(TestIds.APP_OPEN, {
-    requestNonPersonalizedAdsOnly: true,
-  });
+const REWARDED_INTERSTITIAL_ID = __DEV__
+  ? TestIds.REWARDED_INTERSTITIAL
+  : 'ca-app-pub-3655197897637289/5366174687';
 
-  appOpenAd.load();
-
-  const unsubscribeLoaded = appOpenAd.addAdEventListener(
-    AdEventType.LOADED,
-    () => {
-      appOpenAd.show();
+export const showGameRestartAd = (onClose?: () => void) => {
+  const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
+    REWARDED_INTERSTITIAL_ID,
+    {
+      requestNonPersonalizedAdsOnly: true,
+      keywords: ['game', 'puzzle', 'hebrew'],
     },
   );
 
-  const unsubscribeClosed = appOpenAd.addAdEventListener(
-    AdEventType.CLOSED,
-    () => {
+  const unsubscribeLoaded = rewardedInterstitial.addAdEventListener(
+    RewardedAdEventType.LOADED,
+    reward => {
+      console.log(`Ad loaded with reward: ${reward.amount} ${reward.type}`);
+      rewardedInterstitial.show();
+    },
+  );
+
+  const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
+    RewardedAdEventType.EARNED_REWARD,
+    reward => {
+      console.log(`User earned reward: ${reward.amount} ${reward.type}`);
       onClose?.();
-      // Perform any action after the ad is closed
     },
   );
 
-  // Clean up event listeners after a reasonable timeout
+  rewardedInterstitial.load();
+
+  // Cleanup
   setTimeout(() => {
     unsubscribeLoaded();
-    unsubscribeClosed();
-  }, 10000); // Adjust this timeout as needed
+    unsubscribeEarned();
+  }, 10000);
 };
-
-export default showAppOpenAd;
