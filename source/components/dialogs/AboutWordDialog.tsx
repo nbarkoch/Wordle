@@ -109,11 +109,29 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
   }
 
   return (
-    <Pressable style={styles.pressable} onPress={onClose}>
+    <View style={styles.container}>
       <Animated.View
         style={[styles.overlay, overlayStyle]}
-        pointerEvents="auto">
-        <Animated.View style={[styles.overlayDialog, animatedStyle]}>
+        pointerEvents="box-none">
+        <Pressable
+          style={[styles.pressableArea, styles.topPressable]}
+          onPress={onClose}
+        />
+        <Pressable
+          style={[styles.pressableArea, styles.bottomPressable]}
+          onPress={onClose}
+        />
+        <Pressable
+          style={[styles.pressableArea, styles.leftPressable]}
+          onPress={onClose}
+        />
+        <Pressable
+          style={[styles.pressableArea, styles.rightPressable]}
+          onPress={onClose}
+        />
+        <Animated.View
+          style={[styles.overlayDialog, animatedStyle]}
+          pointerEvents="box-none">
           <View style={styles.dialogWrapper}>
             <Canvas style={styles.canvas}>
               <RoundedRect
@@ -141,14 +159,13 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
                 />
               </RoundedRect>
             </Canvas>
-            <View style={styles.dialog}>
+            <View style={styles.dialog} pointerEvents="auto">
               <View style={styles.titleContainer}>
                 <CloseIcon onPress={onClose} />
               </View>
               <Text style={styles.title}>{'רמז על המילה'}</Text>
               <ScrollView
                 horizontal={false}
-                style={styles.scrollView}
                 contentContainerStyle={styles.scrollViewContent}>
                 <Animated.View style={[styles.introduction, introductionStyle]}>
                   <Text style={styles.text}>{hint}</Text>
@@ -158,12 +175,16 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
           </View>
         </Animated.View>
       </Animated.View>
-    </Pressable>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  pressable: {position: 'absolute', width, height},
+  container: {
+    position: 'absolute',
+    width,
+    height,
+  },
   overlay: {
     width,
     height,
@@ -171,7 +192,33 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+  },
+  pressableArea: {
+    position: 'absolute',
+  },
+  topPressable: {
+    top: 0,
+    left: 0,
+    right: 0,
+    height: (height - dialogHeight) / 2,
+  },
+  bottomPressable: {
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: (height - dialogHeight) / 2,
+  },
+  leftPressable: {
+    top: (height - dialogHeight) / 2,
+    left: 0,
+    width: (width - dialogWidth) / 2,
+    height: dialogHeight,
+  },
+  rightPressable: {
+    top: (height - dialogHeight) / 2,
+    right: 0,
+    width: (width - dialogWidth) / 2,
+    height: dialogHeight,
   },
   overlayDialog: {
     width,
@@ -179,7 +226,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1001,
   },
   dialogWrapper: {
     width: dialogWidth,
@@ -210,8 +256,6 @@ const styles = StyleSheet.create({
   introduction: {
     width: '100%',
     flex: 1,
-    padding: 20,
-    marginHorizontal: 10,
     alignItems: 'center',
   },
   text: {
@@ -220,28 +264,17 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     textAlign: 'center',
   },
-  divider: {
-    height: 2,
-    width: '100%',
-    backgroundColor: colors.gold,
-    marginHorizontal: 10,
-    marginVertical: 10,
-  },
   title: {
     color: colors.lightYellow,
     fontSize: 23,
     fontWeight: '900',
   },
-  scrollView: {
-    width: '100%',
-  },
+  scrollView: {},
   scrollViewContent: {
     alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
   },
-  padder: {
-    width: 30,
-  },
-  row: {flexDirection: 'row', padding: 10},
 });
 
 export default AboutWordDialog;
