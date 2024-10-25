@@ -1,12 +1,20 @@
 import React, {memo, Suspense, useEffect, useState} from 'react';
-import {View, StyleSheet, I18nManager, ActivityIndicator} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  I18nManager,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 import {LetterCellLocation, LineHint} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';
+import {colors} from '~/utils/colors';
 
 const LoadingFallback = () => (
   <View style={styles.loading}>
+    <Text style={styles.loadingText}>{'טוען..'}</Text>
     <ActivityIndicator size="large" color="#ffffff80" />
   </View>
 );
@@ -38,7 +46,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
 
   useEffect(() => {
     const loadGameState = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       setIsLoading(false);
     };
     loadGameState();
@@ -100,11 +108,16 @@ const styles = StyleSheet.create({
     flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
   },
   loading: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 200,
+    transform: [{scale: 1.5}],
+    gap: 10,
+    borderRadius: 20,
+    backgroundColor: '#00000025',
+    width: 120,
+    height: 110,
   },
+  loadingText: {color: '#fffffff0', fontWeight: '900', fontSize: 16},
 });
 
 export default memo(SuspendedWordleGrid);

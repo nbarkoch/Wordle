@@ -51,6 +51,7 @@ function LetterCell({
   const flipValue = useSharedValue(0);
   const cellScale = useSharedValue(1);
   const cellOverlayRef = useRef<CellOverlayRef>(null);
+  const cellWasSelected = useRef<boolean>(false);
 
   const [viewedState, setViewedState] = useState<Correctness | undefined>(
     viewed,
@@ -73,6 +74,10 @@ function LetterCell({
   );
 
   useEffect(() => {
+    if (cellWasSelected.current === selected) {
+      return;
+    }
+    cellWasSelected.current = selected;
     if (!selected) {
       cellScale.value = withSequence(
         withTiming(0.97, {duration: 10}),

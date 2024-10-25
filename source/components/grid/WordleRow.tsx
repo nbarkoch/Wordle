@@ -39,7 +39,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
   reveals = Array(wordLength).fill(false),
 }) => {
   const rowOverlayRef = useRef<RowOverlayRef>(null);
-  const scaleAnimation = useSharedValue(1);
+  const scaleAnimation = useSharedValue(0);
 
   useEffect(() => {
     if (shouldShowOverlay) {
