@@ -1,10 +1,15 @@
-import React, {memo} from 'react';
-import {View, StyleSheet, I18nManager} from 'react-native';
-
+import React, {memo, Suspense, useEffect, useState} from 'react';
+import {View, StyleSheet, I18nManager, ActivityIndicator} from 'react-native';
 import {LetterCellLocation, LineHint} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';
+
+const LoadingFallback = () => (
+  <View style={styles.loading}>
+    <ActivityIndicator size="large" color="#ffffff80" />
+  </View>
+);
 
 interface WordleGridProps {
   gameState: GameState;
@@ -28,6 +33,20 @@ const WordleGrid: React.FC<WordleGridProps> = ({
     numberOfSavedRows,
     selectedLetter,
   } = gameState;
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadGameState = async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+    };
+    loadGameState();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
 
   return (
     <View style={styles.grid}>
@@ -65,6 +84,12 @@ const WordleGrid: React.FC<WordleGridProps> = ({
   );
 };
 
+const SuspendedWordleGrid = (props: WordleGridProps) => (
+  <Suspense fallback={<LoadingFallback />}>
+    <WordleGrid {...props} />
+  </Suspense>
+);
+
 const styles = StyleSheet.create({
   grid: {
     flexDirection: 'column',
@@ -74,6 +99,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
   },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200,
+  },
 });
 
-export default memo(WordleGrid);
+export default memo(SuspendedWordleGrid);

@@ -1,43 +1,44 @@
 import {
-  RewardedInterstitialAd,
-  RewardedAdEventType,
+  InterstitialAd,
+  AdEventType,
   TestIds,
 } from 'react-native-google-mobile-ads';
 
-const REWARDED_INTERSTITIAL_ID = __DEV__
-  ? TestIds.REWARDED_INTERSTITIAL
-  : 'ca-app-pub-3655197897637289/5366174687';
+const INTERSTITIAL_ID = __DEV__
+  ? TestIds.INTERSTITIAL
+  : 'ca-app-pub-3655197897637289/1571864948';
 
 export const showGameRestartAd = (onClose?: () => void) => {
-  const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
-    REWARDED_INTERSTITIAL_ID,
-    {
-      requestNonPersonalizedAdsOnly: true,
-      keywords: ['game', 'puzzle', 'hebrew'],
+  const interstitialAd = InterstitialAd.createForAdRequest(INTERSTITIAL_ID, {
+    requestNonPersonalizedAdsOnly: true,
+    keywords: ['game', 'puzzle', 'hebrew'],
+  });
+
+  const unsubscribeLoaded = interstitialAd.addAdEventListener(
+    AdEventType.LOADED,
+    () => {
+      console.log('Interstitial ad loaded successfully');
+      interstitialAd.show();
     },
   );
 
-  const unsubscribeLoaded = rewardedInterstitial.addAdEventListener(
-    RewardedAdEventType.LOADED,
-    reward => {
-      console.log(`Ad loaded with reward: ${reward.amount} ${reward.type}`);
-      rewardedInterstitial.show();
-    },
-  );
-
-  const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
-    RewardedAdEventType.EARNED_REWARD,
-    reward => {
-      console.log(`User earned reward: ${reward.amount} ${reward.type}`);
+  const unsubscribeClosed = interstitialAd.addAdEventListener(
+    AdEventType.CLOSED,
+    () => {
+      console.log('Interstitial ad closed');
       onClose?.();
+      cleanup(); // Unsubscribe when the ad closes
     },
   );
 
-  rewardedInterstitial.load();
+  interstitialAd.load();
 
-  // Cleanup
-  setTimeout(() => {
+  // Cleanup function to remove event listeners
+  const cleanup = () => {
     unsubscribeLoaded();
-    unsubscribeEarned();
-  }, 10000);
+    unsubscribeClosed();
+  };
+
+  // Set a timeout to automatically unsubscribe after 10 seconds
+  setTimeout(cleanup, 10000);
 };

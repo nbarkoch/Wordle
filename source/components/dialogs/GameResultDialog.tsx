@@ -199,8 +199,12 @@ const GameResultDialog = ({
             <StarRating width={270} height={100} rating={rating} />
             {isVisible && (
               <>
-                <Text style={styles.secretWordWas}>{'מילה סודית:'}</Text>
-                <Text style={styles.secretWord}>{secretWord}</Text>
+                {(gameType === 'RANDOM' || isSuccess) && (
+                  <>
+                    <Text style={styles.secretWordWas}>{'מילה סודית:'}</Text>
+                    <Text style={styles.secretWord}>{secretWord}</Text>
+                  </>
+                )}
                 <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
                   <View style={styles.scoreContainer}>
                     <View style={styles.scoreRow}>

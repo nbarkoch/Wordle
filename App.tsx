@@ -51,7 +51,13 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
-          <Stack.Screen name="WordGame" component={GameScreen} />
+          <Stack.Screen
+            name="WordGame"
+            component={GameScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
           <Stack.Screen
             name="UserInfo"
             component={UserInfoScreen}
