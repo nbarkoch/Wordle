@@ -63,6 +63,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkGold,
     width: 3,
   },
-  text: {fontSize: 25, fontWeight: '900', color: colors.darkGold},
+  text: {
+    fontSize: 25,
+    fontFamily: 'Ploni-Bold-AAA',
+    color: colors.darkGold,
+  },
 });
 export default SelectNumber;

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: setColorOpacity(colors.white, 0.75),
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     fontSize: 14,
   },
 });

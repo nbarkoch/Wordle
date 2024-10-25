@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.lightYellow,
     fontSize: 23,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
   },
   bodyWrap: {
     flex: 1,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   subjectText: {
     textAlign: 'right',
-    fontWeight: '700',
+    fontFamily: 'Ploni-Bold-AAA',
     fontSize: 20,
     padding: 10,
     paddingTop: 30,

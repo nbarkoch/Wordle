@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   keyText: {
     fontSize: 22,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
   },
 });
 

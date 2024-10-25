@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     padding: 10,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     color: colors.darkGrey,
   },
   firstButton: {

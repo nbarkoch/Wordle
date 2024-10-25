@@ -40,9 +40,6 @@ const styles = StyleSheet.create({
     borderColor: colors.darkRed,
     backgroundColor: colors.red,
   },
-  text: {
-    fontWeight: '900',
-  },
 });
 
 export default CloseIcon;

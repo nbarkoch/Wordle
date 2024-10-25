@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.lightGrey,
     textAlign: 'center',
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
   },
   divider: {
     height: 2,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.lightYellow,
     fontSize: 23,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
   },
   scrollView: {
     width: '100%',

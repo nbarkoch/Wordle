@@ -81,7 +81,7 @@ const mockUpStyle = StyleSheet.create({
   },
   letter: {
     fontSize: 28,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     includeFontPadding: false,
     textAlignVertical: 'center',
   },

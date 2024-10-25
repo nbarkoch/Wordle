@@ -37,7 +37,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonText: {fontSize: 22, fontWeight: '900', color: 'white'},
+  buttonText: {
+    fontSize: 22,
+    fontFamily: 'Ploni-Bold-AAA',
+    color: 'white',
+  },
 });
 
 export default MenuButton;

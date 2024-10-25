@@ -29,7 +29,7 @@ export const OutlinedText: React.FC<OutlinedTextProps> = ({
         stroke={strokeColor}
         strokeWidth={strokeWidth}
         fontSize={fontSize}
-        fontWeight="900"
+        fontFamily="Ploni-Bold-AAA"
         x={width / 2}
         y={height / 2}
         textAnchor="middle"
@@ -43,7 +43,7 @@ export const OutlinedText: React.FC<OutlinedTextProps> = ({
       <Text
         fill={fillColor}
         fontSize={fontSize}
-        fontWeight="900"
+        fontFamily="Ploni-Bold-AAA"
         x={width / 2}
         y={height / 2}
         textAnchor="middle"

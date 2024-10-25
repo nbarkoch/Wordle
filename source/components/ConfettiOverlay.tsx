@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   feedbackText: {
     fontSize: 40,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     color: colors.white,
     fontStyle: 'italic',
   },

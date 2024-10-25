@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 22,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     color: 'white',
   },
   stripe: {

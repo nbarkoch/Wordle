@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Ploni-Bold-AAA',
   },
   divider: {
     height: 1,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   secretWord: {
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     fontSize: 16,
     color: colors.gold,
   },

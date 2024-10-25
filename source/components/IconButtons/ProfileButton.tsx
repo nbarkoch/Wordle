@@ -39,9 +39,6 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.green,
   },
-  text: {
-    fontWeight: '900',
-  },
 });
 
 export default ProfileIconButton;

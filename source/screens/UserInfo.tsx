@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.lightYellow,
     fontSize: 23,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
   },
   bodyWrap: {
     flex: 1,

@@ -2,12 +2,16 @@
   "migIndex": 1,
   "data": [
     {
-      "path": "source/assets/fonts/GveretLevin-Regular.otf",
-      "sha1": "f58d3b750cb788876b40f464ee3dc67c7c2840c9"
+      "path": "source/assets/fonts/luckiestguy.ttf",
+      "sha1": "e372cd620ff26875dc0b0bfecb39b277323362eb"
     },
     {
-      "path": "source/assets/fonts/VarelaRound-Regular.ttf",
-      "sha1": "9f44418b78583832a55d04964384f2d50689e009"
+      "path": "source/assets/fonts/Ploni-Bold-AAA.ttf",
+      "sha1": "9051c3b13c6006d7ed7d62662c7f626d8e753ff6"
+    },
+    {
+      "path": "source/assets/fonts/Ploni-Demibold-AAA.ttf",
+      "sha1": "a8f85ca73d27f6112267753897f5d240af893889"
     }
   ]
 }

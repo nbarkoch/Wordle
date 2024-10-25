@@ -82,9 +82,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  text: {
-    fontWeight: '900',
-  },
 });
 
 export default HintWordButton;

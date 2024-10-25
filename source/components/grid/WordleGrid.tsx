@@ -117,7 +117,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 110,
   },
-  loadingText: {color: '#fffffff0', fontWeight: '900', fontSize: 16},
+  loadingText: {
+    color: '#fffffff0',
+    fontFamily: 'Ploni-Bold-AAA',
+    fontSize: 16,
+  },
 });
 
 export default memo(SuspendedWordleGrid);

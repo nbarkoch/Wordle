@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: 'white',
     fontSize: 20,
-    fontWeight: '900',
+    fontFamily: 'Ploni-Bold-AAA',
     paddingTop: Platform.OS === 'ios' ? 3 : 0,
   },
 });
