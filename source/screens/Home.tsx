@@ -14,6 +14,7 @@ import {colors} from '~/utils/colors';
 import CoinCostOverlay from '~/components/grid/CoinCostOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
+import VolumeButton from '~/components/IconButtons/VolumeButton';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const {isDone, checkDaily} = useDailyGameStore();
@@ -50,12 +51,16 @@ function HomeScreen({navigation}: HomeScreenProps) {
       <View style={styles.header}>
         <SkiaGradientText />
       </View>
+
       <View style={styles.headerLine}>
-        <HowToPlayButton
-          onPress={() => {
-            setHowToPlayVisible(true);
-          }}
-        />
+        <View style={{flexDirection: 'row', gap: 20}}>
+          <HowToPlayButton
+            onPress={() => {
+              setHowToPlayVisible(true);
+            }}
+          />
+          <VolumeButton onPress={() => {}} />
+        </View>
         <View>
           <CoinCostOverlay scoreCost={userScore} />
           <ProfileIconButton onPress={onUserInfo} />

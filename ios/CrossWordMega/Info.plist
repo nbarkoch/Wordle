@@ -63,8 +63,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>PloniDL1.1AAA-Bold.ttf</string>
-		<string>luckiestguy.ttf</string>
-		<string>PloniDL1.1AAA-D-Bold.ttf</string>
+		<string>LuckiestGuy-Regular.ttf</string>
 	</array>
 </dict>
 </plist>

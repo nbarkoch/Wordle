@@ -12,7 +12,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1533DE9DDA9E41508616AFA2 /* luckiestguy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FEA86466F9594F94B249A243 /* luckiestguy.ttf */; };
+		1533DE9DDA9E41508616AFA2 /* LuckiestGuy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FEA86466F9594F94B249A243 /* LuckiestGuy-Regular.ttf */; };
 		61F9CB3E2CC6548400CA598C /* correct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 61F9CB392CC6548400CA598C /* correct.wav */; };
 		61F9CB3F2CC6548400CA598C /* fail.wav in Resources */ = {isa = PBXBuildFile; fileRef = 61F9CB3A2CC6548400CA598C /* fail.wav */; };
 		61F9CB402CC6548400CA598C /* submit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 61F9CB3B2CC6548400CA598C /* submit.mp3 */; };
@@ -21,7 +21,6 @@
 		61F9CB442CCD645700CA598C /* PloniDL1.1AAA-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61F9CB432CCD645700CA598C /* PloniDL1.1AAA-Bold.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-CrossWordMega-CrossWordMegaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CrossWordMega-CrossWordMegaTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8CED7A7E19564B8198927223 /* PloniDL1.1AAA-D-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F746DBE56E2498F98C67B82 /* PloniDL1.1AAA-D-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,9 +57,8 @@
 		61F9CB432CCD645700CA598C /* PloniDL1.1AAA-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "PloniDL1.1AAA-Bold.ttf"; path = "../source/assets/fonts/PloniDL1.1AAA-Bold.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CrossWordMega/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CrossWordMega-CrossWordMegaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CrossWordMega-CrossWordMegaTests.release.xcconfig"; path = "Target Support Files/Pods-CrossWordMega-CrossWordMegaTests/Pods-CrossWordMega-CrossWordMegaTests.release.xcconfig"; sourceTree = "<group>"; };
-		8F746DBE56E2498F98C67B82 /* PloniDL1.1AAA-D-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PloniDL1.1AAA-D-Bold.ttf"; path = "../source/assets/fonts/PloniDL1.1AAA-D-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FEA86466F9594F94B249A243 /* luckiestguy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = luckiestguy.ttf; path = ../source/assets/fonts/luckiestguy.ttf; sourceTree = "<group>"; };
+		FEA86466F9594F94B249A243 /* LuckiestGuy-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = LuckiestGuy-Regular.ttf; path = ../source/assets/fonts/LuckiestGuy-Regular.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,8 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				56F96624D1FC4CA884DE0869 /* PloniDL1.1AAA-Bold.ttf */,
-				FEA86466F9594F94B249A243 /* luckiestguy.ttf */,
-				8F746DBE56E2498F98C67B82 /* PloniDL1.1AAA-D-Bold.ttf */,
+				FEA86466F9594F94B249A243 /* LuckiestGuy-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -285,8 +282,7 @@
 				61F9CB422CC6548400CA598C /* wrong.mp3 in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				1533DE9DDA9E41508616AFA2 /* luckiestguy.ttf in Resources */,
-				8CED7A7E19564B8198927223 /* PloniDL1.1AAA-D-Bold.ttf in Resources */,
+				1533DE9DDA9E41508616AFA2 /* LuckiestGuy-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,7 +12,7 @@ import {StyleSheet} from 'react-native';
 
 const WordleParagraph = () => {
   const customFontMgr = useFonts({
-    Roboto: [require('~/assets/fonts/luckiestguy.ttf')],
+    Roboto: [require('~/assets/fonts/LuckiestGuy-Regular.ttf')],
   });
 
   const paragraph = useMemo(() => {
