@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   cubeText: {
     fontSize: 19,
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
     color: 'white',
     textAlign: 'right',
   },

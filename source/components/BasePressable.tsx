@@ -10,19 +10,21 @@ import Animated, {
 
 interface BasePressableProps {
   onPress?: () => void;
+  prePress?: () => void;
   disabled?: boolean;
   children: ReactNode;
   style?: any;
 }
 
 function BasePressable(props: BasePressableProps) {
-  const {onPress, style, children, ...rest} = props;
+  const {onPress, prePress, style, children, ...rest} = props;
   const scaleAnimation = useSharedValue<number>(1);
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{scale: scaleAnimation.value}],
   }));
 
   const $onPress = useCallback(() => {
+    prePress?.();
     if (onPress !== undefined) {
       scaleAnimation.value = withSpring(0.9, {}, () => {
         scaleAnimation.value = withSpring(1);

@@ -57,7 +57,7 @@ function Cell({
   selected = false,
   hint,
 }: CellProps) {
-  const font = useFont(require('~/assets/fonts/Ploni-Bold-AAA.ttf'), 30);
+  const font = useFont(require('~/assets/fonts/PloniDL1.1AAA-Bold.ttf'), 30);
 
   const backgroundColor = viewed
     ? getColor(viewed)

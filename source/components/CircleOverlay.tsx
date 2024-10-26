@@ -1,54 +1,42 @@
 import React, {useImperativeHandle, forwardRef} from 'react';
-import {StyleSheet, Vibration} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 import useSound from '~/useSound';
 
-const vibrate = () => {
-  Vibration.vibrate([20, 20]);
-};
-
-export interface CellOverlayRef {
-  activateOverlay: (delay: number) => void;
+export interface CircleOverlayRef {
+  activateOverlay: () => void;
 }
 
-interface CellOverlayProps {
+interface CircleOverlayProps {
   color: string;
 }
 
-const CellOverlay = forwardRef<CellOverlayRef, CellOverlayProps>(
+const CircleOverlay = forwardRef<CircleOverlayRef, CircleOverlayProps>(
   ({color}, ref) => {
     const animation = useSharedValue(0);
-    const {playSound} = useSound('correct.wav');
+    const {playSound} = useSound('submit.mp3');
 
-    const activateOverlay = (delay: number) => {
-      const timeout = setTimeout(() => {
-        vibrate();
-        playSound();
-        clearTimeout(timeout);
-      }, delay);
+    const activateOverlay = () => {
       cancelAnimation(animation);
-      animation.value = withDelay(
-        delay,
-        withTiming(
-          1,
-          {
-            duration: 500,
-            easing: Easing.out(Easing.cubic),
-          },
-          finished => {
-            if (finished) {
-              animation.value = 0;
-            }
-          },
-        ),
+      playSound();
+      animation.value = withTiming(
+        1,
+        {
+          duration: 500,
+          easing: Easing.out(Easing.cubic),
+        },
+        finished => {
+          if (finished) {
+            animation.value = 0;
+          }
+        },
       );
     };
 
@@ -72,14 +60,14 @@ const CellOverlay = forwardRef<CellOverlayRef, CellOverlayProps>(
 
     return (
       <Animated.View
-        style={[styles.CellOverlay, animatedStyle, {borderColor: color}]}
+        style={[styles.CircleOverlay, animatedStyle, {borderColor: color}]}
       />
     );
   },
 );
 
 const styles = StyleSheet.create({
-  CellOverlay: {
+  CircleOverlay: {
     zIndex: 1,
     pointerEvents: 'none',
     position: 'absolute',
@@ -92,4 +80,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CellOverlay;
+export default CircleOverlay;

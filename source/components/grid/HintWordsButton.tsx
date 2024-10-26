@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
 import {StyleSheet, View} from 'react-native';
 import {useScoreStore} from '~/store/useScore';
 import {colors} from '~/utils/colors';
 import CoinCostOverlay from './CoinCostOverlay';
 import BasePressable from '../BasePressable';
+import CircleOverlay, {CircleOverlayRef} from '../CircleOverlay';
 
 interface HintWordButtonProps {
   onHintRequested: () => void;
@@ -23,6 +24,7 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
     'M10.1472 23.9609H17.5652C17.9519 23.9609 18.2449 23.6562 18.2449 23.2695C18.2449 22.8945 17.9519 22.5898 17.5652 22.5898H10.1472C9.7605 22.5898 9.45581 22.8945 9.45581 23.2695C9.45581 23.6562 9.7605 23.9609 10.1472 23.9609ZM13.8503 27.3593C15.6668 27.3593 17.1785 26.4687 17.2957 25.121H10.4168C10.4988 26.4687 12.0222 27.3593 13.8503 27.3593Z';
   const magnifierActivePath2 =
     'M6.0105 7.30859C6.0105 11.8086 8.97534 12.9218 9.45581 20.7382C9.47925 21.1601 9.73706 21.4296 10.1824 21.4296H17.5183C17.9753 21.4296 18.2214 21.1601 18.2566 20.7382C18.7371 12.9218 21.6902 11.8086 21.6902 7.30859C21.6902 3.26562 18.2332 0.0898438 13.8503 0.0898438C9.46753 0.0898438 6.0105 3.26562 6.0105 7.30859Z';
+  const circleOverlayRef = useRef<CircleOverlayRef>(null);
   const width = 34;
   const height = 34;
   const {userScore} = useScoreStore();
@@ -34,39 +36,52 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
     borderColor: disabled ? '#898989' : colors.darkYellow,
     backgroundColor: disabled ? colors.grey : colors.yellow,
   };
+
+  const onPress = () => {
+    circleOverlayRef.current?.activateOverlay();
+    onHintRequested();
+  };
+
   return (
     <>
       <BasePressable
         style={styles.pressable}
         disabled={disabled}
-        onPress={onHintRequested}>
-        <View style={[styles.container, containerStyle]}>
-          <Canvas style={{width, height}}>
-            <Group
-              transform={[
-                {scale: width / 35},
-                {translateY: 3},
-                {translateX: 3},
-              ]}>
-              {disabled ? (
-                <Path path={magnifierDisabledPath} color={color} style="fill" />
-              ) : (
-                <>
+        onPress={onPress}>
+        <>
+          <CircleOverlay ref={circleOverlayRef} color={colors.lightYellow} />
+          <View style={[styles.container, containerStyle]}>
+            <Canvas style={{width, height}}>
+              <Group
+                transform={[
+                  {scale: width / 35},
+                  {translateY: 3},
+                  {translateX: 3},
+                ]}>
+                {disabled ? (
                   <Path
-                    path={magnifierActivePath1}
+                    path={magnifierDisabledPath}
                     color={color}
                     style="fill"
                   />
-                  <Path
-                    path={magnifierActivePath2}
-                    color={color}
-                    style="fill"
-                  />
-                </>
-              )}
-            </Group>
-          </Canvas>
-        </View>
+                ) : (
+                  <>
+                    <Path
+                      path={magnifierActivePath1}
+                      color={color}
+                      style="fill"
+                    />
+                    <Path
+                      path={magnifierActivePath2}
+                      color={color}
+                      style="fill"
+                    />
+                  </>
+                )}
+              </Group>
+            </Canvas>
+          </View>
+        </>
       </BasePressable>
       {!disabled && displayOverlay && <CoinCostOverlay scoreCost={scoreCost} />}
     </>

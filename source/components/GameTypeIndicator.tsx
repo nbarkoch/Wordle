@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: setColorOpacity(colors.white, 0.75),
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
     fontSize: 14,
   },
 });

@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.lightYellow,
     fontSize: 23,
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
   },
   scrollView: {},
   scrollViewContent: {

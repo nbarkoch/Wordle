@@ -62,9 +62,9 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Ploni-Bold-AAA.ttf</string>
-		<string>Ploni-Demibold-AAA.ttf</string>
+		<string>PloniDL1.1AAA-Bold.ttf</string>
 		<string>luckiestguy.ttf</string>
+		<string>PloniDL1.1AAA-D-Bold.ttf</string>
 	</array>
 </dict>
 </plist>

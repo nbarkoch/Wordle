@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     padding: 10,
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
     color: colors.darkGrey,
   },
   firstButton: {

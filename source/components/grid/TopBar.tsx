@@ -13,7 +13,7 @@ import {colors} from '~/utils/colors';
 import StarCoin from '../StarCoin';
 import {useTimerStore} from '~/store/useTimerStore';
 import HomeButton from '../HomeButton';
-import IconButton from '../IconButtons/IconButton';
+import HowToPlayButton from '../IconButtons/HowToPlayButton';
 
 interface TopBarProps {
   displayTimer?: boolean;
@@ -78,7 +78,7 @@ const TopBar: React.FC<TopBarProps> = ({
       {displayTimer && <Timer />}
       <View style={styles.buttons}>
         <HomeButton onClick={onGoHome} width={30} height={30} />
-        <IconButton onPress={onHowToPlay} width={30} height={30} />
+        <HowToPlayButton onPress={onHowToPlay} width={30} height={30} />
       </View>
     </View>
   );

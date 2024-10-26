@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: '#fffffff0',
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
     fontSize: 16,
   },
 });

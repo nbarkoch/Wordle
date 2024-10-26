@@ -5,7 +5,7 @@ import {NewGameProps} from '~/navigation/types';
 import MenuButton from '~/components/MenuButton';
 import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
-import IconButton from '~/components/IconButtons/IconButton';
+import HowToPlayButton from '~/components/IconButtons/HowToPlayButton';
 import {colors} from '~/utils/colors';
 import SelectNumber from '~/components/SelectorNumber';
 import GameSwitch from '~/components/GameSwitch';
@@ -46,7 +46,7 @@ function NewGameScreen({navigation}: NewGameProps) {
           contentContainerStyle={styles.buttonsContainer}
           style={styles.buttons}>
           <View style={styles.iconAligner}>
-            <IconButton
+            <HowToPlayButton
               onPress={() => {
                 setHowToPlayVisible(true);
               }}
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.lightYellow,
     fontSize: 23,
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
   },
   bodyWrap: {
     flex: 1,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   subjectText: {
     textAlign: 'right',
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
     fontSize: 20,
     padding: 10,
     paddingTop: 30,

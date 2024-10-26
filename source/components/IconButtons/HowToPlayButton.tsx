@@ -4,13 +4,13 @@ import {StyleSheet, View} from 'react-native';
 import {colors} from '~/utils/colors';
 import BasePressable from '../BasePressable';
 
-interface IconButtonProps {
+interface HowToPlayButtonProps {
   onPress: () => void;
   width?: number;
   height?: number;
 }
 
-const IconButton: React.FC<IconButtonProps> = ({
+const HowToPlayButton: React.FC<HowToPlayButtonProps> = ({
   onPress,
   width = 34,
   height = 34,
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IconButton;
+export default HowToPlayButton;

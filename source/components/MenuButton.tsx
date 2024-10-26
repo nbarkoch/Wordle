@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 22,
-    fontFamily: 'Ploni-Bold-AAA',
+    fontFamily: 'PloniDL1.1AAA-Bold',
     color: 'white',
   },
 });

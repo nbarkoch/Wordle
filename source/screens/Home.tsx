@@ -4,7 +4,7 @@ import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
 import SkiaGradientText from '~/components/WordleParagraph';
 import MenuButton from '~/components/MenuButton';
-import IconButton from '~/components/IconButtons/IconButton';
+import HowToPlayButton from '~/components/IconButtons/HowToPlayButton';
 import ProfileIconButton from '~/components/IconButtons/ProfileButton';
 import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
@@ -51,7 +51,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
         <SkiaGradientText />
       </View>
       <View style={styles.headerLine}>
-        <IconButton
+        <HowToPlayButton
           onPress={() => {
             setHowToPlayVisible(true);
           }}

@@ -22,6 +22,7 @@ import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
 import Cell from './Cell';
 import CellOverlay, {CellOverlayRef} from './CellOverlay';
 import {View} from 'react-native';
+import {colors} from '~/utils/colors';
 
 interface LetterCellProps {
   letter: string | undefined;
@@ -138,7 +139,7 @@ function LetterCell({
 
   return (
     <View>
-      <CellOverlay ref={cellOverlayRef} />
+      <CellOverlay ref={cellOverlayRef} color={colors.lightGreen} />
       <Animated.View style={animatedStyle}>
         <Cell
           letter={letter}
