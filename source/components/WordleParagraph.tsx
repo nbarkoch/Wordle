@@ -48,7 +48,7 @@ const WordleParagraph = () => {
         },
         foregroundPaint,
       )
-      .addText('WORDLE')
+      .addText('WORDLE-IL')
       .pop()
       .build();
     return para;
