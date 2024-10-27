@@ -10,7 +10,6 @@ import {LetterCellLocation, LineHint} from '~/utils/ui';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';
-import {colors} from '~/utils/colors';
 
 const LoadingFallback = () => (
   <View style={styles.loading}>
