@@ -7,23 +7,26 @@ import {
   ScrollView,
   useWindowDimensions,
 } from 'react-native';
-import {GameCategory} from '~/utils/types';
-import {getRevealedWords, RevealedWordOverview} from '~/store/revealsStore';
+import {Difficulty, GameCategory} from '~/utils/types';
+import {getRevealedWords, WordSection} from '~/store/revealsStore';
 import BackButton from '~/components/IconButtons/BackButton';
 import CanvasBackground from '~/utils/canvas';
 import {colors} from '~/utils/colors';
 import {CategorySelector} from '~/components/overview/CategorySelector';
 import {WordCard} from '~/components/overview/WordCard';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
-import {MAP_CATEGORY_NAME} from '~/utils/consts';
+import {MAP_CATEGORY_NAME, MAP_DIFFICULTY_NAME} from '~/utils/consts';
+import {OutlinedText} from '~/components/CartoonText';
 
 export default function UserInfo() {
   const {width: windowWidth} = useWindowDimensions();
   const [activeCategory, setActiveCategory] = useState<GameCategory>('GENERAL');
   const [aboutWord, setAboutWord] = useState<null | string>(null);
-  const [wordsOverview, setWordsOverview] = useState<RevealedWordOverview[]>(
-    [],
-  );
+  const [wordsOverview, setWordsOverview] = useState<WordSection>({
+    easy: [],
+    medium: [],
+    hard: [],
+  });
 
   const categories = useMemo<Array<{title: string; key: GameCategory}>>(
     () => [
@@ -35,6 +38,18 @@ export default function UserInfo() {
     ],
     [],
   );
+
+  const colorMapperLight: Record<Difficulty, string> = {
+    easy: colors.lightGreen,
+    medium: colors.lightYellow,
+    hard: colors.lightRed,
+  };
+
+  const colorMapper: Record<Difficulty, string> = {
+    easy: colors.green,
+    medium: colors.yellow,
+    hard: colors.red,
+  };
 
   useEffect(() => {
     getRevealedWords(activeCategory).then(setWordsOverview);
@@ -64,14 +79,42 @@ export default function UserInfo() {
           <ScrollView
             style={styles.wordsScroll}
             contentContainerStyle={styles.wordsContainer}>
-            {wordsOverview.map(({word, time, score, hint}) => (
-              <WordCard
-                key={word}
-                word={word}
-                time={time}
-                score={score}
-                onPress={() => setAboutWord(hint)}
-              />
+            {Object.entries(wordsOverview).map(([difficulty, words]) => (
+              <View key={`${activeCategory}-${difficulty}`}>
+                {words.length > 0 && (
+                  <View style={styles.levelTitle}>
+                    <View
+                      style={[
+                        styles.difficultyContainer,
+                        {
+                          backgroundColor:
+                            colorMapperLight[difficulty as Difficulty],
+                        },
+                      ]}>
+                      <OutlinedText
+                        text={MAP_DIFFICULTY_NAME[difficulty as Difficulty]}
+                        fontSize={22}
+                        width={300}
+                        height={40}
+                        fillColor={colors.white}
+                        strokeColor={colorMapper[difficulty as Difficulty]}
+                        strokeWidth={6}
+                      />
+                    </View>
+                  </View>
+                )}
+                <View style={styles.cards}>
+                  {words.map(({word, time, score, hint}) => (
+                    <WordCard
+                      key={word}
+                      word={word}
+                      time={time}
+                      score={score}
+                      onPress={() => setAboutWord(hint)}
+                    />
+                  ))}
+                </View>
+              </View>
             ))}
           </ScrollView>
         </View>
@@ -125,9 +168,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   wordsContainer: {
+    paddingVertical: 10,
+  },
+  levelTitle: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  difficultyContainer: {
+    margin: 5,
+    borderRadius: 20,
+  },
+  cards: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
+    justifyContent: 'center', // This centers the cards
     alignItems: 'center',
-    paddingVertical: 10,
   },
 });

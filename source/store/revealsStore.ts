@@ -9,9 +9,7 @@ type RevealedWordOverview = {
 };
 
 type WordSection = {
-  easy: RevealedWordOverview[];
-  medium: RevealedWordOverview[];
-  hard: RevealedWordOverview[];
+  [K in Difficulty]: RevealedWordOverview[];
 };
 
 type WordHierarchy = {
@@ -73,7 +71,7 @@ async function addToRevealedList(
 ): Promise<void> {
   try {
     const storedWords = await getStoredWords();
-    const difficultyKey = difficulty.toLowerCase() as keyof WordSection;
+    const difficultyKey = difficulty;
     const newWord: RevealedWordOverview = {word, time, score, hint};
 
     // Update in the specified category
@@ -138,40 +136,13 @@ async function getStoredWords(): Promise<WordHierarchy> {
   }
 }
 
-async function getRevealedWords(
-  category: GameCategory,
-  difficulty?: Difficulty,
-  sortBy: 'score' | 'time' = 'score',
-): Promise<RevealedWordOverview[]> {
+async function getRevealedWords(category: GameCategory): Promise<WordSection> {
   try {
     const storedWords = await getStoredWords();
-
-    let words: RevealedWordOverview[];
-    if (difficulty) {
-      words = [
-        ...storedWords[category][difficulty.toLowerCase() as keyof WordSection],
-      ];
-    } else {
-      words = [
-        ...storedWords[category].easy,
-        ...storedWords[category].medium,
-        ...storedWords[category].hard,
-      ];
-    }
-
-    // Sort by specified criterion
-    return words.sort((a, b) => {
-      if (sortBy === 'score') {
-        // Sort by score (descending) and time (ascending) for same scores
-        return b.score - a.score || a.time - b.time;
-      } else {
-        // Sort by time (ascending) and score (descending) for same times
-        return a.time - b.time || b.score - a.score;
-      }
-    });
+    return storedWords[category];
   } catch (error) {
     console.error('Error getting revealed words:', error);
-    return [];
+    return createEmptySection();
   }
 }
 
