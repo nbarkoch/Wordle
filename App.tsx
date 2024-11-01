@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
 import GameScreen from './source/screens/WordleGame';
@@ -15,14 +15,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 mobileAds()
   .initialize()
-  .then(_ => {
-    I18nManager.allowRTL(false);
-  });
+  .then(_ => {});
 
 const App = () => {
   const backgroundStyle = {
     backgroundColor: '#343D4E',
   };
+  I18nManager.allowRTL(false);
 
   return (
     <>
