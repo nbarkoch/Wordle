@@ -33,6 +33,7 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+release/
 
 # node.js
 #
@@ -64,3 +65,7 @@ yarn-error.log
  
 # testing
 /coverage
+
+# client-secrets
+/keystore.txt
+/keystore.jks
