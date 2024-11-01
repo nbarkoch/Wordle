@@ -119,7 +119,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
-    showGameRestartAd(start);
+    showGameRestartAd(() => {
+      reset();
+      start();
+    });
+    start();
     resetGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

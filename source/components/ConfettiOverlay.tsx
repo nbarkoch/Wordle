@@ -21,6 +21,7 @@ import confettiSpark from '~/assets/lottie/confetti_1.json';
 import confettiParty from '~/assets/lottie/confetti_2.json';
 import {OutlinedText} from './CartoonText';
 import {colors} from '~/utils/colors';
+import useSound from '~/useSound';
 
 const {width, height} = Dimensions.get('window');
 
@@ -68,6 +69,9 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
     const textScale = useSharedValue(0);
     const textOpacity = useSharedValue(0);
     const rotation = useSharedValue(-270);
+
+    const {playSound: playStrike} = useSound('good.mp3');
+    const {playSound: playParty} = useSound('finish.mp3');
 
     const animateFeedbackIn = useCallback(
       (text: string, confettiType: ConfettiType) => {
@@ -131,6 +135,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
       triggerFeedback: (type: ConfettiType) => {
         switch (type) {
           case 'party':
+            playParty();
             animateFeedbackIn(
               `${
                 partyStrings[Math.floor(Math.random() * partyStrings.length)]
@@ -139,6 +144,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
             );
             break;
           case 'spark':
+            playStrike();
             animateFeedbackIn(
               `${
                 strikeStrings[Math.floor(Math.random() * strikeStrings.length)]
