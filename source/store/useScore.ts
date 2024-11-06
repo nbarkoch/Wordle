@@ -20,7 +20,6 @@ const STORAGE_KEY = '@user_score';
 export const useScoreStore = create<ScoreState>((set, get) => ({
   score: 0,
   userScore: 0,
-
   resetScore: () => set({score: 0}),
 
   setScore: newScore => set({score: newScore}),

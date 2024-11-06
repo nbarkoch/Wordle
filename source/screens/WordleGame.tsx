@@ -363,6 +363,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           <View style={styles.footer}>
             <View style={styles.centerer}>
               <AboutButton
+                clicked={gameState.aboutWasShown}
                 displayOverlay={!gameState.aboutWasShown}
                 onInfoRequested={onInfoRequested}
                 scoreCost={5}

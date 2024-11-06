@@ -2,7 +2,7 @@ import {useCallback, useMemo} from 'react';
 
 import wordList3 from '~/database/wordle_3.json';
 import wordList4 from '~/database/wordle_4.json';
-import wordList5 from '~/database/wordle.json';
+import wordList5 from '~/database/wordle_5.json';
 
 const wordLists: {[key: number]: string[]} = {
   3: wordList3,
