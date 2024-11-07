@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useState} from 'react';
 
-import {Correctness} from '~/utils/ui';
+import {Correctness, mapSuffix} from '~/utils/words';
 
 import general3 from '~/database/all_3.json';
 import general4 from '~/database/all_4.json';
@@ -144,9 +144,10 @@ const useSecretWord = (
   const evaluateGuess = useCallback(
     (guess: string): Correctness[] => {
       const evaluation: Correctness[] = Array(wordLength).fill('notInUse');
-      const secretLetters: (string | null)[] =
-        secretWord.selectedWord.split('');
-      const guessLetters: (string | null)[] = guess.split('');
+      const secretLetters: (string | null)[] = secretWord.selectedWord
+        .split('')
+        .map(mapSuffix);
+      const guessLetters: (string | null)[] = guess.split('').map(mapSuffix);
 
       // First pass: Identify correct letters
       for (let i = 0; i < wordLength; i++) {

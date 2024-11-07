@@ -1,7 +1,7 @@
 import React, {StyleSheet, View} from 'react-native';
 import KeyboardKey from './KeyboardKey';
 import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
-import {Correctness, keyboardFormat} from '~/utils/ui';
+import {Correctness, keyboardFormat} from '~/utils/words';
 
 interface KeyboardProps {
   handleKeyPress: (key: string) => void;

@@ -18,7 +18,7 @@ import Animated, {
   useAnimatedReaction,
 } from 'react-native-reanimated';
 
-import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
+import {Correctness, LetterCellLocation, LineHint} from '~/utils/words';
 import Cell from './Cell';
 import CellOverlay, {CellOverlayRef} from './CellOverlay';
 import {View} from 'react-native';

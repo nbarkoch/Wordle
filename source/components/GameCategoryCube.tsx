@@ -41,6 +41,6 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontFamily: 'PloniDL1.1AAA-Bold',
     color: 'white',
-    textAlign: 'right',
+    textAlign: 'center',
   },
 });

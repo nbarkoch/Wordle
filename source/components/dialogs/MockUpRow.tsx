@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
 import {colors} from '~/utils/colors';
-import {Correctness} from '~/utils/ui';
+import {Correctness} from '~/utils/words';
 import Animated from 'react-native-reanimated';
 
 interface RowMockupProps {

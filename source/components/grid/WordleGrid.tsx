@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-import {LetterCellLocation, LineHint} from '~/utils/ui';
+import {LetterCellLocation, LineHint} from '~/utils/words';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';

@@ -5,7 +5,7 @@ import {
   LineHint,
   WordGuess,
   Correctness,
-} from '~/utils/ui';
+} from '~/utils/words';
 
 // Define the state shape
 export interface GameState {

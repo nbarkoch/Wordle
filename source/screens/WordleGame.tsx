@@ -25,7 +25,7 @@ import {
   keyboardInitialKeysState,
   LetterCellLocation,
   mergeHints,
-} from '~/utils/ui';
+} from '~/utils/words';
 import GameResultDialog from '~/components/dialogs/GameResultDialog';
 import TopBar from '~/components/grid/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
@@ -216,24 +216,24 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       const reveal = Array(wordLength).fill(false);
 
       currentLetters.forEach((_, index) => {
-        const newReveal =
+        const isNewReveal =
           correctness[index] === 'correct' && !correctLetters[index];
-        if (newReveal) {
+        if (isNewReveal) {
           reveal[index] = true;
           correctLetters[index] = true;
         }
-        return newReveal;
+        return isNewReveal;
       });
 
-      const secretWordRevealed = correctness.every(
-        letter => letter === 'correct',
+      const isSecretWordRevealed = correctness.every(
+        correctness => correctness === 'correct',
       );
       const newRevealLength = reveal.filter(Boolean).length;
 
       if (
         newRevealLength >= 3 &&
         newRevealLength < wordLength &&
-        !secretWordRevealed
+        !isSecretWordRevealed
       ) {
         confettiRef.current?.triggerFeedback('spark');
       }
@@ -248,7 +248,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         correctLetters: correctLetters,
       });
 
-      if (secretWordRevealed) {
+      if (isSecretWordRevealed) {
         if (gameType === 'DAILY') {
           markDone();
         }

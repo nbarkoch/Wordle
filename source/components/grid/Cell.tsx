@@ -3,7 +3,7 @@ import {Pressable, StyleSheet} from 'react-native';
 import {Canvas, Text, useFont, Group} from '@shopify/react-native-skia';
 import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
-import {Correctness} from '~/utils/ui';
+import {Correctness} from '~/utils/words';
 
 interface CellProps {
   letter: string | undefined;

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
-import {Correctness, LetterCellLocation, LineHint} from '~/utils/ui';
+import {Correctness, LetterCellLocation, LineHint} from '~/utils/words';
 import LetterCell from './LetterCell';
 import RowOverlay, {RowOverlayRef} from './RowOverlay';
 import {LETTER_CELL_DISPLAY_DELAY} from '~/utils/consts';

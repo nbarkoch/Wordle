@@ -1,8 +1,8 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
 import {colors} from '~/utils/colors';
-
-import {Correctness, darkenColor} from '~/utils/ui';
+import {darkenColor} from '~/utils/ui';
+import {Correctness} from '~/utils/words';
 
 interface KeyboardKeyProps {
   letter?: string;
