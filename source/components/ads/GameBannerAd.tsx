@@ -14,6 +14,10 @@ const GameBannerAd = () => {
         size={BannerAdSize.BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
+          customTargeting: {
+            content_rating: 'general_audience',
+            app_category: 'family_games',
+          },
         }}
       />
     </View>

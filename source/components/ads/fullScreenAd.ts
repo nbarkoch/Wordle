@@ -11,6 +11,10 @@ const INTERSTITIAL_ID = __DEV__
 export const showGameRestartAd = (onClose?: () => void) => {
   const interstitialAd = InterstitialAd.createForAdRequest(INTERSTITIAL_ID, {
     requestNonPersonalizedAdsOnly: true,
+    customTargeting: {
+      content_rating: 'general_audience',
+      app_category: 'family_games',
+    },
     keywords: ['game', 'puzzle', 'hebrew'],
   });
 
