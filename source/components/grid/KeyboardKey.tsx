@@ -30,7 +30,7 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
       case 'exists':
         return colors.yellow;
       case 'notInUse':
-        return colors.grey;
+        return colors.red;
       default:
         return colors.lightGrey;
     }
@@ -76,7 +76,7 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
 
 const styles = StyleSheet.create({
   key: {
-    width: 30,
+    width: 31,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   keyText: {
-    fontSize: 22,
+    fontSize: 24,
     fontFamily: 'PloniDL1.1AAA-Bold',
   },
 });
