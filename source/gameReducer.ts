@@ -5,6 +5,9 @@ import {
   LineHint,
   WordGuess,
   Correctness,
+  suffixOriginalLetterMapper,
+  suffixLetterMapper,
+  suffixLetters,
 } from '~/utils/words';
 
 // Define the state shape
@@ -65,6 +68,17 @@ const initialState: GameState = {
   wordLength: 0,
 };
 
+function shouldUpdateCorrectness(
+  current: Correctness,
+  newC: Correctness,
+): boolean {
+  if (!current) return true;
+  if (newC === 'correct') return true;
+  if (current === 'correct') return false;
+  if (newC === 'exists' && current === 'notInUse') return true;
+  return false;
+}
+
 // Reducer function
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -76,15 +90,53 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
       const newKeyboardLetters = {...state.keyboardLetters};
+
       action.letters.forEach((letter, index) => {
         const letterCorrectness = action.correctness[index];
         if (
-          letterCorrectness === 'correct' ||
-          (letterCorrectness === 'exists' &&
-            newKeyboardLetters[letter] !== 'correct') ||
-          (letterCorrectness === 'notInUse' && !newKeyboardLetters[letter])
+          shouldUpdateCorrectness(newKeyboardLetters[letter], letterCorrectness)
         ) {
           newKeyboardLetters[letter] = letterCorrectness;
+          const suffixLetter = suffixOriginalLetterMapper[letter];
+          const originalLetter = suffixLetterMapper[letter];
+          if (originalLetter !== undefined || suffixLetter !== undefined) {
+            if (suffixLetter !== undefined) {
+              // if its a nonsuffix letter
+              // reveal corretness about prefix always affect suffix
+              if (
+                newKeyboardLetters[suffixLetter] === null &&
+                letterCorrectness !== 'correct'
+              ) {
+                newKeyboardLetters[suffixLetter] = letterCorrectness;
+              }
+              // unless the reveal is in-place, so the suffix might be notInUse
+              if (
+                newKeyboardLetters[suffixLetter] === 'exists' &&
+                letterCorrectness === 'correct'
+              ) {
+                newKeyboardLetters[suffixLetter] = null;
+              }
+            } else {
+              // if its a suffix letter
+              // reveal corretness about suffix always affect non-suffix
+              // unless the reveal is in-place, so we can't infer nothing about the non-suffix
+              if (
+                newKeyboardLetters[originalLetter] === null &&
+                letterCorrectness !== 'correct'
+              ) {
+                newKeyboardLetters[originalLetter] = letterCorrectness;
+              }
+              if (letterCorrectness === 'correct') {
+                // also, if suffix found true, all other suffix are notInUse
+                suffixLetters.forEach(sLetter => {
+                  newKeyboardLetters[sLetter] = 'notInUse';
+                });
+                newKeyboardLetters[letter] = letterCorrectness;
+              } else if (letterCorrectness === 'exists') {
+                newKeyboardLetters[letter] = 'notInUse';
+              }
+            }
+          }
         }
       });
 

@@ -213,7 +213,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       const correctness = evaluateGuess(gameState.currentGuess.join(''));
       const currentLetters = [...gameState.currentGuess] as string[];
       const correctLetters = [...gameState.correctLetters];
-      const reveal = Array(wordLength).fill(false);
+      const reveal = Array<boolean>(wordLength).fill(false);
 
       currentLetters.forEach((_, index) => {
         const isNewReveal =

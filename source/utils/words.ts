@@ -205,6 +205,16 @@ export const suffixLetterMapper: Record<string, string> = {
   ץ: 'צ',
 };
 
+export const suffixOriginalLetterMapper: Record<string, string> = {
+  נ: 'ן',
+  מ: 'ם',
+  פ: 'ף',
+  כ: 'ך',
+  צ: 'ץ',
+};
+
+export const suffixLetters = ['ן', 'ם', 'ף', 'ך', 'ץ'];
+
 export const mapSuffix = (letter: string | null): string | null => {
   return letter ? suffixLetterMapper[letter] ?? letter : null;
 };
