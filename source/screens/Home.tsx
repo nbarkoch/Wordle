@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
-import SkiaGradientText from '~/components/WordleParagraph';
+import SkiaGradientText from '~/components/TitleParagraph';
 import MenuButton from '~/components/MenuButton';
 import HowToPlayButton from '~/components/IconButtons/HowToPlayButton';
 import ProfileIconButton from '~/components/IconButtons/ProfileButton';

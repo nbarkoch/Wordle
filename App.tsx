@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
 import GameScreen from './source/screens/WordleGame';

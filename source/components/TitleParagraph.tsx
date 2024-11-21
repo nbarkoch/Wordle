@@ -10,7 +10,7 @@ import {
 import {colors} from '~/utils/colors';
 import {StyleSheet} from 'react-native';
 
-const WordleParagraph = () => {
+const TitleParagraph = () => {
   const customFontMgr = useFonts({
     Roboto: [require('~/assets/fonts/PloniDL1.1AAA-Bold.ttf')],
   });
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
   canvas: {width: 300, height: 80},
 });
 
-export default WordleParagraph;
+export default TitleParagraph;
