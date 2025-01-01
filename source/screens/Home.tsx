@@ -48,23 +48,20 @@ function HomeScreen({navigation}: HomeScreenProps) {
   return (
     <View style={styles.body}>
       <CanvasBackground />
-      <View style={styles.header}>
-        <SkiaGradientText />
-      </View>
 
       <View style={styles.headerLine}>
         <View style={{flexDirection: 'row', gap: 20}}>
-          <HowToPlayButton
-            onPress={() => {
-              setHowToPlayVisible(true);
-            }}
-          />
-          <VolumeButton onPress={() => {}} />
+          <HowToPlayButton onPress={() => setHowToPlayVisible(true)} />
+          <VolumeButton />
         </View>
         <View>
           <CoinCostOverlay scoreCost={userScore} />
           <ProfileIconButton onPress={onUserInfo} />
         </View>
+      </View>
+
+      <View style={styles.header}>
+        <SkiaGradientText title="ורדל" />
       </View>
       <View style={styles.body}>
         <MenuButton
@@ -93,18 +90,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   header: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 30,
+    padding: 40,
   },
   headerLine: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
+    paddingTop: 25,
     alignItems: 'center',
   },
+  adjustment: {transform: [{scale: 1}]},
 });
 export default HomeScreen;

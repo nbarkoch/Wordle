@@ -10,7 +10,9 @@ import {
 import {colors} from '~/utils/colors';
 import {StyleSheet} from 'react-native';
 
-const TitleParagraph = () => {
+type TitleParagraphProps = {title: string};
+
+const TitleParagraph = ({title}: TitleParagraphProps) => {
   const customFontMgr = useFonts({
     Roboto: [require('~/assets/fonts/PloniDL1.1AAA-Bold.ttf')],
   });
@@ -43,12 +45,12 @@ const TitleParagraph = () => {
         {
           fontFamilies: ['Roboto'],
           fontSize: 50,
-          fontStyle: {weight: 500},
+          fontStyle: {weight: 600},
           color: Skia.Color('black'),
         },
         foregroundPaint,
       )
-      .addText('ורדל')
+      .addText(title)
       .pop()
       .build();
     return para;

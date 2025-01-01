@@ -17,7 +17,7 @@ import {
   LinearGradient,
   vec,
 } from '@shopify/react-native-skia';
-import HomeIcon from '~/assets/icons/home.svg';
+import HomeIcon from '~/assets/icons/house.svg';
 import ChevronRight from '~/assets/icons/chevron-right.svg';
 
 import StarRating from './StarRating';
@@ -326,12 +326,12 @@ const styles = StyleSheet.create({
     overflow: 'visible',
     justifyContent: 'space-around',
     width: '100%',
-    paddingHorizontal: 40,
+    paddingHorizontal: 50,
   },
   button: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     elevation: 6,
   },
   nextButton: {
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   homeButton: {
-    backgroundColor: colors.blue,
+    backgroundColor: colors.lightBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },

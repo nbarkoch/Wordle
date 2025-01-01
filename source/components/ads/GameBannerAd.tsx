@@ -18,6 +18,7 @@ const GameBannerAd = () => {
             content_rating: 'general_audience',
             app_category: 'family_games',
           },
+          keywords: ['games', 'puzzle', 'word', 'family friendly', 'education'],
         }}
       />
     </View>

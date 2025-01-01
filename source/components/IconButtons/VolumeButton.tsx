@@ -7,13 +7,11 @@ import {useSoundStore} from '~/useSound';
 import CircleOverlay, {CircleOverlayRef} from '../CircleOverlay';
 
 interface VolumeButtonProps {
-  onPress: () => void;
   width?: number;
   height?: number;
 }
 
 const VolumeButton: React.FC<VolumeButtonProps> = ({
-  onPress,
   width = 34,
   height = 34,
 }) => {
@@ -24,7 +22,6 @@ const VolumeButton: React.FC<VolumeButtonProps> = ({
   const $onPress = useCallback(() => {
     setIsSoundEnabled(!isSoundEnabled);
     circleOverlayRef.current?.activateOverlay();
-    onPress();
   }, [isSoundEnabled, setIsSoundEnabled]);
 
   const volPath =
