@@ -1,5 +1,6 @@
 import React from 'react';
 import {ScrollView, View, StyleSheet, ScrollViewProps} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface GradientOverlayScrollViewProps extends ScrollViewProps {
   upperColor: string;
@@ -19,40 +20,18 @@ const GradientOverlayScrollView: React.FC<GradientOverlayScrollViewProps> = ({
   return (
     <View style={[styles.container, style]}>
       <ScrollView {...scrollViewProps}>{children}</ScrollView>
-      <View
-        style={[styles.gradient, styles.topGradient, {height: gradientHeight}]}>
-        {[...Array(gh)].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.gradientStep,
-              {
-                backgroundColor: upperColor,
-                opacity: 1 - index / gh,
-              },
-            ]}
-          />
-        ))}
-      </View>
-      <View
+      <LinearGradient
+        colors={[upperColor, 'transparent']}
+        style={[styles.gradient, styles.topGradient, {height: gradientHeight}]}
+      />
+      <LinearGradient
+        colors={['transparent', bottomColor]}
         style={[
           styles.gradient,
           styles.bottomGradient,
           {height: gradientHeight},
-        ]}>
-        {[...Array(gh)].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.gradientStep,
-              {
-                backgroundColor: bottomColor,
-                opacity: index / gh,
-              },
-            ]}
-          />
-        ))}
-      </View>
+        ]}
+      />
     </View>
   );
 };
