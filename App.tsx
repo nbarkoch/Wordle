@@ -1,7 +1,8 @@
 import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
-import GameScreen from './source/screens/WordleGame';
+import WordleGame from './source/screens/WordleGame';
+import LettleGame from './source/screens/LettleGame';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '~/screens/Home';
@@ -52,7 +53,14 @@ const App = () => {
           />
           <Stack.Screen
             name="WordGame"
-            component={GameScreen}
+            component={WordleGame}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="LetterGame"
+            component={LettleGame}
             options={{
               animation: 'slide_from_right',
             }}

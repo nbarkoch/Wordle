@@ -15,6 +15,7 @@ export type RootStackParamList = {
     difficulty: Difficulty;
     type: 'RANDOM' | 'DAILY';
   };
+  LetterGame: undefined;
   UserInfo: {user: string};
 };
 
@@ -29,6 +30,10 @@ export type NewGameProps = NativeStackScreenProps<
 export type WordGameScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'WordGame'
+>;
+export type LetterGameScreenProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'LetterGame'
 >;
 export type DetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,

@@ -1,4 +1,5 @@
 export const colors = {
+  pink: '#fc97e3',
   red: '#F47A89',
   green: '#7FCCB5',
   yellow: '#F9B033',

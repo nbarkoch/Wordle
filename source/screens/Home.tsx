@@ -27,6 +27,10 @@ function HomeScreen({navigation}: HomeScreenProps) {
     navigation.navigate('NewGame');
   }, [navigation]);
 
+  const onLetterGame = useCallback(() => {
+    navigation.navigate('LetterGame');
+  }, [navigation]);
+
   const onDailyGame = useCallback(() => {
     navigation.navigate('WordGame', {
       maxAttempts: 6,
@@ -69,11 +73,16 @@ function HomeScreen({navigation}: HomeScreenProps) {
           onPress={onNewGame}
           color={setColorOpacity(colors.green, 0.7)}
         />
+        <MenuButton
+          text="אות סודית"
+          onPress={onLetterGame}
+          color={setColorOpacity(colors.lightBlue, 0.7)}
+        />
         <SpecialButton
           disabled={isDone}
-          text="חידה יומית"
+          text="מילה יומית"
           onPress={onDailyGame}
-          color={setColorOpacity(isDone ? colors.grey : colors.blue, 0.5)}
+          color={setColorOpacity(isDone ? colors.grey : colors.red, 0.45)}
         />
       </View>
       <HowToPlayDialog
