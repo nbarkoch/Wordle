@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,7 +7,6 @@ import Animated, {
   withDelay,
   withSequence,
   cancelAnimation,
-  runOnJS,
   useAnimatedReaction,
 } from 'react-native-reanimated';
 
@@ -51,12 +43,9 @@ function LetterCell({
 }: LetterCellProps) {
   const flipValue = useSharedValue(0);
   const cellScale = useSharedValue(1);
+  const sharedView = useSharedValue<Correctness | undefined>(viewed);
   const cellOverlayRef = useRef<CellOverlayRef>(null);
   const cellWasSelected = useRef<boolean>(false);
-
-  const [viewedState, setViewedState] = useState<Correctness | undefined>(
-    viewed,
-  );
 
   const selected = useMemo(
     () =>
@@ -106,18 +95,18 @@ function LetterCell({
   useAnimatedReaction(
     () => flipValue.value,
     currentFlipValue => {
-      if (currentFlipValue >= 90 && viewed !== viewedState) {
+      if (currentFlipValue >= 90 && viewed !== sharedView.value) {
         // Update state exactly at 90 degrees
-        runOnJS(setViewedState)(viewed);
+        sharedView.value = viewed;
       }
     },
     [viewed],
   );
 
   useEffect(() => {
-    if (viewed !== viewedState) {
+    if (viewed !== sharedView.value) {
       if (viewed) {
-        if (revealed && viewed !== viewedState && viewed === 'correct') {
+        if (revealed && viewed === 'correct') {
           cellOverlayRef.current?.activateOverlay(delay + 500);
         }
         flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
@@ -125,7 +114,7 @@ function LetterCell({
         flipValue.value = withTiming(0, {duration: 500});
       }
     }
-  }, [flipValue, viewed, delay, viewedState, revealed]);
+  }, [flipValue, viewed, delay, revealed]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -143,11 +132,12 @@ function LetterCell({
       <Animated.View style={animatedStyle}>
         <Cell
           letter={letter}
-          viewed={viewedState}
+          viewed={viewed}
           selected={selected}
           isCurrentRow={isCurrentRow}
           hint={hint}
           onLetterSelected={$onLetterSelected}
+          viewedAnim={sharedView}
         />
       </Animated.View>
     </View>

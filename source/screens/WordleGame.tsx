@@ -114,6 +114,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
     reset();
     generateSecretWord();
+    setRecentReveals(Array(wordLength).fill(false));
     setScore(0);
     global.gc?.();
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);

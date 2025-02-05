@@ -1,10 +1,12 @@
-import React, {memo, useMemo} from 'react';
+import React, {memo} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
-import {Canvas, Text, useFont, Group} from '@shopify/react-native-skia';
-import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
+import Animated, {
+  SharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import {Correctness} from '~/utils/words';
-
 interface CellProps {
   letter: string | undefined;
   viewed: Correctness | undefined;
@@ -12,9 +14,11 @@ interface CellProps {
   isCurrentRow?: boolean;
   hint?: HintInfo;
   selected?: boolean;
+  viewedAnim: SharedValue<Correctness | undefined>;
 }
 
 const getColor = (status: Correctness | undefined) => {
+  'worklet';
   switch (status) {
     case 'correct':
       return colors.green;
@@ -28,6 +32,7 @@ const getColor = (status: Correctness | undefined) => {
 };
 
 const getHintColor = (status: Correctness | undefined) => {
+  'worklet';
   switch (status) {
     case 'correct':
       return colors.lightGreen;
@@ -56,68 +61,67 @@ function Cell({
   isCurrentRow = false,
   selected = false,
   hint,
+  viewedAnim,
 }: CellProps) {
-  const font = useFont(require('~/assets/fonts/PloniDL1.1AAA-Bold.ttf'), 30);
-
-  const backgroundColor = viewed
-    ? getColor(viewed)
-    : hint
-    ? getHintColor(hint?.correctness)
-    : colors.lightGrey;
-
-  const textColor = viewed
-    ? colors.white
-    : hint && !letter
-    ? colors.grey
-    : colors.darkGrey;
-
   const animatedStyle = useAnimatedStyle(() => {
+    'worklet';
+    const backgroundColor = viewedAnim.value
+      ? getColor(viewedAnim.value)
+      : hint
+      ? getHintColor(hint?.correctness)
+      : colors.lightGrey;
+
     return {
       backgroundColor,
       borderWidth: withTiming(selected ? 3 : 0, {duration: 150}),
       borderColor: isCurrentRow ? colors.gold : colors.blue,
       transform: [
         {
-          rotateX: viewed ? '180deg' : '0deg',
+          rotateX: viewedAnim.value ? '180deg' : '0deg',
         },
       ],
     };
-  }, [backgroundColor, selected, isCurrentRow, viewed]);
+  }, [selected, isCurrentRow, viewedAnim.value]);
+
+  const animatedTextStyle = useAnimatedStyle(() => {
+    'worklet';
+    const textColor = viewedAnim.value
+      ? colors.white
+      : hint && !letter
+      ? colors.grey
+      : colors.darkGrey;
+    return {
+      color: textColor,
+    };
+  });
 
   const displayText = letter || hint?.letter || '';
-
-  const textPosition = useMemo(() => {
-    if (!font) {
-      return {x: CELL_SIZE / 2, y: CELL_SIZE / 2};
-    }
-    const measurement = font.measureText(displayText);
-    const x = (CELL_SIZE - measurement.width) / 2;
-    const y = measurement.height - 13 + (CELL_SIZE - measurement.height); // Slight adjustment for visual centering
-    return {x, y};
-  }, [font, displayText]);
-
-  if (!font) {
-    return <Animated.View style={[styles.cell, animatedStyle]} />;
-  }
 
   return (
     <Pressable
       style={styles.pressable}
       disabled={!isCurrentRow && viewed === null}
       onPress={onLetterSelected}>
-      <Animated.View style={[styles.cell, animatedStyle]}>
-        <Canvas style={styles.canvas}>
-          <Group>
-            <Text
-              x={textPosition.x}
-              y={textPosition.y}
-              text={displayText}
-              font={font}
-              color={textColor}
-              opacity={1}
-            />
-          </Group>
-        </Canvas>
+      <Animated.View
+        style={[
+          styles.cell,
+          animatedStyle,
+          !viewed && {
+            backgroundColor: hint
+              ? getHintColor(hint?.correctness)
+              : colors.lightGrey,
+          },
+        ]}>
+        <Animated.Text
+          style={[
+            styles.letter,
+            animatedTextStyle,
+            !viewed && {
+              color: hint && !letter ? colors.grey : colors.darkGrey,
+            },
+          ]}>
+          {displayText}
+        </Animated.Text>
       </Animated.View>
     </Pressable>
   );
@@ -142,6 +146,7 @@ const styles = StyleSheet.create({
     height: CELL_SIZE,
     borderRadius: 17,
   },
+  letter: {fontSize: 28, fontFamily: 'PloniDL1.1AAA-Bold'},
 });
 
 export default memo(Cell);
