@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {memo, useEffect, useRef} from 'react';
 import {View, StyleSheet, I18nManager} from 'react-native';
 
 import {Correctness, LetterCellLocation, LineHint} from '~/utils/words';
@@ -11,7 +11,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-interface WordleRowProps {
+export interface WordleRowProps {
   rowIndex: number;
   wordLength: number;
   letters: (string | undefined)[];
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WordleRow;
+export default memo(WordleRow);

@@ -291,8 +291,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   ]);
 
   useEffect(() => {
-    const guessStr = gameState.currentGuess.join('');
-    if (guessStr.length === wordLength) {
+    if (
+      gameState.currentGuess.length === wordLength &&
+      gameState.currentGuess.every(l => l !== undefined)
+    ) {
+      const guessStr = gameState.currentGuess.join('');
       dispatch({type: 'SET_VALID_GUESS', isValid: isValidWord(guessStr)});
     } else {
       dispatch({type: 'SET_VALID_GUESS', isValid: null});
