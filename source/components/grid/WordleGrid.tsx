@@ -22,7 +22,7 @@ interface WordleGridProps {
   gameState: GameState;
   onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint;
-  recentReveals?: boolean[];
+  recentReveals: boolean[];
 }
 
 const WordleGrid: React.FC<WordleGridProps> = ({
@@ -60,7 +60,14 @@ const WordleGrid: React.FC<WordleGridProps> = ({
       {Array(maxAttempts)
         .fill(0)
         .map((_, rowIndex) => {
-          const isCurrentRow = rowIndex === currentAttempt;
+          const rowIndicationNum = rowIndex - currentAttempt;
+          const rowIndication =
+            rowIndicationNum === 0
+              ? 'CURRENT'
+              : rowIndicationNum < 0
+              ? 'BEFORE'
+              : 'AFTER';
+          const isCurrentRow = rowIndication === 'CURRENT';
 
           const shouldShowOverlay = rowIndex >= maxAttempts - numberOfSavedRows;
 
@@ -82,7 +89,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
               selectedLetter={selectedLetter}
               onLetterSelected={onLetterSelected}
               lineHint={$lineHint}
-              isCurrentRow={isCurrentRow}
+              rowIndication={rowIndication}
               reveals={recentReveals}
             />
           );

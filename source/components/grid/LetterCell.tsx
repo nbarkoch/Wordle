@@ -18,32 +18,34 @@ import {colors} from '~/utils/colors';
 
 interface LetterCellProps {
   letter: string | undefined;
-  viewed?: Correctness;
+  correctness?: Correctness;
   delay: number;
   rowIndex: number;
   colIndex: number;
   selectedLetter?: LetterCellLocation;
   onLetterSelected: (selectedLetterLocation: LetterCellLocation) => void;
   lineHint?: LineHint | undefined;
-  isCurrentRow?: boolean;
-  revealed?: boolean;
+  rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
+  revealed?: boolean; // for the score only
 }
 
 function LetterCell({
   letter,
-  viewed,
+  correctness,
   delay,
   colIndex,
   rowIndex,
   selectedLetter,
   onLetterSelected,
   lineHint,
-  isCurrentRow = false,
+  rowIndication,
   revealed = false,
 }: LetterCellProps) {
   const flipValue = useSharedValue(0);
   const cellScale = useSharedValue(1);
-  const sharedView = useSharedValue<Correctness | undefined>(viewed);
+  const sharedCorrectness = useSharedValue<Correctness | undefined>(
+    correctness,
+  );
   const cellOverlayRef = useRef<CellOverlayRef>(null);
   const cellWasSelected = useRef<boolean>(false);
 
@@ -95,18 +97,18 @@ function LetterCell({
   useAnimatedReaction(
     () => flipValue.value,
     currentFlipValue => {
-      if (currentFlipValue >= 90 && viewed !== sharedView.value) {
+      if (currentFlipValue >= 90 && correctness !== sharedCorrectness.value) {
         // Update state exactly at 90 degrees
-        sharedView.value = viewed;
+        sharedCorrectness.value = correctness;
       }
     },
-    [viewed],
+    [correctness],
   );
 
   useEffect(() => {
-    if (viewed !== sharedView.value) {
-      if (viewed) {
-        if (revealed && viewed === 'correct') {
+    if (correctness !== sharedCorrectness.value) {
+      if (correctness) {
+        if (revealed && correctness === 'correct') {
           cellOverlayRef.current?.activateOverlay(delay + 500);
         }
         flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
@@ -114,7 +116,7 @@ function LetterCell({
         flipValue.value = withTiming(0, {duration: 500});
       }
     }
-  }, [flipValue, viewed, delay, revealed]);
+  }, [flipValue, correctness, delay, revealed]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -132,12 +134,11 @@ function LetterCell({
       <Animated.View style={animatedStyle}>
         <Cell
           letter={letter}
-          viewed={viewed}
           selected={selected}
-          isCurrentRow={isCurrentRow}
           hint={hint}
           onLetterSelected={$onLetterSelected}
-          viewedAnim={sharedView}
+          correctnessAnim={sharedCorrectness}
+          rowIndication={rowIndication}
         />
       </Animated.View>
     </View>

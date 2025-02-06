@@ -9,12 +9,11 @@ import {colors} from '~/utils/colors';
 import {Correctness} from '~/utils/words';
 interface CellProps {
   letter: string | undefined;
-  viewed: Correctness | undefined;
   onLetterSelected: () => void;
-  isCurrentRow?: boolean;
   hint?: HintInfo;
   selected?: boolean;
-  viewedAnim: SharedValue<Correctness | undefined>;
+  correctnessAnim: SharedValue<Correctness | undefined>;
+  rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
 }
 
 const getColor = (status: Correctness | undefined) => {
@@ -56,17 +55,16 @@ const CELL_SIZE = 45;
 
 function Cell({
   letter,
-  viewed,
   onLetterSelected,
-  isCurrentRow = false,
   selected = false,
   hint,
-  viewedAnim,
+  correctnessAnim,
+  rowIndication,
 }: CellProps) {
   const animatedStyle = useAnimatedStyle(() => {
     'worklet';
-    const backgroundColor = viewedAnim.value
-      ? getColor(viewedAnim.value)
+    const backgroundColor = correctnessAnim.value
+      ? getColor(correctnessAnim.value)
       : hint
       ? getHintColor(hint?.correctness)
       : colors.lightGrey;
@@ -74,18 +72,18 @@ function Cell({
     return {
       backgroundColor,
       borderWidth: withTiming(selected ? 3 : 0, {duration: 150}),
-      borderColor: isCurrentRow ? colors.gold : colors.blue,
+      borderColor: rowIndication === 'CURRENT' ? colors.gold : colors.blue,
       transform: [
         {
-          rotateX: viewedAnim.value ? '180deg' : '0deg',
+          rotateX: correctnessAnim.value ? '180deg' : '0deg',
         },
       ],
     };
-  }, [selected, isCurrentRow, viewedAnim.value]);
+  }, [selected, rowIndication, correctnessAnim.value]);
 
   const animatedTextStyle = useAnimatedStyle(() => {
     'worklet';
-    const textColor = viewedAnim.value
+    const textColor = correctnessAnim.value
       ? colors.white
       : hint && !letter
       ? colors.grey
@@ -100,13 +98,13 @@ function Cell({
   return (
     <Pressable
       style={styles.pressable}
-      disabled={!isCurrentRow && viewed === null}
+      disabled={rowIndication === 'AFTER'}
       onPress={onLetterSelected}>
       <Animated.View
         style={[
           styles.cell,
           animatedStyle,
-          !viewed && {
+          rowIndication === 'CURRENT' && {
             backgroundColor: hint
               ? getHintColor(hint?.correctness)
               : colors.lightGrey,
@@ -116,7 +114,7 @@ function Cell({
           style={[
             styles.letter,
             animatedTextStyle,
-            !viewed && {
+            rowIndication === 'CURRENT' && {
               color: hint && !letter ? colors.grey : colors.darkGrey,
             },
           ]}>
