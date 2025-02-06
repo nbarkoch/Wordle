@@ -70,8 +70,7 @@ const TopBar: React.FC<TopBarProps> = ({
             scoreAnimatedStyle,
             {color: textScoreColor},
           ]}>
-          {' '}
-          {userScore}{' '}
+          {` ${userScore} `}
         </Animated.Text>
         <StarCoin outerRingColor={textScoreColor} />
       </View>
