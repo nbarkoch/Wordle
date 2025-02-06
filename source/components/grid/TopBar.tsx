@@ -32,6 +32,7 @@ const TopBar: React.FC<TopBarProps> = ({
 
   const [textScoreColor, setTextScoreColor] = useState<string>(colors.gold);
   const {isActive, resetKey, increment} = useTimerStore();
+  const timerState = useTimerStore();
 
   useEffect(() => {
     scaleAnimation.value = withTiming(1.25, {duration: 50}, () => {
@@ -55,11 +56,15 @@ const TopBar: React.FC<TopBarProps> = ({
     let intervalId: NodeJS.Timeout;
     if (isActive) {
       intervalId = setInterval(() => {
-        increment();
+        if (displayTimer) {
+          increment();
+        } else {
+          timerState.time += 1;
+        }
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [isActive, increment, resetKey]);
+  }, [isActive, increment, resetKey, displayTimer]);
 
   return (
     <View style={styles.topBar}>
