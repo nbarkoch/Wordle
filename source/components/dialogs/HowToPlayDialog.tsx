@@ -166,7 +166,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
             <GradientOverlayScrollView
               upperColor={'#224d66'}
               bottomColor={'#3B4457'}
-              gradientHeight={10}
+              gradientHeight={30}
               horizontal={false}
               style={styles.scrollView}
               contentContainerStyle={styles.scrollViewContent}>
@@ -278,10 +278,10 @@ const styles = StyleSheet.create({
   dialog: {
     alignItems: 'center',
     paddingTop: 30,
-    paddingBottom: 10,
+    paddingBottom: 5,
     width: dialogWidth,
     height: dialogHeight,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
   },
   titleContainer: {
     position: 'absolute',
@@ -329,6 +329,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     width: '100%',
+    borderRadius: 15,
+    overflow: 'hidden',
   },
   scrollViewContent: {
     alignItems: 'center',
