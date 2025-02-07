@@ -16,32 +16,16 @@ interface CellProps {
   rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
 }
 
-const getColor = (status: Correctness | undefined) => {
-  'worklet';
-  switch (status) {
-    case 'correct':
-      return colors.green;
-    case 'exists':
-      return colors.yellow;
-    case 'notInUse':
-      return colors.red;
-    default:
-      return colors.lightGrey;
-  }
+const hintColorMap: {[key in Exclude<Correctness, null>]: string} = {
+  correct: colors.lightGreen,
+  exists: colors.lightYellow,
+  notInUse: colors.lightRed,
 };
 
-const getHintColor = (status: Correctness | undefined) => {
-  'worklet';
-  switch (status) {
-    case 'correct':
-      return colors.lightGreen;
-    case 'exists':
-      return colors.lightYellow;
-    case 'notInUse':
-      return colors.lightRed;
-    default:
-      return colors.lightGrey;
-  }
+const colorMap: {[key in Exclude<Correctness, null>]: string} = {
+  correct: colors.green,
+  exists: colors.yellow,
+  notInUse: colors.red,
 };
 
 type HintInfo =
@@ -64,9 +48,9 @@ function Cell({
   const animatedStyle = useAnimatedStyle(() => {
     'worklet';
     const backgroundColor = correctnessAnim.value
-      ? getColor(correctnessAnim.value)
-      : hint
-      ? getHintColor(hint?.correctness)
+      ? colorMap[correctnessAnim.value]
+      : hint?.correctness
+      ? hintColorMap[hint.correctness]
       : colors.lightGrey;
 
     return {
@@ -105,8 +89,8 @@ function Cell({
           styles.cell,
           animatedStyle,
           rowIndication === 'CURRENT' && {
-            backgroundColor: hint
-              ? getHintColor(hint?.correctness)
+            backgroundColor: hint?.correctness
+              ? hintColorMap[hint.correctness]
               : colors.lightGrey,
           },
         ]}>
