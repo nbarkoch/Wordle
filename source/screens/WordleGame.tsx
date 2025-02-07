@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions, Vibration} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -57,6 +57,10 @@ import {showGameRestartAd} from '~/components/ads/fullScreenAd';
 import GameTypeIndicator from '~/components/GameTypeIndicator';
 
 const {width} = Dimensions.get('window');
+
+const smallVibration = () => {
+  Vibration.vibrate([2, 2]);
+};
 
 const WordleGame: React.FC<WordGameScreenProps> = ({
   route: {
@@ -199,10 +203,12 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const handleKeyPress = useCallback((key: string) => {
     requestAnimationFrame(() => dispatch({type: 'KEY_PRESS', key}));
+    smallVibration();
   }, []);
 
   const handleDelete = useCallback(() => {
     dispatch({type: 'DELETE_LETTER'});
+    smallVibration();
   }, []);
 
   const handleSubmit = useCallback(() => {
