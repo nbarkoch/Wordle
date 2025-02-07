@@ -29,6 +29,7 @@ import CloseIcon from './CloseIcon';
 import RowMockUp from './MockUpRow';
 import HintWordButton from '../grid/HintWordsButton';
 import AboutButton from '../grid/AboutButton';
+import GradientOverlayScrollView from '../GridScrollView';
 
 const {width, height} = Dimensions.get('window');
 const dialogWidth = width - 60;
@@ -162,52 +163,71 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
               <CloseIcon onPress={onClose} />
             </View>
             <Text style={styles.title}>{'איך משחקים'}</Text>
-            <ScrollView
+            <GradientOverlayScrollView
+              upperColor={'#224d66'}
+              bottomColor={'#3B4457'}
+              gradientHeight={10}
               horizontal={false}
               style={styles.scrollView}
               contentContainerStyle={styles.scrollViewContent}>
               <Animated.View style={[styles.introduction, introductionStyle]}>
-                <Text style={styles.text}>{'נחשו את המילה ב-6 ניסיונות'}</Text>
                 <Text style={styles.text}>
-                  {'הצבעים מראים רמז לאחר כל ניחוש'}
+                  {'נחשו את המילה באורך 5 אותיות, תוך 6 ניסיונות'}
                 </Text>
-                <Text style={styles.text}>{'דוגמה:'}</Text>
+                <Text style={styles.text}>
+                  {'מילת הניחוש חייבת להיות מילה תקנית'}
+                </Text>
+                <Text style={styles.text}>
+                  {
+                    'בתגובה לכל ניחוש המערכת מגיבה בצביעת האותיות לפי הימצאותן ומיקומן במילה הסודית'
+                  }
+                </Text>
+                <Text style={styles.text}>
+                  {'על כל ניחוש נכון תצברו נקודות'}
+                </Text>
+                <View style={styles.divider} />
+                <Text style={styles.boldTitle}>{'דוגמה:'}</Text>
+                <Text style={styles.text}>
+                  {'נניח המילה הסודית היא: מלכות'}
+                </Text>
+                <Text style={styles.text}>{'והניחוש שלך:'}</Text>
                 <View style={styles.adjustment}>
                   <RowMockUp
-                    letters={['מ', 'י', 'ל', 'י', 'ם']}
+                    letters={['מ', 'י', 'ל', 'ו', 'ת']}
                     correctness={[null, null, null, null, null]}
                   />
                 </View>
-                <Text style={styles.text}>{'הניחוש שלך:'}</Text>
+                <Text style={styles.text}>{'לאחר שתלחץ על אישור'}</Text>
                 <View style={styles.adjustment}>
                   <RowMockUp
-                    letters={['מ', 'י', 'ל', 'י', 'ם']}
+                    letters={['מ', 'י', 'ל', 'ו', 'ת']}
                     correctness={[
                       'correct',
                       'notInUse',
-                      'notInUse',
                       'exists',
+                      'correct',
                       'correct',
                     ]}
                   />
                 </View>
+                <Text style={styles.text}>{'הצבעים יראו רמז לאחר הניחוש'}</Text>
                 <LineAbout
                   title={'ירוק'}
                   color={colors.green}
-                  info={'מיקום נכון'}
+                  info={'האות קיימת במילה במיקום זהה'}
                 />
                 <LineAbout
                   title={'צהוב'}
                   color={colors.yellow}
-                  info={'מיקום שגוי'}
+                  info={'האות קיימת במילה במיקום אחר'}
                 />
                 <LineAbout
                   title={'אדום'}
                   color={colors.red}
-                  info={'לא במילה'}
+                  info={'האות אינה קיימת בכלל במילה'}
                 />
                 <View style={styles.divider} />
-                <Text style={styles.text}>{'כפתורי רמז:'}</Text>
+                <Text style={styles.boldTitle}>{'כפתורי רמז:'}</Text>
                 <View style={styles.row}>
                   <HintWordButton onHintRequested={() => {}} scoreCost={0} />
                   <AboutButton onInfoRequested={() => {}} scoreCost={0} />
@@ -224,7 +244,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                   info={'חושפת אותיות'}
                 />
               </Animated.View>
-            </ScrollView>
+            </GradientOverlayScrollView>
           </View>
         </View>
       </Animated.View>
@@ -258,8 +278,10 @@ const styles = StyleSheet.create({
   dialog: {
     alignItems: 'center',
     paddingTop: 30,
+    paddingBottom: 10,
     width: dialogWidth,
     height: dialogHeight,
+    paddingHorizontal: 10,
   },
   titleContainer: {
     position: 'absolute',
@@ -282,7 +304,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   boldText: {
-    fontSize: 15,
+    fontSize: 17,
+    color: colors.lightGrey,
+    textAlign: 'center',
+    fontFamily: 'PloniDL1.1AAA-Bold',
+  },
+  boldTitle: {
+    fontSize: 18,
     color: colors.lightGrey,
     textAlign: 'center',
     fontFamily: 'PloniDL1.1AAA-Bold',
