@@ -107,7 +107,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {playSound: playWrong} = useSound('wrong.mp3');
 
   useEffect(() => {
-    console.log(secretWord);
+    console.log(secretWord.split('').reverse().join(''));
   }, [secretWord]);
 
   const resetGame = useCallback(() => {
@@ -198,7 +198,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [removeFromUserScore, gameState.aboutWasShown]);
 
   const handleKeyPress = useCallback((key: string) => {
-    dispatch({type: 'KEY_PRESS', key});
+    requestAnimationFrame(() => dispatch({type: 'KEY_PRESS', key}));
   }, []);
 
   const handleDelete = useCallback(() => {
@@ -242,11 +242,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       setRecentReveals(reveal);
       addScore(newRevealLength);
 
-      dispatch({
-        type: 'SUBMIT_GUESS',
-        correctness,
-        letters: currentLetters,
-        correctLetters: correctLetters,
+      requestAnimationFrame(() => {
+        dispatch({
+          type: 'SUBMIT_GUESS',
+          correctness,
+          letters: currentLetters,
+          correctLetters: correctLetters,
+        });
       });
 
       if (isSecretWordRevealed) {
