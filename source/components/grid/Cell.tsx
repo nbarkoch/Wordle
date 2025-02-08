@@ -51,6 +51,8 @@ function Cell({
       ? colorMap[correctnessAnim.value]
       : hint?.correctness
       ? hintColorMap[hint.correctness]
+      : rowIndication === 'AFTER'
+      ? colors.midLightGrey
       : colors.lightGrey;
 
     return {
@@ -99,7 +101,8 @@ function Cell({
             styles.letter,
             animatedTextStyle,
             rowIndication === 'CURRENT' && {
-              color: hint && !letter ? colors.grey : colors.darkGrey,
+              color:
+                hint?.correctness && !letter ? colors.grey : colors.darkGrey,
             },
           ]}>
           {displayText}

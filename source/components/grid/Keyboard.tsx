@@ -41,7 +41,6 @@ const Keyboard = ({
   };
   const formattedKeys = formatKeysInChunks();
 
-  console.log('disabled', disabled);
   return (
     <View style={styles.keyboard}>
       {formattedKeys.map((chunk, rowIndex) => (
