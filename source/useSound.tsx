@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import Sound from 'react-native-sound';
 import {create} from 'zustand';
 
@@ -37,6 +37,14 @@ AsyncStorage.getItem(STORAGE_KEY).then(value => {
 const useSound = (soundFile: string) => {
   const soundRef = useRef<Sound | null>(null);
   const isSoundEnabled = useSoundStore(state => state.isSoundEnabled);
+
+  useEffect(() => {
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.release();
+      }
+    };
+  }, []);
 
   const playSound = () => {
     // Don't play if sound is disabled

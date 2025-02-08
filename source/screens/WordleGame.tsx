@@ -6,7 +6,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View, StyleSheet, Dimensions, Vibration} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Vibration,
+  ScrollView,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -109,6 +115,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const shakeAnimation = useSharedValue(0);
   const {playSound: playSubmit} = useSound('submit.mp3');
   const {playSound: playWrong} = useSound('wrong.mp3');
+  const gridScrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     console.log(secretWord.split('').reverse().join(''));
@@ -119,6 +126,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     reset();
     generateSecretWord();
     setRecentReveals(Array(wordLength).fill(false));
+    gridScrollViewRef?.current?.scrollTo({y: 0});
     setScore(0);
     global.gc?.();
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
@@ -340,6 +348,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           }
         />
         <GradientOverlayScrollView
+          ref={gridScrollViewRef}
           upperColor={'#343D4E'}
           bottomColor={'#3A4F6C'}
           gradientHeight={20}
@@ -362,7 +371,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         <View style={styles.bottomContainer}>
           <Keyboard
             disabled={
-              gameState.selectedLetter.rowIndex !== gameState.currentAttempt
+              gameState.selectedLetter.rowIndex !== gameState.currentAttempt ||
+              gameState.gameStatus !== 'PLAYING'
             }
             handleKeyPress={handleKeyPress}
             handleDelete={handleDelete}

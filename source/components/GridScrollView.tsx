@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {ScrollView, View, StyleSheet, ScrollViewProps} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -8,33 +8,46 @@ interface GradientOverlayScrollViewProps extends ScrollViewProps {
   gradientHeight?: number;
 }
 
-const GradientOverlayScrollView: React.FC<GradientOverlayScrollViewProps> = ({
-  children,
-  upperColor,
-  bottomColor,
-  gradientHeight = 100,
-  style,
-  ...scrollViewProps
-}) => {
-  const gh = gradientHeight;
-  return (
-    <View style={[styles.container, style]}>
-      <ScrollView {...scrollViewProps}>{children}</ScrollView>
-      <LinearGradient
-        colors={[upperColor, 'transparent']}
-        style={[styles.gradient, styles.topGradient, {height: gradientHeight}]}
-      />
-      <LinearGradient
-        colors={['transparent', bottomColor]}
-        style={[
-          styles.gradient,
-          styles.bottomGradient,
-          {height: gradientHeight},
-        ]}
-      />
-    </View>
-  );
-};
+const GradientOverlayScrollView = forwardRef<
+  ScrollView,
+  GradientOverlayScrollViewProps
+>(
+  (
+    {
+      children,
+      upperColor,
+      bottomColor,
+      gradientHeight = 100,
+      style,
+      ...scrollViewProps
+    },
+    ref,
+  ) => {
+    return (
+      <View style={[styles.container, style]}>
+        <ScrollView ref={ref} {...scrollViewProps}>
+          {children}
+        </ScrollView>
+        <LinearGradient
+          colors={[upperColor, 'transparent']}
+          style={[
+            styles.gradient,
+            styles.topGradient,
+            {height: gradientHeight},
+          ]}
+        />
+        <LinearGradient
+          colors={['transparent', bottomColor]}
+          style={[
+            styles.gradient,
+            styles.bottomGradient,
+            {height: gradientHeight},
+          ]}
+        />
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

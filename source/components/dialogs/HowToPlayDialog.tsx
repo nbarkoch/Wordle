@@ -164,7 +164,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
             </View>
             <Text style={styles.title}>{'איך משחקים'}</Text>
             <GradientOverlayScrollView
-              upperColor={'#224d66'}
+              upperColor={'#264C64'}
               bottomColor={'#3B4457'}
               gradientHeight={30}
               horizontal={false}

@@ -8,7 +8,7 @@ interface KeyboardProps {
   handleDelete: () => void;
   keyboardLetters: Record<string, Correctness>;
   disableDelete: boolean;
-  disabled?: boolean;
+  disabled: boolean;
 }
 
 const Keyboard = ({
@@ -16,7 +16,7 @@ const Keyboard = ({
   keyboardLetters,
   disableDelete,
   handleDelete,
-  disabled = false,
+  disabled,
 }: KeyboardProps) => {
   const keys = Object.entries(keyboardLetters);
 
@@ -41,6 +41,7 @@ const Keyboard = ({
   };
   const formattedKeys = formatKeysInChunks();
 
+  console.log('disabled', disabled);
   return (
     <View style={styles.keyboard}>
       {formattedKeys.map((chunk, rowIndex) => (
