@@ -51,8 +51,6 @@ function Cell({
       ? colorMap[correctnessAnim.value]
       : hint?.correctness
       ? hintColorMap[hint.correctness]
-      : rowIndication === 'AFTER'
-      ? colors.midLightGrey
       : colors.lightGrey;
 
     return {

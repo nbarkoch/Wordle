@@ -40,7 +40,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
 }) => {
   const rowOverlayRef = useRef<RowOverlayRef>(null);
   const scaleAnimation = useSharedValue(0);
-  const isCurrentRow = rowIndication === 'CURRENT';
+  const opacityAnimation = useSharedValue(0);
 
   useEffect(() => {
     if (shouldShowOverlay) {
@@ -49,11 +49,16 @@ const WordleRow: React.FC<WordleRowProps> = ({
   }, [delay, shouldShowOverlay]);
 
   useEffect(() => {
-    scaleAnimation.value = withSpring(rowIndication ? 1 : 0);
-  }, [isCurrentRow, scaleAnimation]);
+    scaleAnimation.value = withSpring(rowIndication === 'CURRENT' ? 1 : 0);
+  }, [rowIndication, scaleAnimation]);
+
+  useEffect(() => {
+    opacityAnimation.value = withSpring(rowIndication === 'AFTER' ? 0.8 : 1);
+  }, [rowIndication, opacityAnimation]);
 
   const rowAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{scale: 1 + scaleAnimation.value * 0.05}],
+    opacity: opacityAnimation.value,
   }));
 
   return (
