@@ -15,19 +15,49 @@ import CoinCostOverlay from '~/components/grid/CoinCostOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
 import VolumeButton from '~/components/IconButtons/VolumeButton';
+import {loadGame} from '~/store/gameStorageState';
+import {useFocusEffect} from '@react-navigation/native';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const {isDone, checkDaily} = useDailyGameStore();
+  const [isNewGame, setIsNewGame] = useState<boolean>(true);
 
-  useEffect(() => {
+  useFocusEffect(() => {
     checkDaily();
-  }, [checkDaily]);
+    loadGame('RANDOM').then(storageState =>
+      setIsNewGame(storageState === undefined),
+    );
+  });
 
-  const onNewGame = useCallback(() => {
-    navigation.navigate('NewGame');
+  const onNewGame = useCallback(async () => {
+    const gameStorageState = await loadGame('RANDOM');
+    if (gameStorageState) {
+      const {
+        gameState,
+        enableTimer,
+        category,
+        difficulty,
+        secretWord,
+        aboutWord,
+      } = gameStorageState;
+      navigation.navigate('WordGame', {
+        maxAttempts: gameState.maxAttempts,
+        wordLength: gameState.wordLength,
+        enableTimer,
+        category,
+        difficulty,
+        type: 'RANDOM',
+        savedGameState: gameState,
+        secretWord,
+        aboutWord,
+      });
+    } else {
+      navigation.navigate('NewGame');
+    }
   }, [navigation]);
 
-  const onDailyGame = useCallback(() => {
+  const onDailyGame = useCallback(async () => {
+    const gameStorageState = await loadGame('DAILY');
     navigation.navigate('WordGame', {
       maxAttempts: 6,
       wordLength: 5,
@@ -35,6 +65,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
       category: 'GENERAL',
       difficulty: 'easy',
       type: 'DAILY',
+      savedGameState: gameStorageState?.gameState,
     });
   }, [navigation]);
 
@@ -65,7 +96,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
       </View>
       <View style={styles.body}>
         <MenuButton
-          text="משחק חדש"
+          text={isNewGame ? 'משחק חדש' : 'המשך משחק'}
           onPress={onNewGame}
           color={setColorOpacity(colors.green, 0.7)}
         />

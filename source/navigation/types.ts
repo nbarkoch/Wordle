@@ -2,6 +2,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
+import {GameState} from '~/gameReducer';
 import {Difficulty, GameCategory} from '~/utils/types';
 
 export type RootStackParamList = {
@@ -14,6 +15,9 @@ export type RootStackParamList = {
     category: GameCategory;
     difficulty: Difficulty;
     type: 'RANDOM' | 'DAILY';
+    savedGameState?: GameState;
+    secretWord?: string;
+    aboutWord?: string;
   };
   UserInfo: {user: string};
 };

@@ -123,6 +123,34 @@ const newSecretWord = (
   return {selectedWord, about: validWords[selectedWord]};
 };
 
+export const evaluateGuess = (
+  guess: string,
+  hiddenWord: string,
+): Correctness[] => {
+  const wordLength = hiddenWord.length;
+  const evaluation: Correctness[] = Array(wordLength).fill('notInUse');
+  const secretLetters: (string | null)[] = hiddenWord.split('').map(mapSuffix);
+  const guessLetters: (string | null)[] = guess.split('').map(mapSuffix);
+
+  // First pass: Identify correct letters
+  for (let i = 0; i < wordLength; i++) {
+    if (guessLetters[i] === secretLetters[i]) {
+      evaluation[i] = 'correct';
+      secretLetters[i] = guessLetters[i] = null;
+    }
+  }
+
+  // Second pass: Identify misplaced letters
+  for (let i = 0; i < wordLength; i++) {
+    if (guessLetters[i] && secretLetters.includes(guessLetters[i])) {
+      evaluation[i] = 'exists';
+      secretLetters[secretLetters.indexOf(guessLetters[i])] = null;
+    }
+  }
+
+  return evaluation;
+};
+
 const useSecretWord = (
   wordLength: number,
   category: GameCategory,
@@ -141,39 +169,9 @@ const useSecretWord = (
     setRandomWord(newSecretWord(wordLength, category, difficulty));
   };
 
-  const evaluateGuess = useCallback(
-    (guess: string): Correctness[] => {
-      const evaluation: Correctness[] = Array(wordLength).fill('notInUse');
-      const secretLetters: (string | null)[] = secretWord.selectedWord
-        .split('')
-        .map(mapSuffix);
-      const guessLetters: (string | null)[] = guess.split('').map(mapSuffix);
-
-      // First pass: Identify correct letters
-      for (let i = 0; i < wordLength; i++) {
-        if (guessLetters[i] === secretLetters[i]) {
-          evaluation[i] = 'correct';
-          secretLetters[i] = guessLetters[i] = null;
-        }
-      }
-
-      // Second pass: Identify misplaced letters
-      for (let i = 0; i < wordLength; i++) {
-        if (guessLetters[i] && secretLetters.includes(guessLetters[i])) {
-          evaluation[i] = 'exists';
-          secretLetters[secretLetters.indexOf(guessLetters[i])] = null;
-        }
-      }
-
-      return evaluation;
-    },
-    [secretWord, wordLength],
-  );
-
   return {
     secretWord: secretWord.selectedWord,
     aboutWord: secretWord.about,
-    evaluateGuess,
     generateSecretWord,
   };
 };

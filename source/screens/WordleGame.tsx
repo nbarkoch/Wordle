@@ -23,7 +23,7 @@ import Animated, {
 import WordleGrid from '~/components/grid/WordleGrid';
 import useWordValidator from '~/store/useWordValidator';
 import Keyboard from '~/components/grid/Keyboard';
-import useSecretWord from '~/store/useSecretWord';
+import useSecretWord, {evaluateGuess} from '~/store/useSecretWord';
 import {
   calculateHintForLetter,
   giveHint,
@@ -61,6 +61,7 @@ import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
 import {showGameRestartAd} from '~/components/ads/fullScreenAd';
 import GameTypeIndicator from '~/components/GameTypeIndicator';
+import {saveGame} from '~/store/gameStorageState';
 
 const {width} = Dimensions.get('window');
 
@@ -77,6 +78,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       category,
       difficulty,
       type: gameType,
+      savedGameState,
+      secretWord: providedSecretWord,
+      aboutWord: providedAboutWord,
     },
   },
 }) => {
@@ -100,10 +104,16 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     Array(wordLength).fill(false),
   );
 
-  const [gameState, dispatch] = useReducer(gameReducer, initialState);
+  const [gameState, dispatch] = useReducer(
+    gameReducer,
+    savedGameState ?? initialState,
+  );
 
-  const {evaluateGuess, secretWord, generateSecretWord, aboutWord} =
-    useSecretWord(wordLength, category, difficulty, gameType);
+  const {
+    secretWord: generatedSecretWord,
+    aboutWord: generatedAboutWord,
+    generateSecretWord,
+  } = useSecretWord(wordLength, category, difficulty, gameType);
   const {markDone} = useDailyGameStore();
 
   const {start, stop, reset} = useTimerStore();
@@ -116,10 +126,26 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {playSound: playSubmit} = useSound('submit.mp3');
   const {playSound: playWrong} = useSound('wrong.mp3');
   const gridScrollViewRef = useRef<ScrollView>(null);
+  const secretWord = providedSecretWord ?? generatedSecretWord;
+  const aboutWord = providedAboutWord ?? generatedAboutWord;
 
   useEffect(() => {
     console.log(secretWord.split('').reverse().join(''));
   }, [secretWord]);
+
+  useEffect(() => {
+    if (gameState.gameStatus === 'PLAYING') {
+      saveGame(gameType, {
+        gameState,
+        category,
+        difficulty,
+        secretWord,
+        aboutWord,
+      });
+    } else {
+      saveGame(gameType, undefined);
+    }
+  }, [gameState, secretWord, difficulty, category, gameType]);
 
   const resetGame = useCallback(() => {
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
@@ -225,7 +251,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       gameState.currentGuess.every(letter => letter !== undefined)
     ) {
       playSubmit();
-      const correctness = evaluateGuess(gameState.currentGuess.join(''));
+      const correctness = evaluateGuess(
+        gameState.currentGuess.join(''),
+        secretWord,
+      );
       const currentLetters = [...gameState.currentGuess] as string[];
       const correctLetters = [...gameState.correctLetters];
       const reveal = Array<boolean>(wordLength).fill(false);

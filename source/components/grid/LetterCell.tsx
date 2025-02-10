@@ -41,7 +41,7 @@ function LetterCell({
   rowIndication,
   revealed = false,
 }: LetterCellProps) {
-  const flipValue = useSharedValue(0);
+  const flipValue = useSharedValue(correctness ? 180 : 0);
   const cellScale = useSharedValue(1);
   const sharedCorrectness = useSharedValue<Correctness | undefined>(
     correctness,
