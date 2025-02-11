@@ -129,6 +129,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const secretWord = providedSecretWord ?? generatedSecretWord;
   const aboutWord = providedAboutWord ?? generatedAboutWord;
 
+  const currentWordGuess = useMemo(
+    () => gameState.currentGuess.join(''),
+    [gameState.currentGuess],
+  );
+
   useEffect(() => {
     console.log(secretWord.split('').reverse().join(''));
   }, [secretWord]);
@@ -246,15 +251,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    if (
-      gameState.isValidGuess &&
-      gameState.currentGuess.every(letter => letter !== undefined)
-    ) {
+    if (gameState.isValidGuess && currentWordGuess.length === wordLength) {
       playSubmit();
-      const correctness = evaluateGuess(
-        gameState.currentGuess.join(''),
-        secretWord,
-      );
+      const correctness = evaluateGuess(currentWordGuess, secretWord);
       const currentLetters = [...gameState.currentGuess] as string[];
       const correctLetters = [...gameState.correctLetters];
       const reveal = Array<boolean>(wordLength).fill(false);
@@ -320,7 +319,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     }
   }, [
     gameState.isValidGuess,
-    gameState.currentGuess,
+    currentWordGuess,
     gameState.correctLetters,
     gameState.currentAttempt,
     playSubmit,
@@ -336,16 +335,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   ]);
 
   useEffect(() => {
-    if (
-      gameState.currentGuess.length === wordLength &&
-      gameState.currentGuess.every(l => l !== undefined)
-    ) {
-      const guessStr = gameState.currentGuess.join('');
-      dispatch({type: 'SET_VALID_GUESS', isValid: isValidWord(guessStr)});
+    if (currentWordGuess.length === wordLength) {
+      dispatch({
+        type: 'SET_VALID_GUESS',
+        isValid: isValidWord(currentWordGuess),
+      });
     } else {
       dispatch({type: 'SET_VALID_GUESS', isValid: null});
     }
-  }, [isValidWord, gameState.currentGuess, wordLength]);
+  }, [isValidWord, currentWordGuess, wordLength]);
   useEffect(() => {
     if (gameState.gameStatus !== 'PLAYING') {
       const timeout = setTimeout(() => {

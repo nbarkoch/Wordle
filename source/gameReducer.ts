@@ -63,7 +63,7 @@ const initialState: GameState = {
   aboutWasShown: false,
   numberOfSavedRows: 0,
   gameStatus: 'PLAYING',
-  isValidGuess: false,
+  isValidGuess: null,
   maxAttempts: 0,
   wordLength: 0,
 };

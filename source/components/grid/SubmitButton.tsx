@@ -1,16 +1,35 @@
-import React, {memo, useCallback, useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {Platform, StyleSheet} from 'react-native';
 import Animated, {
-  cancelAnimation,
-  Easing,
-  interpolateColor,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  cancelAnimation,
+  Easing,
+  interpolateColor,
 } from 'react-native-reanimated';
-import {colors} from '~/utils/colors';
 import BasePressable from '../BasePressable';
+
+const ANIMATION_DURATION = 300;
+
+// Color configuration object for different states
+const buttonColors = {
+  default: {
+    background: '#A0A0A0',
+    border: '#898989',
+    text: '#6a6a6a',
+  },
+  valid: {
+    background: '#7FCCB5',
+    border: '#5eb299',
+    text: '#FFFFFF',
+  },
+  invalid: {
+    background: '#F47A89',
+    border: '#c9505e',
+    text: '#af3a47',
+  },
+};
 
 interface SubmitButtonProps {
   handleSubmit: () => void;
@@ -18,78 +37,76 @@ interface SubmitButtonProps {
 }
 
 function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
-  const submitColorAnimation = useSharedValue(0);
-  const [internalIsValidGuess, setInternalIsValidGuess] = useState<
-    boolean | null
-  >(isValidGuess);
-
-  const updateInternalState = useCallback(() => {
-    setInternalIsValidGuess(isValidGuess);
-  }, [isValidGuess]);
+  const animationProgress = useSharedValue(0);
+  const currentState = useSharedValue<boolean | null>(null);
+  const previousState = useSharedValue<boolean | null>(null);
 
   useEffect(() => {
-    submitColorAnimation.value = withTiming(
-      isValidGuess === null ? 0 : 1,
-      {
-        duration: 300,
-        easing: Easing.inOut(Easing.quad),
-      },
-      finished => {
-        if (finished) {
-          runOnJS(updateInternalState)();
-        }
-      },
-    );
-    return () => cancelAnimation(submitColorAnimation);
-  }, [isValidGuess, submitColorAnimation, updateInternalState]);
+    // Reset and start new animation
+    const startNewAnimation = () => {
+      animationProgress.value = 0;
+      currentState.value = isValidGuess;
 
-  const validGuess = isValidGuess ?? internalIsValidGuess;
+      animationProgress.value = withTiming(
+        1,
+        {
+          duration: ANIMATION_DURATION,
+          easing: Easing.inOut(Easing.quad),
+        },
+        finished => {
+          if (finished) {
+            previousState.value = isValidGuess;
+          }
+        },
+      );
+    };
 
-  const submitButtonStyle = useAnimatedStyle(() => {
-    const finalColor =
-      validGuess === null ? '#A0A0A0' : validGuess ? colors.green : colors.red;
-    const finalBorderColor =
-      validGuess === null ? '#898989' : validGuess ? '#5eb299' : '#c9505e';
-    const backgroundColor = interpolateColor(
-      submitColorAnimation.value,
-      [0, 1],
-      ['#A0A0A0', finalColor],
-    );
+    startNewAnimation();
 
-    const borderColor = interpolateColor(
-      submitColorAnimation.value,
-      [0, 1],
-      ['#898989', finalBorderColor],
-    );
+    return () => cancelAnimation(animationProgress);
+  }, [isValidGuess, animationProgress, currentState, previousState]);
+
+  const getStateColors = (state: boolean | null) => {
+    'worklet';
+    if (state === null) return buttonColors.default;
+    return state ? buttonColors.valid : buttonColors.invalid;
+  };
+
+  const buttonStyle = useAnimatedStyle(() => {
+    const currentColors = getStateColors(currentState.value);
+    const previousColors = getStateColors(previousState.value);
 
     return {
-      backgroundColor,
-      borderColor,
+      backgroundColor: interpolateColor(
+        animationProgress.value,
+        [0, 1],
+        [previousColors.background, currentColors.background],
+      ),
+      borderColor: interpolateColor(
+        animationProgress.value,
+        [0, 1],
+        [previousColors.border, currentColors.border],
+      ),
     };
   });
 
-  const submitTextStyle = useAnimatedStyle(() => {
-    const finalFontColor =
-      validGuess === null
-        ? colors.darkGrey
-        : validGuess
-        ? colors.white
-        : colors.darkRed;
-
-    const fontColor = interpolateColor(
-      submitColorAnimation.value,
-      [0, 1],
-      [colors.darkGrey, finalFontColor],
-    );
+  const textStyle = useAnimatedStyle(() => {
+    const currentColors = getStateColors(currentState.value);
+    const previousColors = getStateColors(previousState.value);
 
     return {
-      color: fontColor,
+      color: interpolateColor(
+        animationProgress.value,
+        [0, 1],
+        [previousColors.text, currentColors.text],
+      ),
     };
   });
+
   return (
     <BasePressable disabled={isValidGuess === null} onPress={handleSubmit}>
-      <Animated.View style={[styles.submitButton, submitButtonStyle]}>
-        <Animated.Text style={[styles.submitButtonText, submitTextStyle]}>
+      <Animated.View style={[styles.button, buttonStyle]}>
+        <Animated.Text style={[styles.buttonText, textStyle]}>
           {'אישור'}
         </Animated.Text>
       </Animated.View>
@@ -98,18 +115,17 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
 }
 
 const styles = StyleSheet.create({
-  submitButton: {
+  button: {
     paddingHorizontal: 30,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 2.5,
   },
-  submitButtonText: {
-    color: 'white',
+  buttonText: {
     fontSize: 20,
     fontFamily: 'PloniDL1.1AAA-Bold',
     paddingTop: Platform.OS === 'ios' ? 3 : 0,
   },
 });
 
-export default memo(SubmitButton);
+export default React.memo(SubmitButton);
