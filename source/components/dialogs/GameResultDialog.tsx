@@ -59,9 +59,18 @@ const GameResultDialog = ({
   const buttonContainerAnimation = useSharedValue(0);
   const scoreWrapperAnimation = useSharedValue(0);
   const [block, setBlock] = useState<boolean>(false);
+  const {playSound: playWinning} = useSound('winning.mp3');
   const {playSound: playSuccess} = useSound('success.mp3');
+  const {playSound: playNicelyDone} = useSound('nicely_done.mp3');
   const {playSound: playFailure} = useSound('fail.wav');
   const {time} = useTimerStore();
+
+  const rating = Math.min(
+    Math.round(
+      ((currentScore - secretWord.length) / secretWord.length) * 3 + 1,
+    ),
+    3,
+  );
 
   useEffect(() => {
     if (isVisible) {
@@ -114,7 +123,14 @@ const GameResultDialog = ({
   useEffect(() => {
     if (isVisible) {
       if (isSuccess) {
-        playSuccess();
+        if (rating === 3) {
+          playWinning();
+        } else if (rating > 1) {
+          playSuccess();
+        } else {
+          playNicelyDone();
+        }
+
         addToRevealedList(
           secretWord,
           time,
@@ -128,7 +144,7 @@ const GameResultDialog = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, isVisible]);
+  }, [isSuccess, isVisible, rating]);
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -164,13 +180,6 @@ const GameResultDialog = ({
   if (!block && !isVisible) {
     return null;
   }
-
-  const rating = Math.min(
-    Math.round(
-      ((currentScore - secretWord.length) / secretWord.length) * 3 + 1,
-    ),
-    3,
-  );
 
   return (
     <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
