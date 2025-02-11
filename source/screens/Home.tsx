@@ -32,14 +32,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
   const onNewGame = useCallback(async () => {
     const gameStorageState = await loadGame('RANDOM');
     if (gameStorageState) {
-      const {
-        gameState,
-        enableTimer,
-        category,
-        difficulty,
-        secretWord,
-        aboutWord,
-      } = gameStorageState;
+      const {gameState, enableTimer, category, difficulty} = gameStorageState;
       navigation.navigate('WordGame', {
         maxAttempts: gameState.maxAttempts,
         wordLength: gameState.wordLength,
@@ -48,8 +41,6 @@ function HomeScreen({navigation}: HomeScreenProps) {
         difficulty,
         type: 'RANDOM',
         savedGameState: gameState,
-        secretWord,
-        aboutWord,
       });
     } else {
       navigation.navigate('NewGame');

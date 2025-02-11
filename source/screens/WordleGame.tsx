@@ -79,8 +79,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       difficulty,
       type: gameType,
       savedGameState,
-      secretWord: providedSecretWord,
-      aboutWord: providedAboutWord,
     },
   },
 }) => {
@@ -109,11 +107,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     savedGameState ?? initialState,
   );
 
-  const {
-    secretWord: generatedSecretWord,
-    aboutWord: generatedAboutWord,
-    generateSecretWord,
-  } = useSecretWord(wordLength, category, difficulty, gameType);
+  const {secretWord, aboutWord, generateSecretWord} = useSecretWord(
+    wordLength,
+    category,
+    difficulty,
+    gameType,
+  );
+
   const {markDone} = useDailyGameStore();
 
   const {start, stop, reset} = useTimerStore();
@@ -126,8 +126,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {playSound: playSubmit} = useSound('submit.mp3');
   const {playSound: playWrong} = useSound('wrong.mp3');
   const gridScrollViewRef = useRef<ScrollView>(null);
-  const secretWord = providedSecretWord ?? generatedSecretWord;
-  const aboutWord = providedAboutWord ?? generatedAboutWord;
 
   const currentWordGuess = useMemo(
     () => gameState.currentGuess.join(''),

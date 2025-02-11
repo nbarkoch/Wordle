@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import {Correctness, mapSuffix} from '~/utils/words';
 
@@ -23,6 +23,7 @@ import sports4 from '~/database/sports_4.json';
 import sports5 from '~/database/sports_5.json';
 
 import {Difficulty, GameCategory} from '~/utils/types';
+import {loadGame} from './gameStorageState';
 
 type DifficultySections = {
   easy: Record<string, string>;
@@ -157,22 +158,45 @@ const useSecretWord = (
   difficulty: Difficulty,
   type: 'DAILY' | 'RANDOM',
 ) => {
-  const [randomWord, setRandomWord] = useState<WordHandle>(
-    newSecretWord(wordLength, category, difficulty),
+  const [secretWord, setSecretWord] = useState<WordHandle | undefined>(
+    undefined,
   );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const secretWord = useMemo(() => {
-    return type === 'DAILY' ? getDailyWord() : randomWord;
-  }, [randomWord, type]);
+  const loadWordFromStorage: (
+    gameType: string,
+  ) => Promise<WordHandle | undefined> = async gameType => {
+    const gameStorageState = await loadGame(gameType);
+    if (gameStorageState) {
+      return {
+        selectedWord: gameStorageState.secretWord,
+        about: gameStorageState.aboutWord,
+      };
+    }
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    loadWordFromStorage(type).then(result => {
+      setSecretWord(
+        result ??
+          (type === 'DAILY'
+            ? getDailyWord()
+            : newSecretWord(wordLength, category, difficulty)),
+      );
+      setIsLoading(false);
+    });
+  }, []);
 
   const generateSecretWord = () => {
-    setRandomWord(newSecretWord(wordLength, category, difficulty));
+    setSecretWord(newSecretWord(wordLength, category, difficulty));
   };
 
   return {
-    secretWord: secretWord.selectedWord,
-    aboutWord: secretWord.about,
+    secretWord: secretWord?.selectedWord ?? '',
+    aboutWord: secretWord?.about ?? '',
     generateSecretWord,
+    isLoading,
   };
 };
 
