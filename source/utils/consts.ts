@@ -9,7 +9,9 @@ export const CATEGORIES: GameCategory[] = [
   'GEOGRAPHY',
   'SCIENCE',
   'SPORT',
-];
+] as const;
+
+export const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
 
 export const MAP_CATEGORY_NAME: Record<GameCategory, string> = {
   GENERAL: 'ידע כללי',

@@ -2,79 +2,12 @@ import {useCallback, useEffect, useState} from 'react';
 
 import {Correctness, mapSuffix} from '~/utils/words';
 
-import general3 from '~/database/all_3.json';
-import general4 from '~/database/all_4.json';
 import general5 from '~/database/all_5.json';
-
-import geography3 from '~/database/geography_3.json';
-import geography4 from '~/database/geography_4.json';
-import geography5 from '~/database/geography_5.json';
-
-import animals3 from '~/database/animals_3.json';
-import animals4 from '~/database/animals_4.json';
-import animals5 from '~/database/animals_5.json';
-
-import science3 from '~/database/science_3.json';
-import science4 from '~/database/science_4.json';
-import science5 from '~/database/science_5.json';
-
-import sports3 from '~/database/sports_3.json';
-import sports4 from '~/database/sports_4.json';
-import sports5 from '~/database/sports_5.json';
 
 import {Difficulty, GameCategory} from '~/utils/types';
 import {loadGame} from './gameStorageState';
-import {getRevealedWords} from './revealsStore';
-
-type DifficultySections = {
-  easy: Record<string, string>;
-  medium: Record<string, string>;
-  hard: Record<string, string>;
-};
-
-type CategoryWords = {
-  [key: number]: DifficultySections;
-};
-
-const general: {
-  [key: number]: DifficultySections;
-} = {
-  3: general3,
-  4: general4,
-  5: general5,
-};
-
-const science: {[key: number]: DifficultySections} = {
-  3: science3,
-  4: science4,
-  5: science5,
-};
-
-const animals: {[key: number]: DifficultySections} = {
-  3: animals3,
-  4: animals4,
-  5: animals5,
-};
-
-const geography: {[key: number]: DifficultySections} = {
-  3: geography3,
-  4: geography4,
-  5: geography5,
-};
-
-const sports: {[key: number]: DifficultySections} = {
-  3: sports3,
-  4: sports4,
-  5: sports5,
-};
-
-const wordList: Record<GameCategory, CategoryWords> = {
-  GENERAL: general,
-  SCIENCE: science,
-  GEOGRAPHY: geography,
-  ANIMALS: animals,
-  SPORT: sports,
-};
+import {wordList} from '~/utils/db';
+import {getStoredWords} from './revealsStore';
 
 type WordHandle = {selectedWord: string; about: string};
 
@@ -122,7 +55,8 @@ const newSecretWord = async (
   const words = Object.keys(validWords);
 
   // Get list of already revealed words for this category and difficulty
-  const revealedWords = await getRevealedWords(category);
+  const storedWords = await getStoredWords();
+  const revealedWords = await storedWords[category];
   const revealedWordsSet = new Set(revealedWords[difficulty].map(w => w.word));
 
   // Filter out revealed words

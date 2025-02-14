@@ -1,23 +1,24 @@
-// UserInfo.tsx
 import React, {useEffect, useMemo, useState} from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   useWindowDimensions,
   ActivityIndicator,
 } from 'react-native';
 import {Difficulty, GameCategory} from '~/utils/types';
-import {getRevealedWords, WordSection} from '~/store/revealsStore';
+import {
+  createDisplayEmptyHierarchy,
+  getRevealsAndTotals,
+  WordDisplayHierarchy,
+} from '~/store/revealsStore';
 import BackButton from '~/components/IconButtons/BackButton';
 import CanvasBackground from '~/utils/canvas';
 import {colors} from '~/utils/colors';
 import {CategorySelector} from '~/components/overview/CategorySelector';
-import {WordCard} from '~/components/overview/WordCard';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
-import {MAP_CATEGORY_NAME, MAP_DIFFICULTY_NAME} from '~/utils/consts';
-import {OutlinedText} from '~/components/CartoonText';
+import {MAP_CATEGORY_NAME} from '~/utils/consts';
+import WordsSectionsList from '~/components/overview/WordsSectionsList';
 
 const LoadingFallback = () => (
   <View style={styles.loading}>
@@ -34,11 +35,9 @@ export default function UserInfo() {
   const {width: windowWidth} = useWindowDimensions();
   const [activeCategory, setActiveCategory] = useState<GameCategory>('GENERAL');
   const [aboutWord, setAboutWord] = useState<null | string>(null);
-  const [wordsOverview, setWordsOverview] = useState<WordSection>({
-    easy: [],
-    medium: [],
-    hard: [],
-  });
+  const [wordsOverview, setWordsOverview] = useState<WordDisplayHierarchy>(
+    createDisplayEmptyHierarchy(),
+  );
 
   const categories = useMemo<Array<{title: string; key: GameCategory}>>(
     () => [
@@ -51,31 +50,17 @@ export default function UserInfo() {
     [],
   );
 
-  const colorMapperLight: Record<Difficulty, string> = {
-    easy: colors.lightGreen,
-    medium: colors.lightYellow,
-    hard: colors.lightRed,
-  };
-
-  const colorMapper: Record<Difficulty, string> = {
-    easy: colors.green,
-    medium: colors.yellow,
-    hard: colors.red,
-  };
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadWords = async () => {
       setIsLoading(true);
-      const words = await getRevealedWords(activeCategory);
-      setTimeout(async () => {
-        setWordsOverview(words);
-        setIsLoading(false);
-      }, 500);
+      const revealsAndTotals = await getRevealsAndTotals();
+      setWordsOverview(revealsAndTotals);
+      setIsLoading(false);
     };
     loadWords();
-  }, [activeCategory]);
+  }, []);
 
   const shouldScroll = categories.length * 80 > windowWidth - 40;
 
@@ -101,47 +86,11 @@ export default function UserInfo() {
           {isLoading ? (
             <LoadingFallback />
           ) : (
-            <ScrollView
-              style={styles.wordsScroll}
-              contentContainerStyle={styles.wordsContainer}>
-              {Object.entries(wordsOverview).map(([difficulty, words]) => (
-                <View key={`${activeCategory}-${difficulty}`}>
-                  {words.length > 0 && (
-                    <View style={styles.levelTitle}>
-                      <View
-                        style={[
-                          styles.difficultyContainer,
-                          {
-                            backgroundColor:
-                              colorMapperLight[difficulty as Difficulty],
-                          },
-                        ]}>
-                        <OutlinedText
-                          text={MAP_DIFFICULTY_NAME[difficulty as Difficulty]}
-                          fontSize={22}
-                          width={300}
-                          height={40}
-                          fillColor={colors.white}
-                          strokeColor={colorMapper[difficulty as Difficulty]}
-                          strokeWidth={6}
-                        />
-                      </View>
-                    </View>
-                  )}
-                  <View style={styles.cards}>
-                    {words.map(({word, time, score, hint}) => (
-                      <WordCard
-                        key={word}
-                        word={word}
-                        time={time}
-                        score={score}
-                        onPress={() => setAboutWord(hint)}
-                      />
-                    ))}
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
+            <WordsSectionsList
+              wordsOverview={wordsOverview}
+              activeCategory={activeCategory}
+              onWordPress={setAboutWord}
+            />
           )}
         </View>
       </View>
@@ -204,6 +153,7 @@ const styles = StyleSheet.create({
   difficultyContainer: {
     margin: 5,
     borderRadius: 20,
+    alignItems: 'center',
   },
   cards: {
     flexDirection: 'row-reverse',

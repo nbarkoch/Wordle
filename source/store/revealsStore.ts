@@ -1,4 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {CATEGORIES, DIFFICULTIES} from '~/utils/consts';
+import {wordList} from '~/utils/db';
 import {Difficulty, GameCategory} from '~/utils/types';
 
 type RevealedWordOverview = {
@@ -12,6 +14,18 @@ type WordSection = {
   [K in Difficulty]: RevealedWordOverview[];
 };
 
+type WordDisplaySection = {
+  [K in Difficulty]: {reveals: RevealedWordOverview[]; total: number};
+};
+
+type WordDisplayHierarchy = {
+  GENERAL: WordDisplaySection;
+  ANIMALS: WordDisplaySection;
+  SCIENCE: WordDisplaySection;
+  SPORT: WordDisplaySection;
+  GEOGRAPHY: WordDisplaySection;
+};
+
 type WordHierarchy = {
   GENERAL: WordSection;
   ANIMALS: WordSection;
@@ -21,6 +35,12 @@ type WordHierarchy = {
 };
 
 const STORAGE_KEY = '@revealed_words';
+
+const createDisplayEmptySection = (): WordDisplaySection => ({
+  easy: {reveals: [], total: 0},
+  medium: {reveals: [], total: 0},
+  hard: {reveals: [], total: 0},
+});
 
 const createEmptySection = (): WordSection => ({
   easy: [],
@@ -34,6 +54,14 @@ const createEmptyHierarchy = (): WordHierarchy => ({
   SCIENCE: createEmptySection(),
   SPORT: createEmptySection(),
   GEOGRAPHY: createEmptySection(),
+});
+
+const createDisplayEmptyHierarchy = (): WordDisplayHierarchy => ({
+  GENERAL: createDisplayEmptySection(),
+  ANIMALS: createDisplayEmptySection(),
+  SCIENCE: createDisplayEmptySection(),
+  SPORT: createDisplayEmptySection(),
+  GEOGRAPHY: createDisplayEmptySection(),
 });
 
 function updateWordStats(
@@ -75,16 +103,16 @@ async function addToRevealedList(
     const newWord: RevealedWordOverview = {word, time, score, hint};
 
     // Update in the specified category
-    const categoryList = storedWords[category][difficultyKey];
-    const existingIndex = categoryList.findIndex(w => w.word === word);
+    const categorySection = storedWords[category][difficultyKey];
+    const existingIndex = categorySection.findIndex(w => w.word === word);
 
     if (existingIndex !== -1) {
-      categoryList[existingIndex] = updateWordStats(
-        categoryList[existingIndex],
+      categorySection[existingIndex] = updateWordStats(
+        categorySection[existingIndex],
         newWord,
       );
     } else {
-      categoryList.push(newWord);
+      categorySection.push(newWord);
     }
 
     // Save updated hierarchy
@@ -136,20 +164,54 @@ async function getStoredWords(): Promise<WordHierarchy> {
   }
 }
 
-async function getRevealedWords(category: GameCategory): Promise<WordSection> {
+async function getRevealsAndTotals(): Promise<WordDisplayHierarchy> {
   try {
     const storedWords = await getStoredWords();
-    return storedWords[category];
+
+    // Calculate total counts for all categories
+    const totalCounts = Object.entries(wordList).reduce(
+      (acc, [category, categoryData]) => {
+        acc[category as GameCategory] = Object.entries(categoryData).reduce(
+          (diffAcc, [, values]) => {
+            Object.entries(values).forEach(([key, value]) => {
+              if (key in diffAcc) {
+                diffAcc[key as Difficulty] += Object.keys(value).length;
+              }
+            });
+            return diffAcc;
+          },
+          {easy: 0, medium: 0, hard: 0},
+        );
+        return acc;
+      },
+      {} as Record<GameCategory, Record<Difficulty, number>>,
+    );
+
+    return CATEGORIES.reduce((acc, category) => {
+      acc[category] = DIFFICULTIES.reduce((diffAcc, difficulty) => {
+        diffAcc[difficulty] = {
+          reveals: storedWords[category]?.[difficulty] ?? [],
+          total: totalCounts[category][difficulty],
+        };
+        return diffAcc;
+      }, {} as WordDisplaySection);
+
+      return acc;
+    }, {} as WordDisplayHierarchy);
   } catch (error) {
-    console.error('Error getting revealed words:', error);
-    return createEmptySection();
+    console.error('Error loading stored words:', error);
+
+    return createDisplayEmptyHierarchy();
   }
 }
 
 export {
+  getStoredWords,
   addToRevealedList,
-  getRevealedWords,
+  getRevealsAndTotals,
+  createDisplayEmptyHierarchy,
   type RevealedWordOverview,
   type WordHierarchy,
+  type WordDisplayHierarchy,
   type WordSection,
 };
