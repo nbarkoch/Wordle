@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import {Correctness, mapSuffix} from '~/utils/words';
 
@@ -24,6 +24,7 @@ import sports5 from '~/database/sports_5.json';
 
 import {Difficulty, GameCategory} from '~/utils/types';
 import {loadGame} from './gameStorageState';
+import {getRevealedWords} from './revealsStore';
 
 type DifficultySections = {
   easy: Record<string, string>;
@@ -112,16 +113,53 @@ function getDailyWord(): WordHandle {
   };
 }
 
-const newSecretWord = (
+const newSecretWord = async (
   wordLength: number,
   category: GameCategory,
   difficulty: Difficulty,
-): WordHandle => {
+): Promise<WordHandle> => {
   const validWords = wordList[category][wordLength][difficulty];
   const words = Object.keys(validWords);
 
-  const selectedWord = words[Math.floor(Math.random() * words.length)];
-  return {selectedWord, about: validWords[selectedWord]};
+  // Get list of already revealed words for this category and difficulty
+  const revealedWords = await getRevealedWords(category);
+  const revealedWordsSet = new Set(revealedWords[difficulty].map(w => w.word));
+
+  // Filter out revealed words
+  const unrevealed = words.filter(word => !revealedWordsSet.has(word));
+
+  // If we have unrevealed words, select one randomly
+  if (unrevealed.length > 0) {
+    const selectedWord =
+      unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    return {
+      selectedWord,
+      about: validWords[selectedWord],
+    };
+  }
+
+  // If all words are revealed, select from revealed words
+  // Sort by score (ascending) and time (descending) to prioritize words with lower scores
+  const revealedSorted = [...revealedWords[difficulty]].sort((a, b) => {
+    if (a.score !== b.score) {
+      return a.score - b.score; // Lower scores first
+    }
+    return b.time - a.time; // Higher times first (older attempts)
+  });
+
+  // Take from the first third of sorted revealed words to focus on ones needing improvement
+  const selectionPool = revealedSorted.slice(
+    0,
+    Math.max(1, Math.floor(revealedSorted.length / 3)),
+  );
+
+  const selectedRevealedWord =
+    selectionPool[Math.floor(Math.random() * selectionPool.length)];
+
+  return {
+    selectedWord: selectedRevealedWord.word,
+    about: validWords[selectedRevealedWord.word],
+  };
 };
 
 export const evaluateGuess = (
@@ -158,9 +196,7 @@ const useSecretWord = (
   difficulty: Difficulty,
   type: 'DAILY' | 'RANDOM',
 ) => {
-  const [secretWord, setSecretWord] = useState<WordHandle | undefined>(
-    undefined,
-  );
+  const [wordState, setWordState] = useState<WordHandle | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const loadWordFromStorage: (
@@ -175,26 +211,51 @@ const useSecretWord = (
     }
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-    loadWordFromStorage(type).then(result => {
-      setSecretWord(
-        result ??
-          (type === 'DAILY'
-            ? getDailyWord()
-            : newSecretWord(wordLength, category, difficulty)),
-      );
+  const getNewWord = useCallback(async (): Promise<WordHandle> => {
+    if (type === 'DAILY') {
+      return getDailyWord();
+    }
+    return newSecretWord(wordLength, category, difficulty);
+  }, [type, wordLength, category, difficulty]);
+
+  const initializeWord = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const storedWord = await loadWordFromStorage(type);
+
+      if (storedWord) {
+        setWordState(storedWord);
+      } else {
+        const newWord = await getNewWord();
+        setWordState(newWord);
+      }
+    } catch (error) {
+      console.error('Error initializing word:', error);
+      // You might want to add error handling state here
+    } finally {
       setIsLoading(false);
-    });
+    }
+  }, [type, loadWordFromStorage, getNewWord]);
+
+  const generateSecretWord = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const newWord = await getNewWord();
+      setWordState(newWord);
+    } catch (error) {
+      console.error('Error generating new word:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getNewWord]);
+
+  useEffect(() => {
+    initializeWord();
   }, []);
 
-  const generateSecretWord = () => {
-    setSecretWord(newSecretWord(wordLength, category, difficulty));
-  };
-
   return {
-    secretWord: secretWord?.selectedWord ?? '',
-    aboutWord: secretWord?.about ?? '',
+    secretWord: wordState?.selectedWord ?? '',
+    aboutWord: wordState?.about ?? '',
     generateSecretWord,
     isLoading,
   };
