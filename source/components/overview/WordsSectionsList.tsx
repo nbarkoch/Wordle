@@ -1,11 +1,15 @@
 import React, {useCallback, useMemo} from 'react';
-import {StyleSheet, View, SectionList} from 'react-native';
+import {StyleSheet, View, SectionList, SectionListData} from 'react-native';
 import {Difficulty, GameCategory} from '~/utils/types';
 import {colors} from '~/utils/colors';
 import {WordCard} from '~/components/overview/WordCard';
 import {OutlinedText} from '~/components/CartoonText';
 import ProgressIndicator from '~/components/overview/ProgressIndicator';
 import {MAP_DIFFICULTY_NAME} from '~/utils/consts';
+
+const ITEMS_PER_ROW = 3;
+const ROW_HEIGHT = 90; // Adjust based on your WordCard height
+const SECTION_FOOTER_HEIGHT = 20;
 
 interface WordsData {
   word: string;
@@ -27,9 +31,11 @@ interface WordsListProps {
 
 interface Section {
   difficulty: Difficulty;
-  data: WordsData[][]; // Array of rows, where each row contains up to 3 items
+  data: WordsData[][];
   total: number;
 }
+
+type SectionsByCategory = Record<GameCategory, Section[]>;
 
 const colorMapperLight: Record<Difficulty, string> = {
   easy: colors.lightGreen,
@@ -43,14 +49,25 @@ const colorMapper: Record<Difficulty, string> = {
   hard: colors.red,
 };
 
-const renderSectionHeader = ({section}: {section: Section}) => (
+// Optimized chunk array function
+const chunkArray = <T,>(array: T[]): T[][] => {
+  if (array.length === 0) return [];
+  const chunks: T[][] = [];
+  let i = 0;
+  while (i < array.length) {
+    chunks.push(array.slice(i, i + ITEMS_PER_ROW));
+    i += ITEMS_PER_ROW;
+  }
+  return chunks;
+};
+
+// Memoized Section Header Component
+const SectionHeader = React.memo(({section}: {section: Section}) => (
   <View style={styles.levelTitle}>
     <View
       style={[
         styles.difficultyContainer,
-        {
-          backgroundColor: colorMapperLight[section.difficulty],
-        },
+        {backgroundColor: colorMapperLight[section.difficulty]},
       ]}>
       <OutlinedText
         text={MAP_DIFFICULTY_NAME[section.difficulty]}
@@ -69,18 +86,24 @@ const renderSectionHeader = ({section}: {section: Section}) => (
       />
     </View>
   </View>
+));
+
+// Memoized Row Component
+const WordRow = React.memo(
+  ({row, onPress}: {row: WordsData[]; onPress: (hint: string) => void}) => (
+    <View style={styles.row}>
+      {row.map(wordData => (
+        <WordCard
+          key={wordData.word}
+          word={wordData.word}
+          time={wordData.time}
+          score={wordData.score}
+          onPress={() => onPress(wordData.hint)}
+        />
+      ))}
+    </View>
+  ),
 );
-
-// Helper function to chunk array into groups of specified size
-const chunkArray = <T,>(array: T[], size: number): T[][] => {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
-};
-
-type SectionsByCategory = Record<GameCategory, Section[]>;
 
 export const WordsSectionsList: React.FC<WordsListProps> = ({
   wordsOverview,
@@ -94,7 +117,7 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
       result[category as GameCategory] = Object.entries(difficulties)
         .map(([difficulty, words]) => ({
           difficulty: difficulty as Difficulty,
-          data: chunkArray(words.reveals, 3),
+          data: chunkArray(words.reveals),
           total: words.total,
         }))
         .filter(section => section.data.length > 0);
@@ -105,33 +128,42 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
 
   const currentSections = sectionsByCategory[activeCategory] || [];
 
-  const renderRow = useCallback(
+  const renderItem = useCallback(
     ({item: row}: {item: WordsData[]}) => (
-      <View style={styles.row}>
-        {row.map(wordData => (
-          <WordCard
-            key={wordData.word}
-            word={wordData.word}
-            time={wordData.time}
-            score={wordData.score}
-            onPress={() => onWordPress(wordData.hint)}
-          />
-        ))}
-      </View>
+      <WordRow row={row} onPress={onWordPress} />
     ),
     [onWordPress],
+  );
+
+  const renderSectionHeader = useCallback(
+    ({section}: {section: Section}) => <SectionHeader section={section} />,
+    [],
+  );
+
+  const renderSectionFooter = useCallback(
+    () => <View style={styles.sectionFooter} />,
+    [],
+  );
+
+  const keyExtractor = useCallback(
+    (item: WordsData[], index: number) => `row-${index}-${item[0]?.word ?? ''}`,
+    [],
   );
 
   return (
     <SectionList
       sections={currentSections}
       renderSectionHeader={renderSectionHeader}
-      renderItem={renderRow}
+      renderItem={renderItem}
+      renderSectionFooter={renderSectionFooter}
+      keyExtractor={keyExtractor}
       style={styles.list}
       contentContainerStyle={styles.listContent}
       stickySectionHeadersEnabled={false}
-      keyExtractor={(item, index) => `row-${index}-${item[0]?.word ?? ''}`}
-      renderSectionFooter={() => <View style={styles.sectionFooter} />}
+      maxToRenderPerBatch={5}
+      updateCellsBatchingPeriod={50}
+      windowSize={5}
+      initialNumToRender={7}
     />
   );
 };
@@ -154,7 +186,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionFooter: {
-    height: 20,
+    height: SECTION_FOOTER_HEIGHT,
   },
   row: {
     flexDirection: 'row-reverse',
@@ -162,6 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     marginVertical: 5,
+    height: ROW_HEIGHT,
   },
 });
 
