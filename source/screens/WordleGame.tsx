@@ -97,6 +97,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     isValidGuess: null,
     maxAttempts,
     wordLength,
+    score: 0,
   };
   const [recentReveals, setRecentReveals] = useState<boolean[]>(
     Array(wordLength).fill(false),
@@ -180,6 +181,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   useEffect(() => {
     start();
+    setScore(gameState.score);
     return resetGame;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -288,6 +290,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           correctness,
           letters: currentLetters,
           correctLetters: correctLetters,
+          addedScore: newRevealLength,
         });
       });
 

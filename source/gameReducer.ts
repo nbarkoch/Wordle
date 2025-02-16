@@ -28,6 +28,7 @@ export interface GameState {
   isValidGuess: boolean | null;
   maxAttempts: number;
   wordLength: number;
+  score: number;
 }
 
 // Define action types
@@ -37,6 +38,7 @@ export type GameAction =
       correctness: Correctness[];
       letters: string[];
       correctLetters: boolean[];
+      addedScore: number;
     }
   | {type: 'KEY_PRESS'; key: string}
   | {type: 'DELETE_LETTER'}
@@ -66,6 +68,7 @@ const initialState: GameState = {
   isValidGuess: null,
   maxAttempts: 0,
   wordLength: 0,
+  score: 0,
 };
 
 function shouldUpdateCorrectness(
@@ -150,6 +153,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         keyboardLetters: newKeyboardLetters,
         lineHint: undefined,
         lineSearch: undefined,
+        score: state.score + action.addedScore,
       };
     case 'KEY_PRESS':
       if (
