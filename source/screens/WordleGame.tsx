@@ -378,8 +378,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         />
         <GradientOverlayScrollView
           ref={gridScrollViewRef}
-          upperColor={colors.mainColors.b}
-          bottomColor={colors.mainColors.c}
+          upperColor={colors.primary.b}
+          bottomColor={colors.primary.c}
           gradientHeight={20}
           contentContainerStyle={styles.scrollViewContent}>
           <Animated.View

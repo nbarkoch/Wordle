@@ -62,7 +62,7 @@ const VolumeButton: React.FC<VolumeButtonProps> = ({
               </>
             ) : (
               <>
-                <Path path={off2} color={colors.mainColors.c} />
+                <Path path={off2} color={colors.primary.c} />
                 <Path path={off3} color={colors.green} />
               </>
             )}

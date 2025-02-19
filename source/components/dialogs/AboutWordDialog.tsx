@@ -143,7 +143,11 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
                 <LinearGradient
                   start={vec(0, 0)}
                   end={vec(dialogWidth, dialogHeight)}
-                  colors={['#BBB6A6', '#e0b87f', '#BBB6A6']}
+                  colors={[
+                    colors.container.a,
+                    colors.container.b,
+                    colors.container.c,
+                  ]}
                 />
               </RoundedRect>
               <RoundedRect
@@ -155,7 +159,7 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
                 <LinearGradient
                   start={vec(0, 0)}
                   end={vec(0, dialogHeight)}
-                  colors={['#224d66', '#3B4457']}
+                  colors={[colors.secondary.a, colors.secondary.b]}
                 />
               </RoundedRect>
             </Canvas>

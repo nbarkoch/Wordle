@@ -20,14 +20,14 @@ mobileAds()
 
 const App = () => {
   const backgroundStyle = {
-    backgroundColor: colors.mainColors.b,
+    backgroundColor: colors.primary.b,
   };
   I18nManager.allowRTL(false);
 
   return (
     <>
       <SafeAreaView style={backgroundStyle} />
-      <StatusBar backgroundColor={colors.mainColors.b} />
+      <StatusBar backgroundColor={colors.primary.b} />
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"

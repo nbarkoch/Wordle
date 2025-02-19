@@ -190,14 +190,18 @@ const GameResultDialog = ({
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(300, 300)}
-                colors={['#BBB6A6', '#e0b87f', '#BBB6A6']}
+                colors={[
+                  colors.container.a,
+                  colors.container.b,
+                  colors.container.c,
+                ]}
               />
             </RoundedRect>
             <RoundedRect x={5} y={5} width={290} height={290} r={15}>
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(0, 300)}
-                colors={['#224d66', '#3B4457']}
+                colors={[colors.secondary.a, colors.secondary.b]}
               />
             </RoundedRect>
           </Canvas>

@@ -23,10 +23,19 @@ export const colors = {
   darkBlue: '#2676a5',
   darkGrey: '#6a6a6a',
 
-  mainColors: {
+  primary: {
     a: '#343E4F',
     b: '#343D4E',
     c: '#3A4F6C',
     d: '#33556E',
+  },
+  secondary: {
+    a: '#264C64',
+    b: '#3B4457',
+  },
+  container: {
+    a: '#BBB6A6',
+    b: '#e0b87f',
+    c: '#BBB6A6',
   },
 };

@@ -13,10 +13,10 @@ function CanvasBackground() {
           start={vec(0, 0)}
           end={vec(0, height)}
           colors={[
-            colors.mainColors.a,
-            colors.mainColors.b,
-            colors.mainColors.c,
-            colors.mainColors.d,
+            colors.primary.a,
+            colors.primary.b,
+            colors.primary.c,
+            colors.primary.d,
           ]}
         />
       </Rect>

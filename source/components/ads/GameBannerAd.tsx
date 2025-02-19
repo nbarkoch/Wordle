@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 50,
-    backgroundColor: colors.mainColors.d,
+    backgroundColor: colors.primary.d,
   },
 });
 
