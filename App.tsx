@@ -10,6 +10,7 @@ import NewGameScreen from '~/screens/NewGame';
 import GameBannerAd from '~/components/ads/GameBannerAd';
 import {I18nManager} from 'react-native';
 import UserInfoScreen from '~/screens/UserInfo';
+import {colors} from '~/utils/colors';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,14 +20,14 @@ mobileAds()
 
 const App = () => {
   const backgroundStyle = {
-    backgroundColor: '#343D4E',
+    backgroundColor: colors.mainColors.b,
   };
   I18nManager.allowRTL(false);
 
   return (
     <>
       <SafeAreaView style={backgroundStyle} />
-      <StatusBar backgroundColor={'#343D4E'} />
+      <StatusBar backgroundColor={colors.mainColors.b} />
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"

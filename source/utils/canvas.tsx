@@ -1,6 +1,7 @@
 import React from 'react';
 import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
 import {Dimensions, StyleSheet} from 'react-native';
+import {colors} from './colors';
 
 const {width, height} = Dimensions.get('window');
 
@@ -11,7 +12,12 @@ function CanvasBackground() {
         <LinearGradient
           start={vec(0, 0)}
           end={vec(0, height)}
-          colors={['#343E4F', '#343D4E', '#3A4F6C', '#33556E']}
+          colors={[
+            colors.mainColors.a,
+            colors.mainColors.b,
+            colors.mainColors.c,
+            colors.mainColors.d,
+          ]}
         />
       </Rect>
     </Canvas>

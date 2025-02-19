@@ -22,4 +22,11 @@ export const colors = {
   darkGold: '#775a31',
   darkBlue: '#2676a5',
   darkGrey: '#6a6a6a',
+
+  mainColors: {
+    a: '#343E4F',
+    b: '#343D4E',
+    c: '#3A4F6C',
+    d: '#33556E',
+  },
 };

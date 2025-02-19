@@ -62,6 +62,7 @@ import {useDailyGameStore} from '~/store/dailyGameStatus';
 import {showGameRestartAd} from '~/components/ads/fullScreenAd';
 import GameTypeIndicator from '~/components/GameTypeIndicator';
 import {saveGame} from '~/store/gameStorageState';
+import {colors} from '~/utils/colors';
 
 const {width} = Dimensions.get('window');
 
@@ -377,8 +378,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         />
         <GradientOverlayScrollView
           ref={gridScrollViewRef}
-          upperColor={'#343D4E'}
-          bottomColor={'#3A4F6C'}
+          upperColor={colors.mainColors.b}
+          bottomColor={colors.mainColors.c}
           gradientHeight={20}
           contentContainerStyle={styles.scrollViewContent}>
           <Animated.View

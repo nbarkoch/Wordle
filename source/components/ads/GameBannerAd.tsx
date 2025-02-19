@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {colors} from '~/utils/colors';
 
 const GameBannerAd = () => {
   const adUnitId = __DEV__
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 50,
-    backgroundColor: '#33556E',
+    backgroundColor: colors.mainColors.d,
   },
 });
 
