@@ -48,4 +48,6 @@ export const colors = {
     background: '#19273040',
     border: '#77807F',
   },
-};
+} as const;
+
+export type ThemeColors = typeof colors;

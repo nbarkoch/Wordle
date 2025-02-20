@@ -15,24 +15,39 @@ import CoinCostOverlay from '~/components/grid/CoinCostOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
 import VolumeButton from '~/components/IconButtons/VolumeButton';
-import {loadGame} from '~/store/gameStorageState';
+import {GameStorageState, loadGame} from '~/store/gameStorageState';
 import {useFocusEffect} from '@react-navigation/native';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const {isDone, checkDaily} = useDailyGameStore();
-  const [isNewGame, setIsNewGame] = useState<boolean>(true);
 
-  useFocusEffect(() => {
-    checkDaily();
-    loadGame('RANDOM').then(storageState =>
-      setIsNewGame(storageState === undefined),
-    );
-  });
+  const [storageStates, setStorageStates] = useState<{
+    random?: GameStorageState;
+    daily?: GameStorageState;
+  }>({});
+
+  useFocusEffect(
+    useCallback(() => {
+      let isBusy = true;
+
+      const checkDailyStatus = async () => {
+        if (isBusy) {
+          await checkDaily();
+          const randomGameState = await loadGame('RANDOM');
+          const dailyGameState = await loadGame('DAILY');
+          setStorageStates({random: randomGameState, daily: dailyGameState});
+        }
+      };
+
+      checkDailyStatus();
+      return () => (isBusy = false);
+    }, [checkDaily]),
+  );
 
   const onNewGame = useCallback(async () => {
-    const gameStorageState = await loadGame('RANDOM');
-    if (gameStorageState) {
-      const {gameState, enableTimer, category, difficulty} = gameStorageState;
+    if (storageStates.random) {
+      const {gameState, enableTimer, category, difficulty} =
+        storageStates.random;
       navigation.navigate('WordGame', {
         maxAttempts: gameState.maxAttempts,
         wordLength: gameState.wordLength,
@@ -45,10 +60,9 @@ function HomeScreen({navigation}: HomeScreenProps) {
     } else {
       navigation.navigate('NewGame');
     }
-  }, [navigation]);
+  }, [navigation, storageStates.random]);
 
   const onDailyGame = useCallback(async () => {
-    const gameStorageState = await loadGame('DAILY');
     navigation.navigate('WordGame', {
       maxAttempts: 6,
       wordLength: 5,
@@ -56,9 +70,9 @@ function HomeScreen({navigation}: HomeScreenProps) {
       category: 'GENERAL',
       difficulty: 'easy',
       type: 'DAILY',
-      savedGameState: gameStorageState?.gameState,
+      savedGameState: storageStates.daily?.gameState,
     });
-  }, [navigation]);
+  }, [navigation, storageStates.daily]);
 
   const onUserInfo = useCallback(() => {
     navigation.navigate('UserInfo', {user: ''});
@@ -87,7 +101,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
       </View>
       <View style={styles.body}>
         <MenuButton
-          text={isNewGame ? 'משחק חדש' : 'המשך משחק'}
+          text={storageStates.random === undefined ? 'משחק חדש' : 'המשך משחק'}
           onPress={onNewGame}
           color={setColorOpacity(colors.green, 0.7)}
         />

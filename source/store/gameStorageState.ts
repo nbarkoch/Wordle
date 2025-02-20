@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GameState} from '~/gameReducer';
 import {Difficulty, GameCategory} from '~/utils/types';
 
-interface GameStorageState {
+export interface GameStorageState {
   category: GameCategory;
   difficulty: Difficulty;
   enableTimer?: boolean;
