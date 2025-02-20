@@ -13,6 +13,7 @@ import CategoryCubes from '~/components/CategoriyCubes';
 import {Difficulty, GameCategory} from '~/utils/types';
 import SelectDifficulty from '~/components/SelectDifficulty';
 import BackButton from '~/components/IconButtons/BackButton';
+import {setColorOpacity} from '~/utils/ui';
 
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
@@ -65,7 +66,11 @@ function NewGameScreen({navigation}: NewGameProps) {
         </ScrollView>
       </View>
       <View style={styles.footerContainer}>
-        <MenuButton text="התחל" onPress={onStartGame} color="#7FCCB570" />
+        <MenuButton
+          text="התחל"
+          onPress={onStartGame}
+          color={setColorOpacity(colors.green, 0.5)}
+        />
       </View>
       <HowToPlayDialog
         onClose={() => setHowToPlayVisible(false)}
@@ -105,8 +110,8 @@ const styles = StyleSheet.create({
   buttons: {
     flex: 1,
     width: '100%',
-    borderColor: '#77807F',
-    backgroundColor: '#19273040',
+    backgroundColor: colors.boxInfo.background,
+    borderColor: colors.boxInfo.border,
     borderWidth: 2,
     borderRadius: 10,
     overflow: 'hidden',

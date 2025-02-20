@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   loadingText: {
-    color: '#fffffff0',
+    color: colors.white,
     fontFamily: 'PloniDL1.1AAA-Bold',
     fontSize: 20,
   },

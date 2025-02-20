@@ -291,8 +291,8 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: 'absolute',
-    top: -15,
-    backgroundColor: '#F7C275',
+    top: -18,
+    backgroundColor: colors.gold,
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,
@@ -313,8 +313,8 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#19273040',
-    borderColor: '#77807F',
+    backgroundColor: colors.boxInfo.background,
+    borderColor: colors.boxInfo.border,
     borderWidth: 2,
     borderRadius: 10,
   },
@@ -365,10 +365,10 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     marginVertical: 10,
-    backgroundColor: colors.gold,
+    backgroundColor: colors.boxInfo.border,
   },
   secretWordWas: {
-    color: '#758082',
+    color: colors.boxInfo.border,
     fontWeight: '500',
   },
   secretWord: {

@@ -35,7 +35,7 @@ const AboutButton: React.FC<AboutButtonProps> = ({
   };
 
   const containerStyle = {
-    borderColor: $disabled ? '#898989' : colors.darkBlue,
+    borderColor: $disabled ? colors.mediumGrey : colors.darkBlue,
     backgroundColor: $disabled ? colors.grey : colors.blue,
   };
 

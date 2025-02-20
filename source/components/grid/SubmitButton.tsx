@@ -9,6 +9,7 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 import BasePressable from '../BasePressable';
+import {colors} from '~/utils/colors';
 
 const ANIMATION_DURATION = 300;
 
@@ -16,18 +17,18 @@ const ANIMATION_DURATION = 300;
 const buttonColors = {
   default: {
     background: '#A0A0A0',
-    border: '#898989',
-    text: '#6a6a6a',
+    border: colors.mediumGrey,
+    text: colors.darkGrey,
   },
   valid: {
-    background: '#7FCCB5',
-    border: '#5eb299',
-    text: '#FFFFFF',
+    background: colors.green,
+    border: colors.mediumGreen,
+    text: colors.white,
   },
   invalid: {
-    background: '#F47A89',
+    background: colors.red,
     border: '#c9505e',
-    text: '#af3a47',
+    text: colors.darkRed,
   },
 };
 

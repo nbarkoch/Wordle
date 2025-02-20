@@ -11,7 +11,7 @@ interface StarCoinProps {
 const StarCoin = ({
   size = 24,
   outerRingColor = colors.gold,
-  innerCircleColor = '#bf832f',
+  innerCircleColor = colors.mediumGold,
 }: StarCoinProps) => {
   // Star path
   const starPath =

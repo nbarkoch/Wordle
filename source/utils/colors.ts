@@ -23,6 +23,11 @@ export const colors = {
   darkBlue: '#2676a5',
   darkGrey: '#6a6a6a',
 
+  mediumRed: '#c9505e',
+  mediumGreen: '#5eb299',
+  mediumGold: '#bf832f',
+  mediumGrey: '#898989',
+
   primary: {
     a: '#343E4F',
     b: '#343D4E',
@@ -37,5 +42,10 @@ export const colors = {
     a: '#BBB6A6',
     b: '#e0b87f',
     c: '#BBB6A6',
+  },
+
+  boxInfo: {
+    background: '#19273040',
+    border: '#77807F',
   },
 };

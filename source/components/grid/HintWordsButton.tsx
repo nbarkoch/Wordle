@@ -33,7 +33,7 @@ const HintWordButton: React.FC<HintWordButtonProps> = ({
   const color = disabled ? colors.darkGrey : colors.lightGold;
 
   const containerStyle = {
-    borderColor: disabled ? '#898989' : colors.darkYellow,
+    borderColor: disabled ? colors.mediumGrey : colors.darkYellow,
     backgroundColor: disabled ? colors.grey : colors.yellow,
   };
 
