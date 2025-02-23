@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   ActivityIndicator,
 } from 'react-native';
-import {Difficulty, GameCategory} from '~/utils/types';
+import {GameCategory} from '~/utils/types';
 import {
   createDisplayEmptyHierarchy,
   getRevealsAndTotals,
@@ -19,6 +19,7 @@ import {CategorySelector} from '~/components/overview/CategorySelector';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import {MAP_CATEGORY_NAME} from '~/utils/consts';
 import WordsSectionsList from '~/components/overview/WordsSectionsList';
+import ProfileStats from '~/components/overview/ProfileStats';
 
 const LoadingFallback = () => (
   <View style={styles.loading}>
@@ -40,14 +41,23 @@ export default function UserInfo() {
   );
 
   const categories = useMemo<Array<{title: string; key: GameCategory}>>(
-    () => [
-      {title: MAP_CATEGORY_NAME.GENERAL, key: 'GENERAL'},
-      {title: MAP_CATEGORY_NAME.ANIMALS, key: 'ANIMALS'},
-      {title: MAP_CATEGORY_NAME.GEOGRAPHY, key: 'GEOGRAPHY'},
-      {title: MAP_CATEGORY_NAME.SCIENCE, key: 'SCIENCE'},
-      {title: MAP_CATEGORY_NAME.SPORT, key: 'SPORT'},
-    ],
-    [],
+    () =>
+      Object.entries(wordsOverview)
+        .filter(
+          ([_, value]) =>
+            value.easy.reveals.length +
+              value.medium.reveals.length +
+              value.hard.reveals.length >
+            0,
+        )
+        .map(([key, _]) => {
+          const $key = key as GameCategory;
+          return {
+            title: MAP_CATEGORY_NAME[$key],
+            key: $key,
+          };
+        }),
+    [wordsOverview],
   );
 
   const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +86,7 @@ export default function UserInfo() {
       </View>
 
       <View style={styles.bodyWrap}>
+        <ProfileStats wordsOverview={wordsOverview} />
         <View style={styles.container}>
           <CategorySelector
             categories={categories}
@@ -158,7 +169,7 @@ const styles = StyleSheet.create({
   cards: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    justifyContent: 'center', // This centers the cards
+    justifyContent: 'center',
     alignItems: 'center',
   },
   loading: {
