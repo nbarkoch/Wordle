@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {WordDisplayHierarchy} from '~/store/revealsStore';
 import {useScoreStore} from '~/store/useScore';
 import {colors} from '~/utils/colors';
@@ -7,8 +7,9 @@ import StarCoin from '../StarCoin';
 
 interface ProfileStatsProps {
   wordsOverview: WordDisplayHierarchy;
+  isLoading: boolean;
 }
-const ProfileStats = ({wordsOverview}: ProfileStatsProps) => {
+const ProfileStats = ({wordsOverview, isLoading}: ProfileStatsProps) => {
   const {userScore} = useScoreStore();
 
   const totalReveals = useMemo(() => {
@@ -26,14 +27,32 @@ const ProfileStats = ({wordsOverview}: ProfileStatsProps) => {
     <View style={styles.statsContainer}>
       <View style={styles.statBox}>
         <View style={{alignItems: 'center', flexDirection: 'row', gap: 5}}>
-          <Text style={styles.statValue}>{userScore}</Text>
-          <StarCoin outerRingColor={colors.gold} />
+          {isLoading ? (
+            <ActivityIndicator
+              size="large"
+              color="#ffffff80"
+              style={{transform: [{scale: 1}]}}
+            />
+          ) : (
+            <>
+              <Text style={styles.statValue}>{userScore}</Text>
+              <StarCoin outerRingColor={colors.gold} />
+            </>
+          )}
         </View>
         <Text style={styles.statLabel}>ניקוד</Text>
       </View>
       <View style={styles.divider} />
       <View style={styles.statBox}>
-        <Text style={styles.statValue}>{totalReveals}</Text>
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color="#ffffff80"
+            style={{transform: [{scale: 1}]}}
+          />
+        ) : (
+          <Text style={styles.statValue}>{totalReveals}</Text>
+        )}
         <Text style={styles.statLabel}>מילים שנחשפו</Text>
       </View>
     </View>

@@ -86,7 +86,7 @@ export default function UserInfo() {
       </View>
 
       <View style={styles.bodyWrap}>
-        <ProfileStats wordsOverview={wordsOverview} />
+        <ProfileStats wordsOverview={wordsOverview} isLoading={isLoading} />
         <View style={styles.container}>
           <CategorySelector
             categories={categories}
