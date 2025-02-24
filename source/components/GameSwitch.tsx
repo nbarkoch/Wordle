@@ -13,7 +13,7 @@ import Animated, {
   useDerivedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import {colors} from '~/utils/colors';
+import {colors, ThemeColor} from '~/utils/colors';
 
 interface GameSwitchProps {
   width?: number;
@@ -34,10 +34,10 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
 }) => {
   const [isOn, setIsOn] = useState<boolean>(false);
 
-  const startColor = useSharedValue(colors.darkRed);
-  const endColor = useSharedValue(colors.red);
-  const ballColor = useSharedValue(colors.lightRed);
-  const borderColor = useSharedValue(colors.lightRed);
+  const startColor = useSharedValue<ThemeColor>(colors.darkRed);
+  const endColor = useSharedValue<ThemeColor>(colors.red);
+  const ballColor = useSharedValue<ThemeColor>(colors.lightRed);
+  const borderColor = useSharedValue<ThemeColor>(colors.lightRed);
   const ballPosition = useSharedValue(borderWidth);
 
   const handlePress = () => {

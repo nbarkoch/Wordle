@@ -17,6 +17,7 @@ import {useDailyGameStore} from '~/store/dailyGameStatus';
 import VolumeButton from '~/components/IconButtons/VolumeButton';
 import {GameStorageState, loadGame} from '~/store/gameStorageState';
 import {useFocusEffect} from '@react-navigation/native';
+import AnimatedLetterCubes from '~/components/AnimatedCubes';
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const {isDone, checkDaily} = useDailyGameStore();
@@ -97,7 +98,8 @@ function HomeScreen({navigation}: HomeScreenProps) {
       </View>
 
       <View style={styles.header}>
-        <SkiaGradientText title="ורדל" />
+        <AnimatedLetterCubes />
+        <SkiaGradientText title="משחק ניחוש מילים בעברית" />
       </View>
       <View style={styles.body}>
         <MenuButton
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 40,
+    paddingTop: 80,
   },
   headerLine: {
     flexDirection: 'row',

@@ -1,3 +1,5 @@
+import {ExtractLeafValues} from './types';
+
 export const colors = {
   red: '#F47A89',
   green: '#7FCCB5',
@@ -51,3 +53,5 @@ export const colors = {
 } as const;
 
 export type ThemeColors = typeof colors;
+
+export type ThemeColor = ExtractLeafValues<typeof colors>;

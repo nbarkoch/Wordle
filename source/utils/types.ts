@@ -16,3 +16,7 @@ export type DifficultySections = {
 export type CategoryWords = {
   [key: number]: DifficultySections;
 };
+
+export type ExtractLeafValues<T> = T extends object
+  ? {[K in keyof T]: ExtractLeafValues<T[K]>}[keyof T]
+  : T;

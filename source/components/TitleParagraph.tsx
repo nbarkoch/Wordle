@@ -44,7 +44,7 @@ const TitleParagraph = ({title}: TitleParagraphProps) => {
       .pushStyle(
         {
           fontFamilies: ['Roboto'],
-          fontSize: 50,
+          fontSize: 25,
           fontStyle: {weight: 600},
           color: Skia.Color('black'),
         },
@@ -58,7 +58,7 @@ const TitleParagraph = ({title}: TitleParagraphProps) => {
 
   return (
     <Canvas style={styles.canvas}>
-      <Paragraph paragraph={paragraph} x={0} y={0} width={300} />
+      <Paragraph paragraph={paragraph} x={0} y={20} width={300} />
     </Canvas>
   );
 };
