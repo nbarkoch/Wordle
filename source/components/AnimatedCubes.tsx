@@ -99,7 +99,7 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
 
 const AnimatedLetterCubes: React.FC = () => {
   const letters = ['ו', 'ר', 'ד', 'ל'].reverse();
-  const letterColors = [colors.blue, colors.red, colors.green, colors.yellow];
+  const letterColors = [colors.yellow, colors.red, colors.green, colors.yellow];
 
   return (
     <View style={styles.container}>
@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#343E4F',
   },
   cubeContainer: {
     alignItems: 'center',
