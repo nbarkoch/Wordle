@@ -363,7 +363,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         const endTimeout = setTimeout(() => {
           dispatch({type: 'SET_GAME_END', isEnd: true});
           clearTimeout(endTimeout);
-        }, ROW_SAVED_DELAY * savedRows);
+        }, ROW_SAVED_DELAY * savedRows + 300);
       }, 2000);
       return () => clearTimeout(timeout);
     }
