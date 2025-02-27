@@ -40,6 +40,8 @@ interface GameResultDialogProps {
   category: GameCategory;
   difficulty: Difficulty;
   gameType: 'DAILY' | 'RANDOM';
+  maxAttempts: number;
+  currentAttempt: number;
 }
 
 const GameResultDialog = ({
@@ -53,6 +55,8 @@ const GameResultDialog = ({
   category,
   difficulty,
   gameType,
+  currentAttempt,
+  maxAttempts,
 }: GameResultDialogProps) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -65,12 +69,13 @@ const GameResultDialog = ({
   const {playSound: playFailure} = useSound('fail.wav');
   const {time} = useTimerStore();
 
-  const rating = Math.min(
-    Math.round(
-      ((currentScore - secretWord.length) / secretWord.length) * 3 + 1,
-    ),
-    3,
-  );
+  const rating =
+    currentAttempt < 4
+      ? 3
+      : Math.min(
+          Math.ceil(((maxAttempts - currentAttempt + 1) / maxAttempts) * 3),
+          3,
+        );
 
   useEffect(() => {
     if (isVisible) {

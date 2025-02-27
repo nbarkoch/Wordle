@@ -23,6 +23,7 @@ export interface GameState {
   isGameEnd: boolean;
   aboutShown: boolean;
   aboutWasShown: boolean;
+  specialHintUsed: boolean;
   numberOfSavedRows: number;
   gameStatus: 'PLAYING' | 'SUCCESS' | 'FAILURE';
   isValidGuess: boolean | null;
@@ -63,6 +64,7 @@ const initialState: GameState = {
   isGameEnd: false,
   aboutShown: false,
   aboutWasShown: false,
+  specialHintUsed: false,
   numberOfSavedRows: 0,
   gameStatus: 'PLAYING',
   isValidGuess: null,
@@ -190,7 +192,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'SET_SELECTED_LETTER':
       return {...state, selectedLetter: action.location};
     case 'SET_LINE_HINT':
-      return {...state, lineHint: action.hint};
+      return {...state, lineHint: action.hint, specialHintUsed: true};
     case 'SET_LINE_SEARCH':
       return {...state, lineSearch: action.search};
     case 'END_GAME':

@@ -20,7 +20,7 @@ import Animated, {
 import confettiSpark from '~/assets/lottie/confetti_1.json';
 import confettiParty from '~/assets/lottie/confetti_2.json';
 import {OutlinedText} from './CartoonText';
-import {colors} from '~/utils/colors';
+import {colors, ThemeColor} from '~/utils/colors';
 import useSound from '~/useSound';
 
 const {width, height} = Dimensions.get('window');
@@ -36,6 +36,16 @@ const partyStrings = [
   'נצחון',
   'אליפות',
   'שיחקת אותה',
+  'נהדר',
+];
+const quickSolverStrings = [
+  'מה פתאום?',
+  'לא נורמאלי',
+  'בלתי יאומן',
+  'מה קרה פה עכשיו?',
+  'מההה?',
+  'שברת את המשחק',
+  'הזייה!!',
 ];
 const strikeStrings = [
   'סטרייק',
@@ -47,11 +57,48 @@ const strikeStrings = [
   'מטורף',
   'איזה מהלך',
   'עף לי הפוני',
+  'כמעט שם',
 ];
 
-interface ConfettiOverlayProps {}
+const strings: {[key in ConfettiType]: string[]} = {
+  party: partyStrings,
+  spark: strikeStrings,
+  'quick-solver': quickSolverStrings,
+};
 
-type ConfettiType = 'spark' | 'party';
+const confettiConfig: {
+  [key in ConfettiType]: {
+    texts: string[];
+    resource: any;
+    color: ThemeColor;
+    fontSize: number;
+    resizeMode: 'center' | 'cover' | 'contain' | undefined;
+  };
+} = {
+  party: {
+    texts: partyStrings,
+    color: colors.blue,
+    resource: confettiParty,
+    fontSize: 42,
+    resizeMode: 'cover',
+  },
+  spark: {
+    texts: strikeStrings,
+    color: colors.blue,
+    resource: confettiSpark,
+    fontSize: 42,
+    resizeMode: 'center',
+  },
+  'quick-solver': {
+    texts: quickSolverStrings,
+    color: colors.mediumRed,
+    resource: confettiParty,
+    fontSize: 47,
+    resizeMode: 'cover',
+  },
+};
+
+type ConfettiType = 'spark' | 'party' | 'quick-solver';
 
 const SPRING_DELAY = 200;
 const TEXT_DISPLAY_DUR = 2000;
@@ -61,139 +108,133 @@ export interface ConfettiOverlayRef {
   triggerFeedback: (type: ConfettiType) => void;
 }
 
-const ConfettiOverlay = forwardRef<ConfettiOverlayRef, ConfettiOverlayProps>(
-  ({}, ref) => {
-    const [showFeedback, setShowFeedback] = useState<ConfettiType | null>(null);
-    const [showText, setShowText] = useState<string | null>(null);
+const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
+  const [showFeedback, setShowFeedback] = useState<ConfettiType | null>(null);
+  const [showText, setShowText] = useState<string | null>(null);
 
-    const textScale = useSharedValue(0);
-    const textOpacity = useSharedValue(0);
-    const rotation = useSharedValue(-270);
+  const textScale = useSharedValue(0);
+  const textOpacity = useSharedValue(0);
+  const rotation = useSharedValue(-270);
 
-    const {playSound: playStrike} = useSound('good.mp3');
-    const {playSound: playParty} = useSound('finish.mp3');
+  const {playSound: playStrike} = useSound('good.mp3');
+  const {playSound: playParty} = useSound('finish.mp3');
 
-    const animateFeedbackIn = useCallback(
-      (text: string, confettiType: ConfettiType) => {
-        setShowFeedback(confettiType);
-        setShowText(text);
-        cancelAnimation(textScale);
-        cancelAnimation(rotation);
-        cancelAnimation(textOpacity);
-        textScale.value = withSequence(
-          withTiming(1.2, {duration: OPACITY_DUR - SPRING_DELAY}),
-          withTiming(1, {duration: SPRING_DELAY}),
-          withDelay(
-            TEXT_DISPLAY_DUR + SPRING_DELAY,
-            withTiming(0, {
-              duration: SCALE_DUR,
-              easing: Easing.out(Easing.cubic),
-            }),
-          ),
-        );
+  const playSound: {[key in ConfettiType]: () => void} = {
+    party: playParty,
+    spark: playStrike,
+    'quick-solver': playParty,
+  };
 
-        rotation.value = withSequence(
+  const animateFeedbackIn = useCallback(
+    (text: string, confettiType: ConfettiType) => {
+      setShowFeedback(confettiType);
+      setShowText(text);
+      cancelAnimation(textScale);
+      cancelAnimation(rotation);
+      cancelAnimation(textOpacity);
+      textScale.value = withSequence(
+        withTiming(1.2, {duration: OPACITY_DUR - SPRING_DELAY}),
+        withTiming(1, {duration: SPRING_DELAY}),
+        withDelay(
+          TEXT_DISPLAY_DUR + SPRING_DELAY,
           withTiming(0, {
-            duration: OPACITY_DUR,
+            duration: SCALE_DUR,
             easing: Easing.out(Easing.cubic),
           }),
-          withDelay(
-            TEXT_DISPLAY_DUR + SPRING_DELAY,
-            withTiming(-270, {
+        ),
+      );
+
+      rotation.value = withSequence(
+        withTiming(0, {
+          duration: OPACITY_DUR,
+          easing: Easing.out(Easing.cubic),
+        }),
+        withDelay(
+          TEXT_DISPLAY_DUR + SPRING_DELAY,
+          withTiming(-270, {
+            duration: OPACITY_DUR,
+            easing: Easing.in(Easing.cubic),
+          }),
+        ),
+      );
+
+      textOpacity.value = withSequence(
+        withTiming(1, {
+          duration: OPACITY_DUR,
+          easing: Easing.out(Easing.cubic),
+        }),
+        withDelay(
+          TEXT_DISPLAY_DUR + SPRING_DELAY,
+          withTiming(
+            0,
+            {
               duration: OPACITY_DUR,
-              easing: Easing.in(Easing.cubic),
-            }),
+              easing: Easing.out(Easing.cubic),
+            },
+            finished => {
+              if (finished) {
+                runOnJS(setShowText)(null);
+                runOnJS(setShowFeedback)(null);
+              }
+            },
           ),
-        );
+        ),
+      );
+    },
+    [rotation, textOpacity, textScale],
+  );
 
-        textOpacity.value = withSequence(
-          withTiming(1, {
-            duration: OPACITY_DUR,
-            easing: Easing.out(Easing.cubic),
-          }),
-          withDelay(
-            TEXT_DISPLAY_DUR + SPRING_DELAY,
-            withTiming(
-              0,
-              {
-                duration: OPACITY_DUR,
-                easing: Easing.out(Easing.cubic),
-              },
-              finished => {
-                if (finished) {
-                  runOnJS(setShowText)(null);
-                }
-              },
-            ),
-          ),
-        );
-      },
-      [rotation, textOpacity, textScale],
-    );
+  useImperativeHandle(ref, () => ({
+    triggerFeedback: (type: ConfettiType) => {
+      const feedback = `${
+        strings[type][Math.floor(Math.random() * strings[type].length)]
+      }!`;
+      const playConfettiSound = playSound[type];
 
-    useImperativeHandle(ref, () => ({
-      triggerFeedback: (type: ConfettiType) => {
-        switch (type) {
-          case 'party':
-            playParty();
-            animateFeedbackIn(
-              `${
-                partyStrings[Math.floor(Math.random() * partyStrings.length)]
-              }!`,
-              type,
-            );
-            break;
-          case 'spark':
-            playStrike();
-            animateFeedbackIn(
-              `${
-                strikeStrings[Math.floor(Math.random() * strikeStrings.length)]
-              }!`,
-              type,
-            );
-            break;
-        }
-      },
-    }));
+      animateFeedbackIn(feedback, type);
+      playConfettiSound();
+    },
+  }));
 
-    const animatedTextStyle = useAnimatedStyle(() => ({
-      transform: [{scale: textScale.value}, {rotate: `${rotation.value}deg`}],
-      opacity: textOpacity.value,
-    }));
+  const animatedTextStyle = useAnimatedStyle(() => ({
+    transform: [{scale: textScale.value}, {rotate: `${rotation.value}deg`}],
+    opacity: textOpacity.value,
+  }));
 
-    return (
-      <>
-        {(showFeedback || showText) && (
-          <View style={styles.feedbackContainer} pointerEvents="none">
+  return (
+    <>
+      {(showFeedback || showText) && (
+        <View style={styles.feedbackContainer} pointerEvents="none">
+          {showFeedback && (
             <LottieView
               style={styles.confetti}
-              source={showFeedback === 'party' ? confettiParty : confettiSpark}
+              source={confettiConfig[showFeedback].resource}
               autoPlay
               loop={false}
-              resizeMode={showFeedback === 'party' ? 'cover' : 'center'}
+              resizeMode={confettiConfig[showFeedback].resizeMode}
               onAnimationFinish={() => {
-                setShowFeedback(null);
+                if (!showText) setShowFeedback(null);
               }}
             />
-            {showText && (
-              <Animated.View style={[styles.feedbackView, animatedTextStyle]}>
-                <OutlinedText
-                  text={showText}
-                  fontSize={42}
-                  width={300}
-                  height={70}
-                  fillColor={colors.white}
-                  strokeColor={colors.blue}
-                  strokeWidth={12}
-                />
-              </Animated.View>
-            )}
-          </View>
-        )}
-      </>
-    );
-  },
-);
+          )}
+          {showText && showFeedback && (
+            <Animated.View style={[styles.feedbackView, animatedTextStyle]}>
+              <OutlinedText
+                text={showText}
+                fontSize={42}
+                width={width}
+                height={70}
+                fillColor={colors.white}
+                strokeColor={confettiConfig[showFeedback].color}
+                strokeWidth={12}
+              />
+            </Animated.View>
+          )}
+        </View>
+      )}
+    </>
+  );
+});
 
 const styles = StyleSheet.create({
   feedbackContainer: {

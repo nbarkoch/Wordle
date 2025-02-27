@@ -93,6 +93,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     isGameEnd: false,
     aboutShown: false,
     aboutWasShown: false,
+    specialHintUsed: false,
     numberOfSavedRows: 0,
     gameStatus: 'PLAYING',
     isValidGuess: null,
@@ -302,7 +303,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         dispatch({type: 'END_GAME', status: 'SUCCESS'});
         stop();
         const delayConfetti = setTimeout(() => {
-          confettiRef.current?.triggerFeedback('party');
+          if (
+            gameState.currentAttempt < 2 &&
+            !gameState.aboutWasShown &&
+            !gameState.specialHintUsed
+          ) {
+            confettiRef.current?.triggerFeedback('quick-solver');
+          } else {
+            confettiRef.current?.triggerFeedback('party');
+          }
           clearTimeout(delayConfetti);
         }, 400);
       } else if (gameState.currentAttempt + 1 === maxAttempts) {
@@ -354,7 +363,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         const endTimeout = setTimeout(() => {
           dispatch({type: 'SET_GAME_END', isEnd: true});
           clearTimeout(endTimeout);
-        }, ROW_SAVED_DELAY * savedRows + 500);
+        }, ROW_SAVED_DELAY * savedRows);
       }, 2000);
       return () => clearTimeout(timeout);
     }
@@ -454,6 +463,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           category={category}
           difficulty={difficulty}
           gameType={gameType}
+          maxAttempts={maxAttempts}
+          currentAttempt={gameState.currentAttempt}
         />
       </View>
     </View>
