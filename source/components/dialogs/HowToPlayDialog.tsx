@@ -176,32 +176,25 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
               contentContainerStyle={styles.scrollViewContent}>
               <Animated.View style={[styles.introduction, introductionStyle]}>
                 <Text style={styles.text}>
-                  {'נחשו את המילה באורך 5 אותיות, תוך 6 ניסיונות'}
+                  {'המשחק בוחר מילה סודית עם 5 אותיות'}
                 </Text>
                 <Text style={styles.text}>
-                  {'מילת הניחוש חייבת להיות מילה תקנית'}
+                  {'צריך לנחש את המילה תוך 6 ניסיונות'}
                 </Text>
-                <Text style={styles.text}>
-                  {
-                    'בתגובה לכל ניחוש המערכת מגיבה בצביעת האותיות לפי הימצאותן ומיקומן במילה הסודית'
-                  }
-                </Text>
-                <Text style={styles.text}>
-                  {'על כל ניחוש נכון תצברו נקודות'}
-                </Text>
+
                 <View style={styles.divider} />
-                <Text style={styles.boldTitle}>{'דוגמה:'}</Text>
+                <Text style={styles.boldTitle}>{'איך זה עובד:'}</Text>
                 <Text style={styles.text}>
-                  {'נניח המילה הסודית היא: מלכות'}
+                  {'לדוגמה: כשהמילה הסודית היא "מלכות"'}
                 </Text>
-                <Text style={styles.text}>{'והניחוש שלך:'}</Text>
+                <Text style={styles.text}>{'והניחוש שלכם הוא "מילות"'}</Text>
                 <View style={styles.adjustment}>
                   <RowMockUp
                     letters={['מ', 'י', 'ל', 'ו', 'ת']}
                     correctness={[null, null, null, null, null]}
                   />
                 </View>
-                <Text style={styles.text}>{'לאחר שתלחץ על אישור'}</Text>
+                <Text style={styles.text}>{'המשחק יצבע את האותיות כך:'}</Text>
                 <View style={styles.adjustment}>
                   <RowMockUp
                     letters={['מ', 'י', 'ל', 'ו', 'ת']}
@@ -214,39 +207,46 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                     ]}
                   />
                 </View>
-                <Text style={styles.text}>{'הצבעים יראו רמז לאחר הניחוש'}</Text>
+                <Text style={styles.text}>{'משמעות הצבעים:'}</Text>
                 <LineAbout
                   title={'ירוק'}
                   color={colors.green}
-                  info={'האות קיימת במילה במיקום זהה'}
+                  info={'האות נמצאת במקום הנכון'}
                 />
                 <LineAbout
                   title={'צהוב'}
                   color={colors.yellow}
-                  info={'האות קיימת במילה במיקום אחר'}
+                  info={'האות נמצאת במילה אבל במקום אחר'}
                 />
                 <LineAbout
                   title={'אדום'}
                   color={colors.red}
-                  info={'האות אינה קיימת בכלל במילה'}
+                  info={'האות לא נמצאת במילה כלל'}
                 />
                 <View style={styles.divider} />
-                <Text style={styles.boldTitle}>{'כפתורי רמז:'}</Text>
+                <Text style={styles.boldTitle}>{'אם צריכים עזרה:'}</Text>
                 <View style={styles.row}>
                   <HintWordButton onHintRequested={() => {}} scoreCost={0} />
                   <AboutButton onInfoRequested={() => {}} scoreCost={0} />
                 </View>
-                <Text style={styles.text}>{'שימוש ברמזים עולה נקודות'}</Text>
+                <Text style={styles.text}>
+                  {'אפשר להשתמש ברמזים, אבל זה עולה נקודות'}
+                </Text>
                 <LineAbout
                   title={'מידע'}
                   color={colors.blue}
-                  info={'מילה נרדפת או רמז על המילה'}
+                  info={'נותן רמז או מילה נרדפת למילה הסודית'}
                 />
                 <LineAbout
                   title={'נורה'}
                   color={colors.yellow}
-                  info={'חושפת אותיות'}
+                  info={'חושפת אותיות מהמילה הסודית'}
                 />
+                <View style={styles.divider} />
+                <Text style={styles.boldTitle}>{'בהצלחה!'}</Text>
+                <Text style={styles.text}>
+                  {'נחשו את המילה הסודית ותזכו בנקודות'}
+                </Text>
               </Animated.View>
             </GradientOverlayScrollView>
           </View>
@@ -270,22 +270,22 @@ const styles = StyleSheet.create({
     padding: 3,
     elevation: 6,
     width: dialogWidth,
-    height: dialogHeight,
+    height: dialogHeight < 450 ? 450 : dialogHeight, // מינימום גובה לדיאלוג
     justifyContent: 'center',
     alignItems: 'center',
   },
   canvas: {
     position: 'absolute',
     width: dialogWidth,
-    height: dialogHeight,
+    height: dialogHeight < 450 ? 450 : dialogHeight, // להתאים לגודל החדש של הדיאלוג
   },
   dialog: {
     alignItems: 'center',
     paddingTop: 30,
     paddingBottom: 5,
     width: dialogWidth,
-    height: dialogHeight,
-    paddingHorizontal: 5,
+    height: dialogHeight < 450 ? 450 : dialogHeight, // להתאים לגודל החדש של הדיאלוג
+    paddingHorizontal: 10, // הגדלתי את הרווח האופקי
   },
   titleContainer: {
     position: 'absolute',
@@ -295,29 +295,31 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   introduction: {
-    width: '100%',
+    width: '95%', // הקטנתי מעט את הרוחב
     flex: 1,
-    padding: 20,
-    marginHorizontal: 10,
+    padding: 15,
+    marginHorizontal: 5,
     alignItems: 'center',
   },
   text: {
-    fontSize: 15,
+    fontSize: 16,
     color: colors.lightGrey,
-    paddingVertical: 4,
+    paddingVertical: 5,
     textAlign: 'center',
+    lineHeight: 22,
   },
   boldText: {
-    fontSize: 17,
+    fontSize: 18,
     color: colors.lightGrey,
     textAlign: 'center',
     fontFamily: 'PloniDL1.1AAA-Bold',
   },
   boldTitle: {
-    fontSize: 18,
-    color: colors.lightGrey,
+    fontSize: 20,
+    color: colors.lightYellow,
     textAlign: 'center',
     fontFamily: 'PloniDL1.1AAA-Bold',
+    marginBottom: 6,
   },
   divider: {
     height: 2,
@@ -328,7 +330,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.lightYellow,
-    fontSize: 23,
+    fontSize: 26,
     fontFamily: 'PloniDL1.1AAA-Bold',
   },
   scrollView: {
