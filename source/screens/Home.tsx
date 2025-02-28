@@ -46,6 +46,10 @@ function HomeScreen({navigation}: HomeScreenProps) {
   );
 
   const onNewGame = useCallback(async () => {
+    navigation.navigate('NewGame');
+  }, [navigation]);
+
+  const onContinueGame = useCallback(() => {
     if (storageStates.random) {
       const {gameState, enableTimer, category, difficulty} =
         storageStates.random;
@@ -58,8 +62,6 @@ function HomeScreen({navigation}: HomeScreenProps) {
         type: 'RANDOM',
         savedGameState: gameState,
       });
-    } else {
-      navigation.navigate('NewGame');
     }
   }, [navigation, storageStates.random]);
 
@@ -103,10 +105,22 @@ function HomeScreen({navigation}: HomeScreenProps) {
       </View>
       <View style={styles.body}>
         <MenuButton
-          text={storageStates.random === undefined ? 'משחק חדש' : 'המשך משחק'}
+          disabled={storageStates.random === undefined}
+          text={'המשך משחק'}
+          onPress={onContinueGame}
+          color={setColorOpacity(
+            storageStates.random === undefined
+              ? colors.grey
+              : colors.mediumGreen,
+            0.7,
+          )}
+        />
+        <MenuButton
+          text={'משחק חדש'}
           onPress={onNewGame}
           color={setColorOpacity(colors.green, 0.7)}
         />
+
         <SpecialButton
           disabled={isDone}
           text="חידה יומית"

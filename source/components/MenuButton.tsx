@@ -8,10 +8,11 @@ interface MenuButtonProps {
   onPress: () => void;
   text: string;
   color: string;
+  disabled?: boolean;
 }
-function MenuButton({onPress, text, color}: MenuButtonProps) {
+function MenuButton({onPress, text, color, disabled = false}: MenuButtonProps) {
   return (
-    <BasePressable onPress={onPress}>
+    <BasePressable onPress={onPress} disabled={disabled}>
       <View
         style={[
           styles.button,
