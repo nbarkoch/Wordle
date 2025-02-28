@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    borderColor: '#77807F',
+    borderColor: colors.grey,
     backgroundColor: '#19273080',
     borderWidth: 2,
     borderRadius: 10,

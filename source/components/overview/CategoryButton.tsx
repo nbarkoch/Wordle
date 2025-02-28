@@ -3,6 +3,7 @@ import {StyleSheet, Text} from 'react-native';
 import {View} from 'react-native';
 import BasePressable from '~/components/BasePressable';
 import {colors} from '~/utils/colors';
+import {lightenColor, setColorOpacity} from '~/utils/ui';
 
 interface CategoryButtonProps {
   title: string;
@@ -26,7 +27,11 @@ export const CategoryButton = ({
           styles.view,
           isFirst && styles.firstButton,
           isLast && styles.lastButton,
-          {backgroundColor: isActive ? colors.lightGold : colors.gold},
+          {
+            backgroundColor: isActive
+              ? lightenColor(colors.gold, 17)
+              : colors.gold,
+          },
         ]}>
         <Text style={[styles.text]}>{title}</Text>
       </View>
@@ -38,6 +43,7 @@ export const CategoryButton = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: setColorOpacity(colors.gold, 0.5),
   },
   view: {
     height: 40,
@@ -58,6 +64,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: 2,
-    backgroundColor: colors.darkGold,
+    backgroundColor: setColorOpacity(colors.gold, 0.5),
   },
 });

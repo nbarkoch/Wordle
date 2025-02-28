@@ -46,7 +46,7 @@ export const CategorySelector = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.darkGold,
+    backgroundColor: colors.darkGrey,
     paddingBottom: 2,
   },
   flexContainer: {

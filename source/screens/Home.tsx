@@ -120,7 +120,6 @@ function HomeScreen({navigation}: HomeScreenProps) {
           onPress={onNewGame}
           color={setColorOpacity(colors.green, 0.7)}
         />
-
         <SpecialButton
           disabled={isDone}
           text="חידה יומית"

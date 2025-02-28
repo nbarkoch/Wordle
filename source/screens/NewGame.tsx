@@ -7,13 +7,15 @@ import CanvasBackground from '~/utils/canvas';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 import HowToPlayButton from '~/components/IconButtons/HowToPlayButton';
 import {colors} from '~/utils/colors';
-import SelectNumber from '~/components/SelectorNumber';
 import GameSwitch from '~/components/GameSwitch';
 import CategoryCubes from '~/components/CategoriyCubes';
 import {Difficulty, GameCategory} from '~/utils/types';
-import SelectDifficulty from '~/components/SelectDifficulty';
 import BackButton from '~/components/IconButtons/BackButton';
 import {setColorOpacity} from '~/utils/ui';
+import {saveGame} from '~/store/gameStorageState';
+import VolumeButton from '~/components/IconButtons/VolumeButton';
+import Selection from '~/components/Selection';
+import {DIFFICULTIES, MAP_DIFFICULTY_NAME} from '~/utils/consts';
 
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
@@ -22,13 +24,15 @@ function NewGameScreen({navigation}: NewGameProps) {
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [enableTimer, setEnableTimer] = useState<boolean>(false);
   const onStartGame = useCallback(() => {
-    navigation.replace('WordGame', {
-      maxAttempts: 11 - wordLength,
-      wordLength,
-      enableTimer,
-      category,
-      difficulty,
-      type: 'RANDOM',
+    saveGame('RANDOM', undefined).then(() => {
+      navigation.replace('WordGame', {
+        maxAttempts: 11 - wordLength,
+        wordLength,
+        enableTimer,
+        category,
+        difficulty,
+        type: 'RANDOM',
+      });
     });
   }, [navigation, wordLength, enableTimer, category, difficulty]);
 
@@ -47,16 +51,33 @@ function NewGameScreen({navigation}: NewGameProps) {
           contentContainerStyle={styles.buttonsContainer}
           style={styles.buttons}>
           <View style={styles.iconAligner}>
+            <View style={styles.pusher} />
+            <VolumeButton />
             <HowToPlayButton
               onPress={() => {
                 setHowToPlayVisible(true);
               }}
             />
           </View>
+
           <Text style={styles.subjectText}>{'רמת קושי: '}</Text>
-          <SelectDifficulty selected={difficulty} setSelected={setDifficulty} />
+          <Selection
+            items={DIFFICULTIES.map(difficulty => ({
+              value: difficulty,
+              label: MAP_DIFFICULTY_NAME[difficulty],
+            }))}
+            selected={difficulty}
+            setSelected={setDifficulty}
+          />
           <Text style={styles.subjectText}>{'אורך מילה: '}</Text>
-          <SelectNumber selected={wordLength} setSelected={setWordLength} />
+          <Selection
+            items={[3, 4, 5].map(num => ({
+              value: num,
+              label: `${num}`,
+            }))}
+            selected={wordLength}
+            setSelected={setWordLength}
+          />
           <Text style={styles.subjectText}>{'הצג שעון עצר:'}</Text>
           <View style={styles.switch}>
             <GameSwitch onToggle={setEnableTimer} />
@@ -135,7 +156,9 @@ const styles = StyleSheet.create({
   centerer: {width: 50, alignItems: 'center'},
   iconAligner: {
     width: '100%',
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    gap: 15,
   },
+  pusher: {flex: 1},
 });
 export default NewGameScreen;
