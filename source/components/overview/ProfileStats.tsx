@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {WordDisplayHierarchy} from '~/store/revealsStore';
 import {useScoreStore} from '~/store/useScore';
@@ -26,7 +26,7 @@ const ProfileStats = ({wordsOverview, isLoading}: ProfileStatsProps) => {
   return (
     <View style={styles.statsContainer}>
       <View style={styles.statBox}>
-        <View style={{alignItems: 'center', flexDirection: 'row', gap: 5}}>
+        <View style={styles.coinContainer}>
           {isLoading ? (
             <ActivityIndicator
               size="large"
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gold,
     marginHorizontal: 20,
   },
+  coinContainer: {alignItems: 'center', flexDirection: 'row', gap: 5},
 });
 
 export default ProfileStats;

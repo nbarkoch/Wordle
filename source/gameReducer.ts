@@ -74,14 +74,14 @@ const initialState: GameState = {
 };
 
 function shouldUpdateCorrectness(
-  current: Correctness,
-  newC: Correctness,
+  correctness: Correctness,
+  newCorrectness: Correctness,
 ): boolean {
-  if (!current) return true;
-  if (newC === 'correct') return true;
-  if (current === 'correct') return false;
-  if (newC === 'exists' && current === 'notInUse') return true;
-  return false;
+  const priority = {notInUse: 1, exists: 2, correct: 3};
+  return Boolean(
+    newCorrectness &&
+      (!correctness || priority[newCorrectness] > priority[correctness]),
+  );
 }
 
 // Reducer function

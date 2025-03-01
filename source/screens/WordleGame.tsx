@@ -151,7 +151,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     } else {
       saveGame(gameType, undefined);
     }
-  }, [gameState, secretWord, difficulty, category, gameType]);
+  }, [gameState, secretWord, difficulty, category, gameType, aboutWord]);
 
   const resetGame = useCallback(() => {
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
@@ -271,7 +271,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       });
 
       const isSecretWordRevealed = correctness.every(
-        correctness => correctness === 'correct',
+        $correctness => $correctness === 'correct',
       );
       const newRevealLength = reveal.filter(Boolean).length;
 
@@ -328,6 +328,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     gameState.isValidGuess,
     currentWordGuess,

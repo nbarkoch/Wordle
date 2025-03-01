@@ -1,7 +1,7 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
 import {colors} from '~/utils/colors';
-import {darkenColor} from '~/utils/ui';
+import {colorMap, colorMediumMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
 
 interface KeyboardKeyProps {
@@ -23,19 +23,6 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
 }) => {
   const [isPressed, setIsPressed] = useState(false);
 
-  const baseColor = useMemo(() => {
-    switch (correctness) {
-      case 'correct':
-        return colors.green;
-      case 'exists':
-        return colors.yellow;
-      case 'notInUse':
-        return colors.red;
-      default:
-        return colors.lightGrey;
-    }
-  }, [correctness]);
-
   const handlePressIn = () => {
     setIsPressed(true);
   };
@@ -50,13 +37,17 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
     if (isPressed) {
       return [
         ...baseStyle,
-        {backgroundColor: darkenColor(baseColor, 20)},
+        {
+          backgroundColor: correctness
+            ? colorMediumMap[correctness]
+            : colors.mediumGrey,
+        },
         {transform: [{scale: 0.9}]},
       ];
     }
 
     return baseStyle;
-  }, [style, baseColor, disabled, isPressed]);
+  }, [style, correctness, disabled, isPressed]);
 
   const $onPress = useCallback(() => onPress(letter ?? ''), [letter, onPress]);
 
@@ -68,7 +59,13 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
       onPressOut={handlePressOut}
       onPress={$onPress}>
       {children ?? (
-        <Text style={[styles.keyText, {color: baseColor}]}>{letter}</Text>
+        <Text
+          style={[
+            styles.keyText,
+            {color: correctness ? colorMap[correctness] : colors.lightGrey},
+          ]}>
+          {letter}
+        </Text>
       )}
     </Pressable>
   );

@@ -1,3 +1,8 @@
+/* eslint-disable no-bitwise */
+
+import {colors, ThemeColor} from './colors';
+import {Correctness} from './words';
+
 // Helper function to darken a hex color
 export const darkenColor = (color: string, percent: number) => {
   const num = parseInt(color.replace('#', ''), 16),
@@ -115,4 +120,23 @@ export const lightenColor = (color: string, percent: number): string => {
 
   // Return the result with or without opacity
   return A ? `#${RR}${GG}${BB}${A}` : `#${RR}${GG}${BB}`;
+};
+
+export const colorLightMap: {[key in Exclude<Correctness, null>]: ThemeColor} =
+  {
+    correct: colors.lightGreen,
+    exists: colors.lightYellow,
+    notInUse: colors.lightRed,
+  };
+
+export const colorMediumMap: {[key in Exclude<Correctness, null>]: string} = {
+  correct: lightenColor(colors.green, -20),
+  exists: lightenColor(colors.yellow, -20),
+  notInUse: lightenColor(colors.red, -20),
+};
+
+export const colorMap: {[key in Exclude<Correctness, null>]: ThemeColor} = {
+  correct: colors.green,
+  exists: colors.yellow,
+  notInUse: colors.red,
 };

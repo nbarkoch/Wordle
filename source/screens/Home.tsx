@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
@@ -89,7 +89,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
       <CanvasBackground />
 
       <View style={styles.headerLine}>
-        <View style={{flexDirection: 'row', gap: 20}}>
+        <View style={styles.controlsContainer}>
           <HowToPlayButton onPress={() => setHowToPlayVisible(true)} />
           <VolumeButton />
         </View>
@@ -155,5 +155,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   adjustment: {transform: [{scale: 1}]},
+  controlsContainer: {flexDirection: 'row', gap: 20},
 });
 export default HomeScreen;

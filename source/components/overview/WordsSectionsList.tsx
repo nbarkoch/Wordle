@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo} from 'react';
-import {StyleSheet, View, SectionList, SectionListData} from 'react-native';
+import {StyleSheet, View, SectionList} from 'react-native';
 import {Difficulty, GameCategory} from '~/utils/types';
 import {colors} from '~/utils/colors';
 import {WordCard} from '~/components/overview/WordCard';
@@ -51,7 +51,9 @@ const colorMapper: Record<Difficulty, string> = {
 
 // Optimized chunk array function
 const chunkArray = <T,>(array: T[]): T[][] => {
-  if (array.length === 0) return [];
+  if (array.length === 0) {
+    return [];
+  }
   const chunks: T[][] = [];
   let i = 0;
   while (i < array.length) {

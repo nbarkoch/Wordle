@@ -64,7 +64,7 @@ const TopBar: React.FC<TopBarProps> = ({
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [isActive, increment, resetKey, displayTimer]);
+  }, [isActive, increment, resetKey, displayTimer, timerState]);
 
   return (
     <View style={styles.topBar}>

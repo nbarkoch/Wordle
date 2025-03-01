@@ -62,9 +62,9 @@ function NewGameScreen({navigation}: NewGameProps) {
 
           <Text style={styles.subjectText}>{'רמת קושי: '}</Text>
           <Selection
-            items={DIFFICULTIES.map(difficulty => ({
-              value: difficulty,
-              label: MAP_DIFFICULTY_NAME[difficulty],
+            items={DIFFICULTIES.map($difficulty => ({
+              value: $difficulty,
+              label: MAP_DIFFICULTY_NAME[$difficulty],
             }))}
             selected={difficulty}
             setSelected={setDifficulty}

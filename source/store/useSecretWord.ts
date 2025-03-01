@@ -135,7 +135,7 @@ const useSecretWord = (
 
   const loadWordFromStorage: (
     gameType: string,
-  ) => Promise<WordHandle | undefined> = async gameType => {
+  ) => Promise<WordHandle | undefined> = useCallback(async gameType => {
     const gameStorageState = await loadGame(gameType);
     if (gameStorageState) {
       return {
@@ -143,7 +143,7 @@ const useSecretWord = (
         about: gameStorageState.aboutWord,
       };
     }
-  };
+  }, []);
 
   const getNewWord = useCallback(async (): Promise<WordHandle> => {
     if (type === 'DAILY') {
@@ -185,6 +185,7 @@ const useSecretWord = (
 
   useEffect(() => {
     initializeWord();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

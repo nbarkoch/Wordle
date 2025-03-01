@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
 import {StyleSheet, View} from 'react-native';
 import {colors} from '~/utils/colors';

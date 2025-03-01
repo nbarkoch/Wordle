@@ -213,7 +213,9 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
               loop={false}
               resizeMode={confettiConfig[showFeedback].resizeMode}
               onAnimationFinish={() => {
-                if (!showText) setShowFeedback(null);
+                if (!showText) {
+                  setShowFeedback(null);
+                }
               }}
             />
           )}

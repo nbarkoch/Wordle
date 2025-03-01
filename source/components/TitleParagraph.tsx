@@ -54,7 +54,7 @@ const TitleParagraph = ({title}: TitleParagraphProps) => {
       .pop()
       .build();
     return para;
-  }, [customFontMgr]);
+  }, [customFontMgr, title]);
 
   return (
     <Canvas style={styles.canvas}>

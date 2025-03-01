@@ -1,20 +1,15 @@
-import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSequence,
   withTiming,
-  withDelay,
   withRepeat,
-  withSpring,
   Easing,
-  interpolate,
   runOnJS,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
-
-const {width} = Dimensions.get('window');
 
 interface LetterCubeProps {
   letter: string;
@@ -27,7 +22,7 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
   const rotation = useSharedValue(0);
   const scale = useSharedValue(1);
 
-  const startRandomAnimation = () => {
+  const startRandomAnimation = useCallback(() => {
     const randomAnim = Math.floor(Math.random() * 3);
 
     switch (randomAnim) {
@@ -66,7 +61,7 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
     }, 3000 + Math.random() * 4000); // Random interval between 3-7 seconds
 
     return () => clearTimeout(timeout);
-  };
+  }, [rotation, scale, translateY]);
 
   useEffect(() => {
     // Start animations with staggered delay based on index
@@ -75,7 +70,7 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
     }, 1000 + index * 800);
 
     return () => clearTimeout(initialDelay);
-  }, []);
+  }, [index, startRandomAnimation]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
+import {colorLightMap, colorMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
 interface CellProps {
   letter: string | undefined;
@@ -15,18 +16,6 @@ interface CellProps {
   correctnessAnim: SharedValue<Correctness | undefined>;
   rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
 }
-
-const hintColorMap: {[key in Exclude<Correctness, null>]: string} = {
-  correct: colors.lightGreen,
-  exists: colors.lightYellow,
-  notInUse: colors.lightRed,
-};
-
-const colorMap: {[key in Exclude<Correctness, null>]: string} = {
-  correct: colors.green,
-  exists: colors.yellow,
-  notInUse: colors.red,
-};
 
 type HintInfo =
   | {
@@ -50,7 +39,7 @@ function Cell({
     const backgroundColor = correctnessAnim.value
       ? colorMap[correctnessAnim.value]
       : hint?.correctness
-      ? hintColorMap[hint.correctness]
+      ? colorLightMap[hint.correctness]
       : colors.lightGrey;
 
     return {
@@ -90,7 +79,7 @@ function Cell({
           animatedStyle,
           rowIndication === 'CURRENT' && {
             backgroundColor: hint?.correctness
-              ? hintColorMap[hint.correctness]
+              ? colorLightMap[hint.correctness]
               : colors.lightGrey,
           },
         ]}>

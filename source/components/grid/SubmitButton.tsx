@@ -69,7 +69,9 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
 
   const getStateColors = (state: boolean | null) => {
     'worklet';
-    if (state === null) return buttonColors.default;
+    if (state === null) {
+      return buttonColors.default;
+    }
     return state ? buttonColors.valid : buttonColors.invalid;
   };
 

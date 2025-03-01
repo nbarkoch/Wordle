@@ -2,11 +2,12 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react-native';
 import {colors} from '~/utils/colors';
 import BasePressable from '~/components/BasePressable';
-import {darkenColor, lightenColor, setColorOpacity} from '~/utils/ui';
+import {lightenColor, setColorOpacity} from '~/utils/ui';
+import {Fragment} from 'react';
 
-const dividerColor = darkenColor(colors.gold, 15);
-const borderColor = setColorOpacity(darkenColor(colors.gold, 35), 0.35);
-const letterColor = darkenColor(colors.gold, 40);
+const dividerColor = lightenColor(colors.gold, -15);
+const borderColor = setColorOpacity(lightenColor(colors.gold, -35), 0.35);
+const letterColor = lightenColor(colors.gold, -40);
 const cubeSelectedColor = lightenColor(colors.gold, 15);
 
 const DividerVertical = () => <View style={styles.divider} />;
@@ -39,14 +40,14 @@ function Selection<T>({selected, setSelected, items}: SelectNumberProps<T>) {
   return (
     <View style={styles.body}>
       {items.map((item, index) => (
-        <>
+        <Fragment key={`${item.value}`}>
           <Selector
             value={item.label}
             selected={selected === item.value}
             onSelect={() => setSelected(item.value)}
           />
           {index < items.length - 1 && <DividerVertical />}
-        </>
+        </Fragment>
       ))}
     </View>
   );

@@ -31,7 +31,7 @@ function BasePressable(props: BasePressableProps) {
         runOnJS(onPress)();
       });
     }
-  }, [onPress, scaleAnimation]);
+  }, [onPress, prePress, scaleAnimation]);
 
   return (
     <Pressable onPress={$onPress} style={style} {...rest}>
