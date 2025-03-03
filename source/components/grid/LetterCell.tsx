@@ -116,7 +116,14 @@ function LetterCell({
         flipValue.value = withTiming(0, {duration: 500});
       }
     }
-  }, [flipValue, correctness, delay, revealed, sharedCorrectness.value]);
+  }, [
+    flipValue,
+    correctness,
+    delay,
+    revealed,
+    sharedCorrectness.value,
+    sharedCorrectness,
+  ]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

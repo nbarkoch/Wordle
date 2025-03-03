@@ -42,7 +42,6 @@
     "@tsconfig/react-native": "^3.0.0",
     "@types/jest": "^29.5.13",
     "@types/react": "^18.0.24",
-    "@types/react-native-sqlite-storage": "^6.0.5",
     "@types/react-test-renderer": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "5.37.0",
     "@typescript-eslint/parser": "5.37.0",

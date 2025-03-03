@@ -45,14 +45,18 @@ function Cell({
     return {
       backgroundColor,
       borderWidth: withTiming(selected ? 3 : 0, {duration: 150}),
-      borderColor: rowIndication === 'CURRENT' ? colors.gold : colors.blue,
+      borderColor: selected
+        ? rowIndication === 'CURRENT'
+          ? colors.gold
+          : colors.blue
+        : 'transparent',
       transform: [
         {
           rotateX: correctnessAnim.value ? '180deg' : '0deg',
         },
       ],
     };
-  }, [selected, rowIndication, correctnessAnim.value]);
+  });
 
   const animatedTextStyle = useAnimatedStyle(() => {
     'worklet';
@@ -78,9 +82,10 @@ function Cell({
           styles.cell,
           animatedStyle,
           rowIndication === 'CURRENT' && {
-            backgroundColor: hint?.correctness
-              ? colorLightMap[hint.correctness]
-              : colors.lightGrey,
+            backgroundColor:
+              hint?.correctness && !letter
+                ? colorLightMap[hint.correctness]
+                : colors.lightGrey,
           },
         ]}>
         <Animated.Text
