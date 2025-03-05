@@ -40,7 +40,7 @@ export default function UserInfo() {
     createDisplayEmptyHierarchy(),
   );
 
-  const categories = useMemo<Array<{title: string; key: GameCategory}>>(
+  const filteredCategories = useMemo(
     () =>
       Object.entries(wordsOverview)
         .filter(
@@ -61,18 +61,38 @@ export default function UserInfo() {
   );
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCategory, setIsLoadingCategory] = useState(true);
 
   useEffect(() => {
-    const loadWords = async () => {
-      setIsLoading(true);
-      const revealsAndTotals = await getRevealsAndTotals();
-      setWordsOverview(revealsAndTotals);
-      setIsLoading(false);
-    };
-    loadWords();
+    const timer = setTimeout(() => {
+      const loadWords = async () => {
+        setIsLoading(true);
+        try {
+          const revealsAndTotals = await getRevealsAndTotals();
+          setWordsOverview(revealsAndTotals);
+        } catch (error) {
+          console.error('Error loading words:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadWords();
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
-  const shouldScroll = categories.length * 80 > windowWidth - 40;
+  useEffect(() => {
+    setIsLoadingCategory(true);
+    const timer = setTimeout(() => {
+      const loadWords = async () => {
+        setIsLoadingCategory(false);
+      };
+      loadWords();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [activeCategory]);
+
+  const shouldScroll = filteredCategories.length * 80 > windowWidth - 40;
 
   return (
     <View style={styles.screen}>
@@ -89,12 +109,12 @@ export default function UserInfo() {
         <ProfileStats wordsOverview={wordsOverview} isLoading={isLoading} />
         <View style={styles.container}>
           <CategorySelector
-            categories={categories}
+            categories={filteredCategories}
             activeCategory={activeCategory}
             onCategoryChange={setActiveCategory}
             shouldScroll={shouldScroll}
           />
-          {isLoading ? (
+          {isLoading || isLoadingCategory ? (
             <LoadingFallback />
           ) : (
             <WordsSectionsList

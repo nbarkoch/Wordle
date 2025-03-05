@@ -1,10 +1,6 @@
 import React, {memo} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
-import Animated, {
-  SharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import {colorLightMap, colorMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
@@ -44,7 +40,7 @@ function Cell({
 
     return {
       backgroundColor,
-      borderWidth: withTiming(selected ? 3 : 0, {duration: 150}),
+      borderWidth: selected ? 3 : 0,
       borderColor: selected
         ? rowIndication === 'CURRENT'
           ? colors.gold

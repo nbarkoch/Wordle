@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import {GameCategory} from '~/utils/types';
 import {colors} from '~/utils/colors';
@@ -11,38 +11,44 @@ interface CategorySelectorProps {
   shouldScroll: boolean;
 }
 
-export const CategorySelector = ({
-  categories,
-  activeCategory,
-  onCategoryChange,
-  shouldScroll,
-}: CategorySelectorProps) => {
-  const CategoryButtons = categories.map((category, index) => (
-    <CategoryButton
-      key={category.key}
-      title={category.title}
-      onPress={() => onCategoryChange(category.key)}
-      isActive={activeCategory === category.key}
-      isFirst={index === 0}
-      isLast={index === categories.length - 1}
-    />
-  ));
+export const CategorySelector = React.memo(
+  ({
+    categories,
+    activeCategory,
+    onCategoryChange,
+    shouldScroll,
+  }: CategorySelectorProps) => {
+    const CategoryButtons = useMemo(
+      () =>
+        categories.map((category, index) => (
+          <CategoryButton
+            key={category.key}
+            title={category.title}
+            onPress={() => onCategoryChange(category.key)}
+            isActive={activeCategory === category.key}
+            isFirst={index === 0}
+            isLast={index === categories.length - 1}
+          />
+        )),
+      [categories, activeCategory, onCategoryChange],
+    );
 
-  return (
-    <View style={styles.container}>
-      {shouldScroll ? (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}>
-          {CategoryButtons}
-        </ScrollView>
-      ) : (
-        <View style={styles.flexContainer}>{CategoryButtons}</View>
-      )}
-    </View>
-  );
-};
+    return (
+      <View style={styles.container}>
+        {shouldScroll ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}>
+            {CategoryButtons}
+          </ScrollView>
+        ) : (
+          <View style={styles.flexContainer}>{CategoryButtons}</View>
+        )}
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

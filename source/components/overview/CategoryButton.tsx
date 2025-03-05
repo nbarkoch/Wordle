@@ -13,7 +13,7 @@ interface CategoryButtonProps {
   isActive: boolean;
 }
 
-export const CategoryButton = ({
+export const _CategoryButton = ({
   title,
   onPress,
   isFirst,
@@ -38,6 +38,13 @@ export const CategoryButton = ({
     </BasePressable>
     {!isLast && <View style={styles.divider} />}
   </>
+);
+
+export const CategoryButton = React.memo(
+  _CategoryButton,
+  (prevProps, nextProps) =>
+    prevProps.isActive === nextProps.isActive &&
+    prevProps.title === nextProps.title,
 );
 
 const styles = StyleSheet.create({

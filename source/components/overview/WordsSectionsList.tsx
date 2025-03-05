@@ -128,7 +128,10 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
     return result;
   }, [wordsOverview]);
 
-  const currentSections = sectionsByCategory[activeCategory] || [];
+  const currentSections = useMemo(
+    () => sectionsByCategory[activeCategory] || [],
+    [sectionsByCategory, activeCategory],
+  );
 
   const renderItem = useCallback(
     ({item: row}: {item: WordsData[]}) => (
