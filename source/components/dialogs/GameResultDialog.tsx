@@ -69,13 +69,14 @@ const GameResultDialog = ({
   const {playSound: playFailure} = useSound('fail.wav');
   const {time} = useTimerStore();
 
-  const rating =
-    currentAttempt < 4
+  const rating = isSuccess
+    ? currentAttempt < 4
       ? 3
       : Math.min(
           Math.ceil(((maxAttempts - currentAttempt + 1) / maxAttempts) * 3),
           3,
-        );
+        )
+    : 0;
 
   useEffect(() => {
     if (isVisible) {
