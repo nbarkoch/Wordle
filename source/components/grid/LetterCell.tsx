@@ -1,4 +1,11 @@
-import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,6 +15,7 @@ import Animated, {
   withSequence,
   cancelAnimation,
   useAnimatedReaction,
+  runOnJS,
 } from 'react-native-reanimated';
 
 import {Correctness, LetterCellLocation, LineHint} from '~/utils/words';
@@ -42,12 +50,16 @@ function LetterCell({
   revealed = false,
 }: LetterCellProps) {
   const flipValue = useSharedValue(correctness ? 180 : 0);
+  const flipDirection = useSharedValue(0);
   const cellScale = useSharedValue(1);
-  const sharedCorrectness = useSharedValue<Correctness | undefined>(
-    correctness,
-  );
+  const [sharedCorrectness, setSharedCorrectness] = useState<
+    Correctness | undefined
+  >(correctness);
+
   const cellOverlayRef = useRef<CellOverlayRef>(null);
   const cellWasSelected = useRef<boolean>(false);
+
+  const [_letter, _setLetter] = useState<string | undefined>(undefined);
 
   const selected = useMemo(
     () =>
@@ -97,22 +109,31 @@ function LetterCell({
   useAnimatedReaction(
     () => flipValue.value,
     currentFlipValue => {
-      if (currentFlipValue >= 90 && correctness !== sharedCorrectness.value) {
-        // Update state exactly at 90 degrees
-        sharedCorrectness.value = correctness;
+      if (correctness !== sharedCorrectness) {
+        if (flipDirection.value > 0 && currentFlipValue >= 90) {
+          runOnJS(setSharedCorrectness)(correctness);
+          runOnJS(_setLetter)(letter);
+          flipDirection.value = 0;
+        } else if (flipDirection.value < 0 && currentFlipValue <= 90) {
+          runOnJS(setSharedCorrectness)(undefined);
+          runOnJS(_setLetter)(undefined);
+          flipDirection.value = 0;
+        }
       }
     },
     [correctness],
   );
 
   useEffect(() => {
-    if (correctness !== sharedCorrectness.value) {
+    if (correctness !== sharedCorrectness) {
       if (correctness) {
         if (revealed && correctness === 'correct') {
           cellOverlayRef.current?.activateOverlay(delay + 500);
         }
+        flipDirection.value = 1;
         flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
       } else {
+        flipDirection.value = -1;
         flipValue.value = withTiming(0, {duration: 500});
       }
     }
@@ -121,8 +142,8 @@ function LetterCell({
     correctness,
     delay,
     revealed,
-    sharedCorrectness.value,
     sharedCorrectness,
+    flipDirection,
   ]);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -140,11 +161,11 @@ function LetterCell({
       <CellOverlay ref={cellOverlayRef} color={colors.lightGreen} />
       <Animated.View style={animatedStyle}>
         <Cell
-          letter={letter}
+          letter={_letter ?? letter}
           selected={selected}
           hint={hint}
           onLetterSelected={$onLetterSelected}
-          correctnessAnim={sharedCorrectness}
+          correctness={sharedCorrectness}
           rowIndication={rowIndication}
         />
       </Animated.View>

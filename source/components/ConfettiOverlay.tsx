@@ -174,7 +174,6 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
             finished => {
               if (finished) {
                 runOnJS(setShowText)(null);
-                runOnJS(setShowFeedback)(null);
               }
             },
           ),

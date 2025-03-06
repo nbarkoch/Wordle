@@ -1,6 +1,5 @@
 import React, {memo} from 'react';
-import {Pressable, StyleSheet} from 'react-native';
-import Animated, {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {colors} from '~/utils/colors';
 import {colorLightMap, colorMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
@@ -9,7 +8,7 @@ interface CellProps {
   onLetterSelected: () => void;
   hint?: HintInfo;
   selected?: boolean;
-  correctnessAnim: SharedValue<Correctness | undefined>;
+  correctness: Correctness | undefined;
   rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
 }
 
@@ -27,44 +26,37 @@ function Cell({
   onLetterSelected,
   selected = false,
   hint,
-  correctnessAnim,
+  correctness,
   rowIndication,
 }: CellProps) {
-  const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
-    const backgroundColor = correctnessAnim.value
-      ? colorMap[correctnessAnim.value]
-      : hint?.correctness
-      ? colorLightMap[hint.correctness]
-      : colors.lightGrey;
+  const viewStyle = {
+    backgroundColor:
+      hint?.correctness && !letter
+        ? colorLightMap[hint.correctness]
+        : correctness
+        ? colorMap[correctness]
+        : colors.lightGrey,
+    borderWidth: selected ? 3 : 0,
+    borderColor: selected
+      ? rowIndication === 'CURRENT'
+        ? colors.gold
+        : colors.blue
+      : 'transparent',
+    transform: [
+      {
+        rotateX: correctness ? '180deg' : '0deg',
+      },
+    ],
+  };
 
-    return {
-      backgroundColor,
-      borderWidth: selected ? 3 : 0,
-      borderColor: selected
-        ? rowIndication === 'CURRENT'
-          ? colors.gold
-          : colors.blue
-        : 'transparent',
-      transform: [
-        {
-          rotateX: correctnessAnim.value ? '180deg' : '0deg',
-        },
-      ],
-    };
-  });
-
-  const animatedTextStyle = useAnimatedStyle(() => {
-    'worklet';
-    const textColor = correctnessAnim.value
-      ? colors.white
-      : hint && !letter
-      ? colors.grey
-      : colors.darkGrey;
-    return {
-      color: textColor,
-    };
-  });
+  const textStyle = {
+    color:
+      hint?.correctness && !letter
+        ? colors.grey
+        : correctness
+        ? colors.white
+        : colors.darkGrey,
+  };
 
   const displayText = letter || hint?.letter || '';
 
@@ -73,29 +65,9 @@ function Cell({
       style={styles.pressable}
       disabled={rowIndication === 'AFTER'}
       onPress={onLetterSelected}>
-      <Animated.View
-        style={[
-          styles.cell,
-          animatedStyle,
-          rowIndication === 'CURRENT' && {
-            backgroundColor:
-              hint?.correctness && !letter
-                ? colorLightMap[hint.correctness]
-                : colors.lightGrey,
-          },
-        ]}>
-        <Animated.Text
-          style={[
-            styles.letter,
-            animatedTextStyle,
-            rowIndication === 'CURRENT' && {
-              color:
-                hint?.correctness && !letter ? colors.grey : colors.darkGrey,
-            },
-          ]}>
-          {displayText}
-        </Animated.Text>
-      </Animated.View>
+      <View style={[styles.cell, viewStyle]}>
+        <Text style={[styles.letter, textStyle]}>{displayText}</Text>
+      </View>
     </Pressable>
   );
 }

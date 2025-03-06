@@ -63,6 +63,7 @@ import {showGameRestartAd} from '~/components/ads/fullScreenAd';
 import GameTypeIndicator from '~/components/GameTypeIndicator';
 import {saveGame} from '~/store/gameStorageState';
 import {colors} from '~/utils/colors';
+import {useAdCounter} from '~/store/useAdCounter';
 
 const {width} = Dimensions.get('window');
 
@@ -118,7 +119,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   );
 
   const {markDone} = useDailyGameStore();
-
+  const adCounter = useAdCounter(3);
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
@@ -164,10 +165,15 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
-    showGameRestartAd(() => {
+    if (adCounter.shouldShowAd()) {
+      showGameRestartAd(() => {
+        reset();
+        start();
+      });
+    } else {
       reset();
       start();
-    });
+    }
     start();
     resetGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
