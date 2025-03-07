@@ -98,6 +98,14 @@ const confettiConfig: {
   },
 };
 
+const textColorConfig: {
+  [key in ConfettiType]: ThemeColor;
+} = {
+  party: colors.blue,
+  spark: colors.blue,
+  'quick-solver': colors.mediumRed,
+};
+
 type ConfettiType = 'spark' | 'party' | 'quick-solver';
 
 const SPRING_DELAY = 200;
@@ -110,7 +118,10 @@ export interface ConfettiOverlayRef {
 
 const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
   const [showFeedback, setShowFeedback] = useState<ConfettiType | null>(null);
-  const [showText, setShowText] = useState<string | null>(null);
+  const [showText, setShowText] = useState<{
+    text: string;
+    color: ThemeColor;
+  } | null>(null);
 
   const textScale = useSharedValue(0);
   const textOpacity = useSharedValue(0);
@@ -128,7 +139,7 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
   const animateFeedbackIn = useCallback(
     (text: string, confettiType: ConfettiType) => {
       setShowFeedback(confettiType);
-      setShowText(text);
+      setShowText({text, color: textColorConfig[confettiType]});
       cancelAnimation(textScale);
       cancelAnimation(rotation);
       cancelAnimation(textOpacity);
@@ -211,22 +222,18 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
               autoPlay
               loop={false}
               resizeMode={confettiConfig[showFeedback].resizeMode}
-              onAnimationFinish={() => {
-                if (!showText) {
-                  setShowFeedback(null);
-                }
-              }}
+              onAnimationFinish={() => setShowFeedback(null)}
             />
           )}
-          {showText && showFeedback && (
+          {showText && (
             <Animated.View style={[styles.feedbackView, animatedTextStyle]}>
               <OutlinedText
-                text={showText}
+                text={showText.text}
                 fontSize={42}
                 width={width}
                 height={70}
                 fillColor={colors.white}
-                strokeColor={confettiConfig[showFeedback].color}
+                strokeColor={showText.color}
                 strokeWidth={12}
               />
             </Animated.View>

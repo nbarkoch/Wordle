@@ -134,7 +134,7 @@ function LetterCell({
         flipValue.value = withDelay(delay, withTiming(180, {duration: 500}));
       } else {
         flipDirection.value = -1;
-        flipValue.value = withTiming(0, {duration: 500});
+        flipValue.value = withDelay(delay, withTiming(0, {duration: 500}));
       }
     }
   }, [
