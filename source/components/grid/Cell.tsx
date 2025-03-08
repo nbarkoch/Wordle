@@ -1,97 +1,134 @@
 import React, {memo} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
+import Animated, {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
 import {colorLightMap, colorMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
-interface CellProps {
-  letter: string | undefined;
-  onLetterSelected: () => void;
-  hint?: HintInfo;
-  selected?: boolean;
-  correctness: Correctness | undefined;
-  rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
-}
 
-type HintInfo =
-  | {
-      letter: string;
-      correctness: Correctness;
-    }
-  | undefined;
+interface CellProps {
+  front: {
+    letter: string | undefined;
+    correctness: Correctness | undefined;
+  };
+  back: {
+    letter: string | undefined;
+    correctness: Correctness | undefined;
+  };
+
+  onLetterSelected: () => void;
+  selected?: boolean;
+
+  rowIndication: 'BEFORE' | 'CURRENT' | 'AFTER';
+  flipValue: SharedValue<number>;
+}
 
 const CELL_SIZE = 45;
 
 function Cell({
-  letter,
   onLetterSelected,
   selected = false,
-  hint,
-  correctness,
+  front,
+  back,
   rowIndication,
+  flipValue,
 }: CellProps) {
-  const viewStyle = {
-    backgroundColor:
-      hint?.correctness && !letter
-        ? colorLightMap[hint.correctness]
-        : correctness
-        ? colorMap[correctness]
-        : colors.lightGrey,
+  // Front face (showing when not flipped)
+  const frontStyle = useAnimatedStyle(() => {
+    return {
+      opacity: flipValue.value >= 90 ? 0 : 1,
+      transform: [{rotateX: `${flipValue.value}deg`}],
+    };
+  });
+
+  const fStyle = {
+    backgroundColor: front.correctness
+      ? colorLightMap[front.correctness]
+      : colors.lightGrey,
     borderWidth: selected ? 3 : 0,
     borderColor: selected
       ? rowIndication === 'CURRENT'
         ? colors.gold
         : colors.blue
       : 'transparent',
-    transform: [
-      {
-        rotateX: correctness ? '180deg' : '0deg',
-      },
-    ],
   };
 
-  const textStyle = {
-    color:
-      hint?.correctness && !letter
-        ? colors.grey
-        : correctness
-        ? colors.white
-        : colors.darkGrey,
-  };
+  // Back face (showing when flipped)
+  const backStyle = useAnimatedStyle(() => {
+    return {
+      opacity: flipValue.value >= 90 ? 1 : 0,
+      transform: [{rotateX: `${180 - flipValue.value}deg`}],
+    };
+  });
 
-  const displayText = letter || hint?.letter || '';
+  const bStyle = {
+    backgroundColor: back.correctness
+      ? colorMap[back.correctness]
+      : colors.lightGrey,
+    borderWidth: selected ? 3 : 0,
+    borderColor: selected
+      ? rowIndication === 'CURRENT'
+        ? colors.gold
+        : colors.blue
+      : 'transparent',
+  };
 
   return (
     <Pressable
       style={styles.pressable}
       disabled={rowIndication === 'AFTER'}
       onPress={onLetterSelected}>
-      <View style={[styles.cell, viewStyle]}>
-        <Text style={[styles.letter, textStyle]}>{displayText}</Text>
+      <View style={styles.cellContainer}>
+        {/* Front face */}
+        <Animated.View style={[styles.cell, frontStyle, fStyle]}>
+          <Text
+            style={[
+              styles.letter,
+              {
+                color:
+                  front?.correctness && !front.letter
+                    ? colors.grey
+                    : colors.darkGrey,
+              },
+            ]}>
+            {front?.letter || ''}
+          </Text>
+        </Animated.View>
+
+        {/* Back face */}
+        <Animated.View style={[styles.cell, backStyle, bStyle]}>
+          <Text style={[styles.letter, {color: colors.white}]}>
+            {back?.letter || ''}
+          </Text>
+        </Animated.View>
       </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  cell: {
+  cellContainer: {
+    position: 'relative',
     width: CELL_SIZE,
     height: CELL_SIZE,
-    borderRadius: 17,
     marginVertical: 4,
     marginHorizontal: 5,
+  },
+  cell: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
+    backfaceVisibility: 'hidden',
   },
   pressable: {
     zIndex: 10,
   },
-  canvas: {
-    position: 'absolute',
-    width: CELL_SIZE,
-    height: CELL_SIZE,
-    borderRadius: 17,
+  letter: {
+    fontSize: 28,
+    fontFamily: 'PloniDL1.1AAA-Bold',
   },
-  letter: {fontSize: 28, fontFamily: 'PloniDL1.1AAA-Bold'},
 });
 
 export default memo(Cell);
