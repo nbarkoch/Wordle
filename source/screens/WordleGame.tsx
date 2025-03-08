@@ -174,7 +174,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       reset();
       start();
     }
-    start();
     resetGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

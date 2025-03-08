@@ -40,6 +40,8 @@ const partyStrings = [
   'אליפות',
   'שיחקת אותה',
   'נהדר',
+  'בראבו',
+  'פנטסטי',
 ];
 const quickSolverStrings = [
   'מה פתאום?',
@@ -49,6 +51,10 @@ const quickSolverStrings = [
   'מההה?',
   'שברת את המשחק',
   'הזייה!!',
+  'לא יאומן',
+  'מטורף לגמרי',
+  'כישרון טבעי',
+  'זה לא אמיתי',
 ];
 const strikeStrings = [
   'סטרייק',
@@ -61,6 +67,10 @@ const strikeStrings = [
   'איזה מהלך',
   'עף לי הפוני',
   'כמעט שם',
+  'בול פגיעה',
+  'פצצה',
+  'חבל על הזמן',
+  'איזו הברקה',
 ];
 
 const strings: {[key in ConfettiType]: string[]} = {
