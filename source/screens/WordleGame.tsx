@@ -76,7 +76,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     params: {
       maxAttempts,
       wordLength,
-      enableTimer = false,
+      displayTimer = false,
       startTime = 0,
       category,
       difficulty,
@@ -149,11 +149,20 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         difficulty,
         secretWord,
         aboutWord,
+        displayTimer,
       });
     } else {
       saveGame(gameType, undefined);
     }
-  }, [gameState, secretWord, difficulty, category, gameType, aboutWord]);
+  }, [
+    gameState,
+    secretWord,
+    difficulty,
+    category,
+    gameType,
+    aboutWord,
+    displayTimer,
+  ]);
 
   const resetGame = useCallback(() => {
     dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
@@ -382,7 +391,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       <CanvasBackground />
       <View style={[styles.content]}>
         <TopBar
-          displayTimer={enableTimer}
+          displayTimer={displayTimer}
           onGoHome={handleGoHome}
           onHowToPlay={handleHowToPlay}
           gameType={gameType}

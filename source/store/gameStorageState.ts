@@ -5,7 +5,7 @@ import {Difficulty, GameCategory} from '~/utils/types';
 export interface GameStorageState {
   category: GameCategory;
   difficulty: Difficulty;
-  enableTimer?: boolean;
+  displayTimer?: boolean;
   secretWord: string;
   aboutWord: string;
   gameState: GameState;

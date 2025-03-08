@@ -28,7 +28,7 @@ function NewGameScreen({navigation}: NewGameProps) {
       navigation.replace('WordGame', {
         maxAttempts: 11 - wordLength,
         wordLength,
-        enableTimer,
+        displayTimer: enableTimer,
         category,
         difficulty,
         type: 'RANDOM',

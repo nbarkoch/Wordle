@@ -11,7 +11,7 @@ export type RootStackParamList = {
   WordGame: {
     maxAttempts: number;
     wordLength: number;
-    enableTimer?: boolean;
+    displayTimer?: boolean;
     category: GameCategory;
     difficulty: Difficulty;
     type: 'RANDOM' | 'DAILY';

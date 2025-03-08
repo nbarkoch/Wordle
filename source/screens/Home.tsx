@@ -61,13 +61,13 @@ function HomeScreen({navigation}: HomeScreenProps) {
 
   const onContinueGame = useCallback(async () => {
     if (storageStates.random) {
-      const {gameState, enableTimer, category, difficulty} =
+      const {gameState, displayTimer, category, difficulty} =
         storageStates.random;
       const startTime = await loadTimer('RANDOM');
       navigation.navigate('WordGame', {
         maxAttempts: gameState.maxAttempts,
         wordLength: gameState.wordLength,
-        enableTimer,
+        displayTimer,
         category,
         difficulty,
         type: 'RANDOM',
@@ -82,7 +82,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
     navigation.navigate('WordGame', {
       maxAttempts: 6,
       wordLength: 5,
-      enableTimer: false,
+      displayTimer: false,
       category: 'GENERAL',
       difficulty: 'easy',
       type: 'DAILY',
