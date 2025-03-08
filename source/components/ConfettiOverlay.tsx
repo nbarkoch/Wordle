@@ -15,10 +15,13 @@ import Animated, {
   withSequence,
   withDelay,
   cancelAnimation,
+  FadeIn,
+  FadeOut,
 } from 'react-native-reanimated';
 
 import confettiSpark from '~/assets/lottie/confetti_1.json';
 import confettiParty from '~/assets/lottie/confetti_2.json';
+import fireworks from '~/assets/lottie/fireworks.json';
 import {OutlinedText} from './CartoonText';
 import {colors, ThemeColor} from '~/utils/colors';
 import useSound from '~/useSound';
@@ -92,9 +95,9 @@ const confettiConfig: {
   'quick-solver': {
     texts: quickSolverStrings,
     color: colors.mediumRed,
-    resource: confettiParty,
+    resource: fireworks,
     fontSize: 47,
-    resizeMode: 'cover',
+    resizeMode: 'center',
   },
 };
 
@@ -129,11 +132,12 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
 
   const {playSound: playStrike} = useSound('good.mp3');
   const {playSound: playParty} = useSound('finish.mp3');
+  const {playSound: playFirework} = useSound('firework.mp3');
 
   const playSound: {[key in ConfettiType]: () => void} = {
     party: playParty,
     spark: playStrike,
-    'quick-solver': playParty,
+    'quick-solver': playFirework,
   };
 
   const animateFeedbackIn = useCallback(
@@ -213,6 +217,13 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
 
   return (
     <>
+      {Boolean(showFeedback === 'quick-solver' && showText) && (
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
+          style={styles.darkOverlay}
+        />
+      )}
       {(showFeedback || showText) && (
         <View style={styles.feedbackContainer} pointerEvents="none">
           {showFeedback && (
@@ -268,6 +279,13 @@ const styles = StyleSheet.create({
     fontFamily: 'PloniDL1.1AAA-Bold',
     color: colors.white,
     fontStyle: 'italic',
+  },
+  darkOverlay: {
+    backgroundColor: '#00000030',
+    position: 'absolute',
+    width,
+    height,
+    zIndex: 1,
   },
 });
 

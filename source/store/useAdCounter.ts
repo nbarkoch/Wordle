@@ -15,7 +15,6 @@ export const useAdCounter = () => {
    * @returns {boolean} True if an ad should be shown
    */
   const shouldShowAd = () => {
-    console.log('fre', frequencyRef.current, gameCountRef.current);
     // Check if we should show an ad based on the frequency
     const shouldShow = gameCountRef.current >= frequencyRef.current - 1;
 
