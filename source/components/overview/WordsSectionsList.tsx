@@ -167,7 +167,6 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
       stickySectionHeadersEnabled={false}
       maxToRenderPerBatch={5}
       updateCellsBatchingPeriod={50}
-      windowSize={5}
       initialNumToRender={7}
     />
   );
