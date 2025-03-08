@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useMemo} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Animated, {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {colors} from '~/utils/colors';
@@ -8,7 +8,10 @@ import {Correctness} from '~/utils/words';
 interface CellProps {
   front: {
     letter: string | undefined;
-    correctness: Correctness | undefined;
+    hint?: {
+      letter: string;
+      correctness: Correctness;
+    };
   };
   back: {
     letter: string | undefined;
@@ -40,17 +43,28 @@ function Cell({
     };
   });
 
-  const fStyle = {
-    backgroundColor: front.correctness
-      ? colorLightMap[front.correctness]
-      : colors.lightGrey,
-    borderWidth: selected ? 3 : 0,
-    borderColor: selected
-      ? rowIndication === 'CURRENT'
-        ? colors.gold
-        : colors.blue
-      : 'transparent',
-  };
+  const fStyle = useMemo(
+    () => ({
+      backgroundColor: front.hint?.correctness
+        ? colorLightMap[front.hint.correctness]
+        : colors.lightGrey,
+      borderWidth: selected ? 3 : 0,
+      borderColor: selected
+        ? rowIndication === 'CURRENT'
+          ? colors.gold
+          : colors.blue
+        : 'transparent',
+    }),
+    [front.hint, rowIndication, selected],
+  );
+
+  const ftStyle = useMemo(
+    () => ({
+      color:
+        !front.letter && front.hint?.letter ? colors.grey : colors.darkGrey,
+    }),
+    [front.hint?.letter, front.letter],
+  );
 
   // Back face (showing when flipped)
   const backStyle = useAnimatedStyle(() => {
@@ -60,17 +74,20 @@ function Cell({
     };
   });
 
-  const bStyle = {
-    backgroundColor: back.correctness
-      ? colorMap[back.correctness]
-      : colors.lightGrey,
-    borderWidth: selected ? 3 : 0,
-    borderColor: selected
-      ? rowIndication === 'CURRENT'
-        ? colors.gold
-        : colors.blue
-      : 'transparent',
-  };
+  const bStyle = useMemo(
+    () => ({
+      backgroundColor: back.correctness
+        ? colorMap[back.correctness]
+        : colors.lightGrey,
+      borderWidth: selected ? 3 : 0,
+      borderColor: selected
+        ? rowIndication === 'CURRENT'
+          ? colors.gold
+          : colors.blue
+        : 'transparent',
+    }),
+    [back.correctness, rowIndication, selected],
+  );
 
   return (
     <Pressable
@@ -80,25 +97,14 @@ function Cell({
       <View style={styles.cellContainer}>
         {/* Front face */}
         <Animated.View style={[styles.cell, frontStyle, fStyle]}>
-          <Text
-            style={[
-              styles.letter,
-              {
-                color:
-                  front?.correctness && !front.letter
-                    ? colors.grey
-                    : colors.darkGrey,
-              },
-            ]}>
-            {front?.letter || ''}
+          <Text style={[styles.letter, ftStyle]}>
+            {front.letter || front.hint?.letter || ''}
           </Text>
         </Animated.View>
 
         {/* Back face */}
         <Animated.View style={[styles.cell, backStyle, bStyle]}>
-          <Text style={[styles.letter, {color: colors.white}]}>
-            {back?.letter || ''}
-          </Text>
+          <Text style={styles.letter}>{back.letter || ''}</Text>
         </Animated.View>
       </View>
     </Pressable>
@@ -128,6 +134,7 @@ const styles = StyleSheet.create({
   letter: {
     fontSize: 28,
     fontFamily: 'PloniDL1.1AAA-Bold',
+    color: colors.white,
   },
 });
 

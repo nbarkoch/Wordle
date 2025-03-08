@@ -150,8 +150,8 @@ function LetterCell({
       <Animated.View style={animatedStyle}>
         <Cell
           front={{
-            letter: letter ?? hint?.letter,
-            correctness: hint?.correctness,
+            letter,
+            hint,
           }}
           back={{
             letter: _letter ?? letter,
