@@ -119,7 +119,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   );
 
   const {markDone} = useDailyGameStore();
-  const adCounter = useAdCounter(3);
+  const adCounter = useAdCounter();
   const {start, stop, reset} = useTimerStore();
   const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
