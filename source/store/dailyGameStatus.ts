@@ -20,8 +20,8 @@ interface DailyGameState {
 async function validateDailyGameStorage() {
   // for game storage state
   const gameStorageState = await loadGame('DAILY');
-  if (gameStorageState?.time) {
-    const date = new Date(gameStorageState.time);
+  if (gameStorageState?.date) {
+    const date = new Date(gameStorageState.date);
     const today = new Date();
     // Set both dates to midnight to ignore time differences
     const dateOnly = new Date(

@@ -67,7 +67,7 @@ const GameResultDialog = ({
   const {playSound: playSuccess} = useSound('success.mp3');
   const {playSound: playNicelyDone} = useSound('nicely_done.mp3');
   const {playSound: playFailure} = useSound('fail.wav');
-  const {time} = useTimerStore();
+  const {getTime} = useTimerStore();
 
   const rating = isSuccess
     ? currentAttempt < 4
@@ -139,7 +139,7 @@ const GameResultDialog = ({
 
         addToRevealedList(
           secretWord,
-          time,
+          getTime(),
           currentScore,
           hint,
           category,
@@ -233,7 +233,9 @@ const GameResultDialog = ({
                     <View style={styles.divider} />
                     <View style={[styles.scoreRow]}>
                       <Text style={[styles.scoreLabel]}>{'זמן משחק'}</Text>
-                      <Text style={styles.scoreValue}>{formatTime(time)}</Text>
+                      <Text style={styles.scoreValue}>
+                        {formatTime(getTime())}
+                      </Text>
                     </View>
                   </View>
                 </Animated.View>

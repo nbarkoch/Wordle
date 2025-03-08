@@ -9,7 +9,7 @@ export interface GameStorageState {
   secretWord: string;
   aboutWord: string;
   gameState: GameState;
-  time?: string;
+  date?: string;
 }
 
 export const saveGame = async (
@@ -18,7 +18,7 @@ export const saveGame = async (
 ) => {
   if (gameStorageState) {
     const today = new Date().toISOString();
-    gameStorageState.time = today;
+    gameStorageState.date = today;
     await AsyncStorage.setItem(
       `GameStorageState.${gameId}`,
       JSON.stringify(gameStorageState),

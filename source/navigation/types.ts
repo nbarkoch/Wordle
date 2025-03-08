@@ -16,6 +16,7 @@ export type RootStackParamList = {
     difficulty: Difficulty;
     type: 'RANDOM' | 'DAILY';
     savedGameState?: GameState;
+    startTime?: number;
   };
   UserInfo: {user: string};
 };

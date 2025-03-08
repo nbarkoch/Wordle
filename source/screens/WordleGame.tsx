@@ -77,6 +77,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       maxAttempts,
       wordLength,
       enableTimer = false,
+      startTime = 0,
       category,
       difficulty,
       type: gameType,
@@ -165,6 +166,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
+    resetGame();
     if (adCounter.shouldShowAd()) {
       showGameRestartAd(() => {
         reset();
@@ -174,7 +176,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       reset();
       start();
     }
-    resetGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -187,6 +188,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, []);
 
   useEffect(() => {
+    reset(startTime);
     start();
     setScore(gameState.score);
     return resetGame;
@@ -383,6 +385,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           displayTimer={enableTimer}
           onGoHome={handleGoHome}
           onHowToPlay={handleHowToPlay}
+          gameType={gameType}
         />
         <GameTypeIndicator
           title={

@@ -14,25 +14,27 @@ import StarCoin from '../StarCoin';
 import {useTimerStore} from '~/store/useTimerStore';
 import HomeButton from '../HomeButton';
 import HowToPlayButton from '../IconButtons/HowToPlayButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface TopBarProps {
   displayTimer?: boolean;
   onGoHome: () => void;
   onHowToPlay: () => void;
+  gameType: 'RANDOM' | 'DAILY';
 }
 
 const TopBar: React.FC<TopBarProps> = ({
   displayTimer = true,
   onGoHome,
   onHowToPlay,
+  gameType,
 }) => {
   const {userScore} = useScoreStore();
   const scaleAnimation = useSharedValue(1);
   const lastUserScore = useRef<number>(userScore);
 
   const [textScoreColor, setTextScoreColor] = useState<string>(colors.gold);
-  const {isActive, resetKey, increment} = useTimerStore();
-  const timerState = useTimerStore();
+  const {isActive, resetKey, increment, setSilentMode, reset} = useTimerStore();
 
   useEffect(() => {
     scaleAnimation.value = withTiming(1.25, {duration: 50}, () => {
@@ -54,17 +56,24 @@ const TopBar: React.FC<TopBarProps> = ({
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
+    setSilentMode(!displayTimer);
     if (isActive) {
       intervalId = setInterval(() => {
-        if (displayTimer) {
-          increment();
-        } else {
-          timerState.time += 1;
-        }
+        increment(time => {
+          AsyncStorage.setItem(`@time_${gameType}`, `${time}`);
+        });
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [isActive, increment, resetKey, displayTimer, timerState]);
+  }, [
+    isActive,
+    increment,
+    resetKey,
+    reset,
+    displayTimer,
+    setSilentMode,
+    gameType,
+  ]);
 
   return (
     <View style={styles.topBar}>

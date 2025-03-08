@@ -9,7 +9,7 @@ export const CATEGORIES: GameCategory[] = [
   'GEOGRAPHY',
   'SCIENCE',
   'SPORT',
-] as const;
+];
 
 export const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
 

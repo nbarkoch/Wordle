@@ -18,6 +18,16 @@ import VolumeButton from '~/components/IconButtons/VolumeButton';
 import {GameStorageState, loadGame} from '~/store/gameStorageState';
 import {useFocusEffect} from '@react-navigation/native';
 import AnimatedLetterCubes from '~/components/AnimatedCubes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+async function loadTimer(gameType: 'RANDOM' | 'DAILY'): Promise<number> {
+  const timeStr = await AsyncStorage.getItem(`@time_${gameType}`);
+  if (timeStr) {
+    const time = +timeStr;
+    return isNaN(time) ? 0 : time;
+  }
+  return 0;
+}
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const {isDone, checkDaily} = useDailyGameStore();
@@ -49,10 +59,11 @@ function HomeScreen({navigation}: HomeScreenProps) {
     navigation.navigate('NewGame');
   }, [navigation]);
 
-  const onContinueGame = useCallback(() => {
+  const onContinueGame = useCallback(async () => {
     if (storageStates.random) {
       const {gameState, enableTimer, category, difficulty} =
         storageStates.random;
+      const startTime = await loadTimer('RANDOM');
       navigation.navigate('WordGame', {
         maxAttempts: gameState.maxAttempts,
         wordLength: gameState.wordLength,
@@ -61,11 +72,13 @@ function HomeScreen({navigation}: HomeScreenProps) {
         difficulty,
         type: 'RANDOM',
         savedGameState: gameState,
+        startTime,
       });
     }
   }, [navigation, storageStates.random]);
 
   const onDailyGame = useCallback(async () => {
+    const startTime = await loadTimer('DAILY');
     navigation.navigate('WordGame', {
       maxAttempts: 6,
       wordLength: 5,
@@ -74,6 +87,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
       difficulty: 'easy',
       type: 'DAILY',
       savedGameState: storageStates.daily?.gameState,
+      startTime,
     });
   }, [navigation, storageStates.daily]);
 
