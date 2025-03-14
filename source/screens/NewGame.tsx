@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react-native';
 import {NewGameProps} from '~/navigation/types';
@@ -23,16 +23,21 @@ function NewGameScreen({navigation}: NewGameProps) {
   const [category, setCategory] = useState<GameCategory>('GENERAL');
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [enableTimer, setEnableTimer] = useState<boolean>(false);
-  const onStartGame = useCallback(() => {
-    saveGame('RANDOM', undefined).then(() => {
-      navigation.replace('WordGame', {
-        maxAttempts: 11 - wordLength,
-        wordLength,
-        displayTimer: enableTimer,
-        category,
-        difficulty,
-        type: 'RANDOM',
-      });
+  const eventDisabled = useRef<Boolean>(false);
+
+  const onStartGame = useCallback(async () => {
+    if (eventDisabled.current) {
+      return;
+    }
+    eventDisabled.current = true;
+    await saveGame('RANDOM', undefined);
+    navigation.replace('WordGame', {
+      maxAttempts: 11 - wordLength,
+      wordLength,
+      displayTimer: enableTimer,
+      category,
+      difficulty,
+      type: 'RANDOM',
     });
   }, [navigation, wordLength, enableTimer, category, difficulty]);
 

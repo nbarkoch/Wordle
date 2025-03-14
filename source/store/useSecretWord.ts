@@ -102,8 +102,8 @@ export const evaluateGuess = (
 ): Correctness[] => {
   const wordLength = hiddenWord.length;
   const evaluation: Correctness[] = Array(wordLength).fill('notInUse');
-  const secretLetters: (string | null)[] = hiddenWord.split('').map(mapSuffix);
-  const guessLetters: (string | null)[] = guess.split('').map(mapSuffix);
+  const secretLetters: (string | null)[] = hiddenWord.split('');
+  const guessLetters: (string | null)[] = guess.split('');
 
   // First pass: Identify correct letters
   for (let i = 0; i < wordLength; i++) {
@@ -113,11 +113,13 @@ export const evaluateGuess = (
     }
   }
 
+  const mGuessLetters = guessLetters.map(mapSuffix);
+  const mSecretLetters = secretLetters.map(mapSuffix);
   // Second pass: Identify misplaced letters
   for (let i = 0; i < wordLength; i++) {
-    if (guessLetters[i] && secretLetters.includes(guessLetters[i])) {
+    if (mGuessLetters[i] && mSecretLetters.includes(mGuessLetters[i])) {
       evaluation[i] = 'exists';
-      secretLetters[secretLetters.indexOf(guessLetters[i])] = null;
+      mSecretLetters[mSecretLetters.indexOf(mGuessLetters[i])] = null;
     }
   }
 

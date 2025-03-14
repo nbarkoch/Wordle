@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Platform, StyleSheet} from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -41,13 +41,21 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
   const animationProgress = useSharedValue(0);
   const currentState = useSharedValue<boolean | null>(null);
   const previousState = useSharedValue<boolean | null>(null);
+  const buttonIsBusy = useRef<boolean>(false);
+
+  const $handleSubmit = () => {
+    if (!buttonIsBusy.current) {
+      buttonIsBusy.current = true;
+      handleSubmit();
+    }
+  };
 
   useEffect(() => {
     // Reset and start new animation
     const startNewAnimation = () => {
       animationProgress.value = 0;
       currentState.value = isValidGuess;
-
+      buttonIsBusy.current = false;
       animationProgress.value = withTiming(
         1,
         {
@@ -107,7 +115,7 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
   });
 
   return (
-    <BasePressable disabled={isValidGuess === null} onPress={handleSubmit}>
+    <BasePressable disabled={isValidGuess === null} onPress={$handleSubmit}>
       <Animated.View style={[styles.button, buttonStyle]}>
         <Animated.Text style={[styles.buttonText, textStyle]}>
           {'אישור'}
