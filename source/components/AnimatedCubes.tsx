@@ -79,22 +79,25 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
         {rotateZ: `${rotation.value}rad`},
         {scale: scale.value},
       ],
+      zIndex: 1,
     };
   });
 
   return (
-    <Animated.View style={[styles.cubeContainer, animatedStyle]}>
-      <View style={[styles.cube, {backgroundColor: color}]}>
-        <Text style={styles.letter}>{letter}</Text>
-      </View>
+    <View style={styles.cubeContainer}>
+      <Animated.View style={animatedStyle}>
+        <View style={[styles.cube, {backgroundColor: color}]}>
+          <Text style={styles.letter}>{letter}</Text>
+        </View>
+      </Animated.View>
       <View style={styles.shadow} />
-    </Animated.View>
+    </View>
   );
 };
 
 const AnimatedLetterCubes: React.FC = () => {
-  const letters = ['ו', 'ר', 'ד', 'ל'].reverse();
-  const letterColors = [colors.yellow, colors.red, colors.green, colors.yellow];
+  const letters = ['ו', 'ר', 'ד', 'ל'];
+  const letterColors = [colors.yellow, colors.green, colors.red, colors.yellow];
 
   return (
     <View style={styles.container}>
@@ -112,7 +115,7 @@ const AnimatedLetterCubes: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
     height: 10,
     backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius: 50,
-    zIndex: -1,
+    zIndex: 0,
   },
 });
 
