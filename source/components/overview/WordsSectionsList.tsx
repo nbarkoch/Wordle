@@ -1,5 +1,11 @@
 import React, {useCallback, useMemo} from 'react';
-import {StyleSheet, View, SectionList} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  SectionList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {Difficulty, GameCategory} from '~/utils/types';
 import {colors} from '~/utils/colors';
 import {WordCard} from '~/components/overview/WordCard';
@@ -13,6 +19,17 @@ const ITEMS_PER_ROW = 3;
 const ROW_HEIGHT = 90; // Adjust based on your WordCard height
 const SECTION_FOOTER_HEIGHT = 20;
 
+const LoadingFallback = () => (
+  <View style={styles.loading}>
+    <Text style={styles.loadingText}>{'טוען..'}</Text>
+    <ActivityIndicator
+      size="large"
+      color="#ffffff80"
+      style={{transform: [{scale: 1.5}]}}
+    />
+  </View>
+);
+
 interface DifficultyData {
   reveals: RevealedWordOverview[];
   total: number;
@@ -24,6 +41,7 @@ interface WordsListProps {
   wordsOverview: Record<GameCategory, Record<Difficulty, DifficultyData>>;
   activeCategory: GameCategory;
   onWordPress: (hint: string) => void;
+  isLoading?: boolean;
 }
 
 interface Section {
@@ -105,14 +123,14 @@ const WordRow = React.memo(
   ),
 );
 
-export const WordsSectionsList: React.FC<WordsListProps> = ({
+const WordsSectionsList: React.FC<WordsListProps> = ({
   wordsOverview,
   activeCategory,
   onWordPress,
+  isLoading = false,
 }) => {
   const sectionsByCategory = useMemo<SectionsByCategory>(() => {
     const result = {} as SectionsByCategory;
-
     Object.entries(wordsOverview).forEach(([category, difficulties]) => {
       const gameCategory = category as GameCategory;
 
@@ -136,7 +154,6 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
         })
         .filter(section => section.data.length > 0);
     });
-
     return result;
   }, [wordsOverview]);
 
@@ -168,6 +185,9 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
     [],
   );
 
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
   return (
     <SectionList
       sections={currentSections}
@@ -212,6 +232,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 5,
     height: ROW_HEIGHT,
+  },
+  loading: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 20,
+    backgroundColor: '#00000025',
+    width: '100%',
+    height: '100%',
+  },
+  loadingText: {
+    color: colors.white,
+    fontFamily: 'PloniDL1.1AAA-Bold',
+    fontSize: 20,
   },
 });
 

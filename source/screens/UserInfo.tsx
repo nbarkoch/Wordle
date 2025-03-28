@@ -1,11 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-  ActivityIndicator,
-} from 'react-native';
+import {StyleSheet, Text, View, useWindowDimensions} from 'react-native';
 import {GameCategory} from '~/utils/types';
 import {
   createDisplayEmptyHierarchy,
@@ -20,17 +14,6 @@ import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
 import {MAP_CATEGORY_NAME} from '~/utils/consts';
 import WordsSectionsList from '~/components/overview/WordsSectionsList';
 import ProfileStats from '~/components/overview/ProfileStats';
-
-const LoadingFallback = () => (
-  <View style={styles.loading}>
-    <Text style={styles.loadingText}>{'טוען..'}</Text>
-    <ActivityIndicator
-      size="large"
-      color="#ffffff80"
-      style={{transform: [{scale: 1.5}]}}
-    />
-  </View>
-);
 
 export default function UserInfo() {
   const {width: windowWidth} = useWindowDimensions();
@@ -114,15 +97,12 @@ export default function UserInfo() {
             onCategoryChange={setActiveCategory}
             shouldScroll={shouldScroll}
           />
-          {isLoading || isLoadingCategory ? (
-            <LoadingFallback />
-          ) : (
-            <WordsSectionsList
-              wordsOverview={wordsOverview}
-              activeCategory={activeCategory}
-              onWordPress={setAboutWord}
-            />
-          )}
+          <WordsSectionsList
+            wordsOverview={wordsOverview}
+            activeCategory={activeCategory}
+            onWordPress={setAboutWord}
+            isLoading={isLoading || isLoadingCategory}
+          />
         </View>
       </View>
       <AboutWordDialog
@@ -191,19 +171,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  loading: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-    borderRadius: 20,
-    backgroundColor: '#00000025',
-    width: '100%',
-    height: '100%',
-  },
-  loadingText: {
-    color: colors.white,
-    fontFamily: 'PloniDL1.1AAA-Bold',
-    fontSize: 20,
   },
 });
