@@ -83,6 +83,15 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
     };
   });
 
+  const animatedShadowStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {translateX: rotation.value},
+        {scale: (1 / (2 - translateY.value) + scale.value) / 1.5},
+      ],
+    };
+  });
+
   return (
     <View style={styles.cubeContainer}>
       <Animated.View style={animatedStyle}>
@@ -90,7 +99,7 @@ const LetterCube: React.FC<LetterCubeProps> = ({letter, index, color}) => {
           <Text style={styles.letter}>{letter}</Text>
         </View>
       </Animated.View>
-      <View style={styles.shadow} />
+      <Animated.View style={[animatedShadowStyle, styles.shadow]} />
     </View>
   );
 };
