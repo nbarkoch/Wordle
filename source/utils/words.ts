@@ -145,54 +145,66 @@ export async function calculateHintForLetter(
 ): Promise<LineHint> {
   return new Promise(resolve => {
     const wordLength = guesses[0].letters.length;
-    const letterCorrectness =
-      guesses[letter.rowIndex].correctness[letter.colIndex];
+    const currentGuess = guesses[letter.rowIndex];
+    const letterCorrectness = currentGuess.correctness[letter.colIndex];
+    const letterValue = mapSuffix(currentGuess.letters[letter.colIndex]) ?? '';
 
-    const letterValue = mapSuffix(
-      guesses[letter.rowIndex].letters[letter.colIndex],
-    );
-    // 1. finding all greens letters
-    // 2. find all places where we see the letter yellow
-    // 3. infer where it could be remain
-    const letterNotTherePositions: number[] = [];
+    // Early return for "notInUse" case
     if (letterCorrectness === 'notInUse') {
       resolve({
         letters: Array(wordLength).fill(''),
         correctness: Array(wordLength).fill(null),
       });
+      return;
     }
 
+    const letterNotTherePositions = new Set<number>();
+    const letterWasTherePositions = new Set<number>();
+
+    // Process all guesses to find constraints
     guesses.forEach(guess => {
       guess.correctness.forEach((correctness, i) => {
-        if (correctness === 'correct' && !letterNotTherePositions.includes(i)) {
-          letterNotTherePositions.push(i);
+        if (correctness === 'correct') {
+          letterNotTherePositions.add(i);
+          // If that correct letter is our target letter, remember this position
+          if (mapSuffix(guess.letters[i]) === letterValue) {
+            letterWasTherePositions.add(i);
+          }
         } else if (
           mapSuffix(guess.letters[i]) === letterValue &&
-          (correctness === 'exists' || correctness === 'notInUse') &&
-          !letterNotTherePositions.includes(i)
+          (correctness === 'exists' || correctness === 'notInUse')
         ) {
-          letterNotTherePositions.push(i);
+          letterNotTherePositions.add(i);
         }
       });
     });
 
+    // Determine if this is a single-position case
+    const correctOccurrences = currentGuess.letters.filter(
+      (l, i) =>
+        mapSuffix(l) === letterValue &&
+        currentGuess.correctness[i] === 'correct',
+    ).length;
+
+    const isSingle =
+      letterWasTherePositions.size === correctOccurrences &&
+      wordLength - letterNotTherePositions.size <= 1;
+
     const line = {
       letters: Array(wordLength)
-        .fill(letterValue)
-        .map((l, i) =>
-          letterNotTherePositions.find(j => j === i) !== undefined ? '' : l,
-        ),
+        .fill('')
+        .map((_, i) => (!letterNotTherePositions.has(i) ? letterValue : '')),
       correctness: Array(wordLength)
-        .fill('exists')
-        .map((c, i) => {
-          const found = letterNotTherePositions.find(j => j === i);
-          const isSingle =
-            letterCorrectness === 'exists' &&
-            wordLength - letterNotTherePositions.length <= 1;
-
-          return found !== undefined ? null : isSingle ? 'correct' : c;
-        }),
+        .fill(null)
+        .map((_, i) =>
+          !letterNotTherePositions.has(i)
+            ? isSingle
+              ? 'correct'
+              : 'exists'
+            : null,
+        ),
     };
+
     resolve(line);
   });
 }
