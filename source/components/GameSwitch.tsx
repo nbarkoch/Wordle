@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import {
   Canvas,
@@ -18,9 +18,10 @@ import {colors, ThemeColor} from '~/utils/colors';
 interface GameSwitchProps {
   width?: number;
   height?: number;
-  borderWidth?: number; // New prop for border width
+  borderWidth?: number;
   onToggle: (value: boolean) => void;
   ballMargin?: number;
+  defaultValue?: boolean;
 }
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas);
@@ -31,14 +32,57 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
   borderWidth = 3,
   ballMargin = 4,
   onToggle,
+  defaultValue = false,
 }) => {
-  const [isOn, setIsOn] = useState<boolean>(false);
+  const [isOn, setIsOn] = useState<boolean>(defaultValue);
 
-  const startColor = useSharedValue<ThemeColor>(colors.darkRed);
-  const endColor = useSharedValue<ThemeColor>(colors.red);
-  const ballColor = useSharedValue<ThemeColor>(colors.lightRed);
-  const borderColor = useSharedValue<ThemeColor>(colors.lightRed);
-  const ballPosition = useSharedValue(borderWidth);
+  const startColor = useSharedValue<ThemeColor>(
+    isOn ? colors.darkGreen : colors.darkRed,
+  );
+  const endColor = useSharedValue<ThemeColor>(isOn ? colors.green : colors.red);
+  const ballColor = useSharedValue<ThemeColor>(
+    isOn ? colors.lightGreen : colors.lightRed,
+  );
+  const borderColor = useSharedValue<ThemeColor>(
+    isOn ? colors.lightGreen : colors.lightRed,
+  );
+  const ballPosition = useSharedValue(
+    isOn ? width - height + borderWidth : borderWidth,
+  );
+
+  // Effect to handle changes to defaultValue from parent
+  useEffect(() => {
+    if (defaultValue !== isOn) {
+      setIsOn(defaultValue);
+
+      if (defaultValue) {
+        startColor.value = withTiming(colors.darkGreen);
+        endColor.value = withTiming(colors.green);
+        ballColor.value = withTiming(colors.lightGreen);
+        borderColor.value = withTiming(colors.lightGreen);
+        ballPosition.value = withTiming(width - height + borderWidth, {
+          duration: 300,
+        });
+      } else {
+        startColor.value = withTiming(colors.darkRed);
+        endColor.value = withTiming(colors.red);
+        ballColor.value = withTiming(colors.lightRed);
+        borderColor.value = withTiming(colors.lightRed);
+        ballPosition.value = withTiming(borderWidth, {duration: 300});
+      }
+    }
+  }, [
+    defaultValue,
+    ballPosition,
+    ballColor,
+    borderColor,
+    borderWidth,
+    endColor,
+    height,
+    isOn,
+    startColor,
+    width,
+  ]);
 
   const handlePress = () => {
     const newValue = !isOn;

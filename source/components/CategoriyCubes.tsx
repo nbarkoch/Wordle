@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {CATEGORIES} from '~/utils/consts';
 
@@ -7,7 +7,7 @@ import {GameCategoryCube} from './GameCategoryCube';
 
 interface CategoryCubesProps {
   category: GameCategory;
-  setCategory: Dispatch<SetStateAction<GameCategory>>;
+  setCategory: (category: GameCategory) => void;
 }
 
 export default function CategoryCubes({

@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react-native';
 import {NewGameProps} from '~/navigation/types';
@@ -15,22 +15,106 @@ import {setColorOpacity} from '~/utils/ui';
 import {saveGame} from '~/store/gameStorageState';
 import VolumeButton from '~/components/IconButtons/VolumeButton';
 import Selection from '~/components/Selection';
-import {DIFFICULTIES, MAP_DIFFICULTY_NAME} from '~/utils/consts';
+import {CATEGORIES, DIFFICULTIES, MAP_DIFFICULTY_NAME} from '~/utils/consts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Use a single key for storing all game settings
+const GAME_SETTINGS_KEY = '@game_settings';
+
+interface GameSettings {
+  wordLength: number;
+  category: GameCategory;
+  difficulty: Difficulty;
+  enableTimer: boolean;
+}
+
+// Default settings
+const DEFAULT_SETTINGS: GameSettings = {
+  wordLength: 5,
+  category: 'GENERAL',
+  difficulty: 'easy',
+  enableTimer: false,
+};
 
 function NewGameScreen({navigation}: NewGameProps) {
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
-  const [wordLength, setWordLength] = useState<number>(5);
-  const [category, setCategory] = useState<GameCategory>('GENERAL');
-  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
-  const [enableTimer, setEnableTimer] = useState<boolean>(false);
-  const eventDisabled = useRef<Boolean>(false);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const eventDisabled = useRef<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const {wordLength, category, difficulty, enableTimer} = settings;
+
+  useEffect(() => {
+    const loadSavedSettings = async () => {
+      try {
+        const savedSettings = await AsyncStorage.getItem(GAME_SETTINGS_KEY);
+
+        if (savedSettings) {
+          const parsedSettings: GameSettings = JSON.parse(savedSettings);
+
+          const validatedSettings = {
+            ...DEFAULT_SETTINGS,
+            wordLength:
+              Number(parsedSettings.wordLength) || DEFAULT_SETTINGS.wordLength,
+            category: CATEGORIES.includes(parsedSettings.category)
+              ? parsedSettings.category
+              : DEFAULT_SETTINGS.category,
+            difficulty: DIFFICULTIES.includes(parsedSettings.difficulty)
+              ? parsedSettings.difficulty
+              : DEFAULT_SETTINGS.difficulty,
+            enableTimer: Boolean(parsedSettings.enableTimer),
+          };
+
+          setSettings(validatedSettings);
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSavedSettings();
+  }, []);
+
+  const updateSettings = useCallback((newSettings: Partial<GameSettings>) => {
+    setSettings(prevSettings => ({...prevSettings, ...newSettings}));
+  }, []);
+
+  // Individual setters for improved readability
+  const setWordLength = useCallback(
+    (value: number) => updateSettings({wordLength: value}),
+    [updateSettings],
+  );
+
+  const setCategory = useCallback(
+    (value: GameCategory) => updateSettings({category: value}),
+    [updateSettings],
+  );
+
+  const setDifficulty = useCallback(
+    (value: Difficulty) => updateSettings({difficulty: value}),
+    [updateSettings],
+  );
+
+  const setEnableTimer = useCallback(
+    (value: boolean) => updateSettings({enableTimer: value}),
+    [updateSettings],
+  );
 
   const onStartGame = useCallback(async () => {
     if (eventDisabled.current) {
       return;
     }
     eventDisabled.current = true;
-    await saveGame('RANDOM', undefined);
+
+    try {
+      await AsyncStorage.setItem(GAME_SETTINGS_KEY, JSON.stringify(settings));
+      await saveGame('RANDOM', undefined);
+    } catch (error) {
+      console.error('Error saving in store', error);
+    }
+
     navigation.replace('WordGame', {
       maxAttempts: 11 - wordLength,
       wordLength,
@@ -39,7 +123,16 @@ function NewGameScreen({navigation}: NewGameProps) {
       difficulty,
       type: 'RANDOM',
     });
-  }, [navigation, wordLength, enableTimer, category, difficulty]);
+  }, [navigation, wordLength, enableTimer, category, difficulty, settings]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.body}>
+        <CanvasBackground />
+        <Text style={styles.loadingText}>טוען...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.body}>
@@ -85,7 +178,7 @@ function NewGameScreen({navigation}: NewGameProps) {
           />
           <Text style={styles.subjectText}>{'הצג שעון עצר:'}</Text>
           <View style={styles.switch}>
-            <GameSwitch onToggle={setEnableTimer} />
+            <GameSwitch onToggle={setEnableTimer} defaultValue={enableTimer} />
           </View>
           <Text style={styles.subjectText}>{'קטגוריה:'}</Text>
           <CategoryCubes category={category} setCategory={setCategory} />
@@ -165,5 +258,11 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   pusher: {flex: 1},
+  loadingText: {
+    color: colors.lightYellow,
+    fontSize: 20,
+    fontFamily: 'PloniDL1.1AAA-Bold',
+  },
 });
+
 export default NewGameScreen;
