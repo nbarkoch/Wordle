@@ -1,32 +1,32 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Canvas, LinearGradient, Rect, vec} from '@shopify/react-native-skia';
 import {colors} from '~/utils/colors';
 import StarCoin from '~/components/StarCoin';
 import TimerIcon from '~/components/TimerIcon';
 import {formatTime} from '~/components/grid/Timer';
 import BasePressable from '../BasePressable';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface WordCardProps {
   word: string;
   time: number;
   score: number;
+  disabled?: boolean;
   onPress: () => void;
 }
 
-export const WordCard = ({word, time, score, onPress}: WordCardProps) => {
+export const WordCard = ({
+  word,
+  time,
+  score,
+  onPress,
+  disabled = false,
+}: WordCardProps) => {
   return (
-    <BasePressable onPress={onPress}>
-      <View style={styles.container}>
-        <Canvas style={styles.canvas}>
-          <Rect x={0} y={0} width={100} height={100}>
-            <LinearGradient
-              start={vec(0, 0)}
-              end={vec(0, 100)}
-              colors={['#ffffff60', '#ffffff09']}
-            />
-          </Rect>
-        </Canvas>
+    <BasePressable onPress={onPress} disabled={disabled}>
+      <LinearGradient
+        colors={['#ffffff60', '#ffffff09']}
+        style={[styles.container, disabled && styles.disabled]}>
         <Text style={styles.wordText}>{word}</Text>
         <View style={styles.row}>
           <StarCoin
@@ -40,7 +40,7 @@ export const WordCard = ({word, time, score, onPress}: WordCardProps) => {
           <TimerIcon size={13} fillColor={colors.lightGrey} />
           <Text style={styles.timeText}>{` ${formatTime(time)} `}</Text>
         </View>
-      </View>
+      </LinearGradient>
     </BasePressable>
   );
 };
@@ -56,11 +56,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 2,
-  },
-  canvas: {
-    width: 90,
-    height: 90,
-    position: 'absolute',
   },
   wordText: {
     fontWeight: '600',
@@ -78,4 +73,5 @@ const styles = StyleSheet.create({
   timeText: {
     color: colors.white,
   },
+  disabled: {opacity: 0.35},
 });

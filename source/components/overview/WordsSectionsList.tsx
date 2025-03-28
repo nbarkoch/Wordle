@@ -6,22 +6,19 @@ import {WordCard} from '~/components/overview/WordCard';
 import {OutlinedText} from '~/components/CartoonText';
 import ProgressIndicator from '~/components/overview/ProgressIndicator';
 import {MAP_DIFFICULTY_NAME} from '~/utils/consts';
+import {RevealedWordOverview} from '~/store/revealsStore';
+import {wordList} from '~/utils/db';
 
 const ITEMS_PER_ROW = 3;
 const ROW_HEIGHT = 90; // Adjust based on your WordCard height
 const SECTION_FOOTER_HEIGHT = 20;
 
-interface WordsData {
-  word: string;
-  time: number;
-  score: number;
-  hint: string;
-}
-
 interface DifficultyData {
-  reveals: WordsData[];
+  reveals: RevealedWordOverview[];
   total: number;
 }
+
+type WordData = RevealedWordOverview & {info: string};
 
 interface WordsListProps {
   wordsOverview: Record<GameCategory, Record<Difficulty, DifficultyData>>;
@@ -31,7 +28,7 @@ interface WordsListProps {
 
 interface Section {
   difficulty: Difficulty;
-  data: WordsData[][];
+  data: WordData[][];
   total: number;
 }
 
@@ -92,7 +89,7 @@ const SectionHeader = React.memo(({section}: {section: Section}) => (
 
 // Memoized Row Component
 const WordRow = React.memo(
-  ({row, onPress}: {row: WordsData[]; onPress: (hint: string) => void}) => (
+  ({row, onPress}: {row: WordData[]; onPress: (info: string) => void}) => (
     <View style={styles.row}>
       {row.map(wordData => (
         <WordCard
@@ -100,7 +97,8 @@ const WordRow = React.memo(
           word={wordData.word}
           time={wordData.time}
           score={wordData.score}
-          onPress={() => onPress(wordData.hint)}
+          onPress={() => onPress(wordData.info)}
+          disabled={!wordData.info}
         />
       ))}
     </View>
@@ -113,15 +111,29 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
   onWordPress,
 }) => {
   const sectionsByCategory = useMemo<SectionsByCategory>(() => {
-    const result: SectionsByCategory = {} as SectionsByCategory;
+    const result = {} as SectionsByCategory;
 
     Object.entries(wordsOverview).forEach(([category, difficulties]) => {
-      result[category as GameCategory] = Object.entries(difficulties)
-        .map(([difficulty, words]) => ({
-          difficulty: difficulty as Difficulty,
-          data: chunkArray(words.reveals),
-          total: words.total,
-        }))
+      const gameCategory = category as GameCategory;
+
+      result[gameCategory] = Object.entries(difficulties)
+        .map(([difficulty, words]) => {
+          const difficultyValue = difficulty as Difficulty;
+          const categoryWordList = wordList[gameCategory];
+
+          // Filter words that exist in the wordList
+          const validReveals = words.reveals.map(reveal => ({
+            ...reveal,
+            info: categoryWordList[reveal.word.length]?.[difficultyValue]?.[
+              reveal.word
+            ],
+          }));
+          return {
+            difficulty: difficultyValue,
+            data: chunkArray(validReveals),
+            total: words.total,
+          };
+        })
         .filter(section => section.data.length > 0);
     });
 
@@ -134,7 +146,7 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
   );
 
   const renderItem = useCallback(
-    ({item: row}: {item: WordsData[]}) => (
+    ({item: row}: {item: WordData[]}) => (
       <WordRow row={row} onPress={onWordPress} />
     ),
     [onWordPress],
@@ -151,7 +163,8 @@ export const WordsSectionsList: React.FC<WordsListProps> = ({
   );
 
   const keyExtractor = useCallback(
-    (item: WordsData[], index: number) => `row-${index}-${item[0]?.word ?? ''}`,
+    (item: RevealedWordOverview[], index: number) =>
+      `row-${index}-${item[0]?.word ?? ''}`,
     [],
   );
 

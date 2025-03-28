@@ -7,7 +7,6 @@ type RevealedWordOverview = {
   word: string;
   time: number;
   score: number;
-  hint: string;
 };
 
 type WordSection = {
@@ -100,7 +99,7 @@ async function addToRevealedList(
   try {
     const storedWords = await getStoredWords();
     const difficultyKey = difficulty;
-    const newWord: RevealedWordOverview = {word, time, score, hint};
+    const newWord: RevealedWordOverview = {word, time, score};
 
     // Update in the specified category
     const categorySection = storedWords[category][difficultyKey];
