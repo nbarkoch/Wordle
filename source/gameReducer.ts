@@ -78,9 +78,10 @@ function updateCorrectness(
   letterInput: {
     letter: string;
     newCorrectness: Correctness;
+    isLast: boolean;
   },
 ) {
-  const {letter, newCorrectness} = letterInput;
+  const {letter, newCorrectness, isLast} = letterInput;
   const suffixLetter = suffixOriginalLetterMapper[letter] ?? letter;
   const originalLetter = suffixLetterMapper[letter] ?? letter;
   const isOriginal = originalLetter === letter;
@@ -113,10 +114,14 @@ function updateCorrectness(
         // Override this specific suffix letter
         curLettersCorrectness[suffixLetter] = 'correct';
       } else if (isOriginal) {
-        curLettersCorrectness[originalLetter] = 'correct';
-        if (curLettersCorrectness[suffixLetter] === 'exists') {
+        if (isLast) {
+          suffixLetters.forEach(sLetter => {
+            curLettersCorrectness[sLetter] = 'notInUse';
+          });
+        } else if (curLettersCorrectness[suffixLetter] === 'exists') {
           curLettersCorrectness[suffixLetter] = null;
         }
+        curLettersCorrectness[originalLetter] = 'correct';
       }
       break;
     }
@@ -147,6 +152,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         updateCorrectness(newKeyboardLetters, {
           letter,
           newCorrectness: letterCorrectness,
+          isLast: state.wordLength === index + 1,
         });
       });
 
