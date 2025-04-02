@@ -11,12 +11,7 @@ import Animated, {
   runOnJS,
   cancelAnimation,
 } from 'react-native-reanimated';
-import {
-  Canvas,
-  RoundedRect,
-  LinearGradient,
-  vec,
-} from '@shopify/react-native-skia';
+import LinearGradient from 'react-native-linear-gradient';
 import HomeIcon from '~/assets/icons/house.svg';
 import ChevronRight from '~/assets/icons/chevron-right.svg';
 
@@ -190,59 +185,54 @@ const GameResultDialog = ({
   return (
     <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
       <Animated.View style={[styles.overlayDialog, animatedStyle]}>
-        <View style={styles.dialogWrapper}>
-          <Canvas style={styles.canvas}>
-            <RoundedRect x={0} y={0} width={300} height={300} r={20}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(300, 300)}
-                colors={[
-                  colors.container.a,
-                  colors.container.b,
-                  colors.container.c,
-                ]}
-              />
-            </RoundedRect>
-            <RoundedRect x={5} y={5} width={290} height={290} r={15}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(0, 300)}
-                colors={[colors.secondary.a, colors.secondary.b]}
-              />
-            </RoundedRect>
-          </Canvas>
-          <View style={styles.dialog}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{'סיכום'}</Text>
-            </View>
-            <StarRating width={270} height={100} rating={rating} />
-            {isVisible && (
-              <>
-                {(gameType === 'RANDOM' || isSuccess) && (
-                  <>
-                    <Text style={styles.secretWordWas}>{'מילה סודית:'}</Text>
-                    <Text style={styles.secretWord}>{secretWord}</Text>
-                  </>
-                )}
-                <Animated.View style={[styles.scoreWrapper, scoreWrapperStyle]}>
-                  <View style={styles.scoreContainer}>
-                    <View style={styles.scoreRow}>
-                      <Text style={styles.scoreLabel}>{'ניקוד'}</Text>
-                      <Text style={styles.scoreValue}>{currentScore}</Text>
-                    </View>
-                    <View style={styles.divider} />
-                    <View style={[styles.scoreRow]}>
-                      <Text style={[styles.scoreLabel]}>{'זמן משחק'}</Text>
-                      <Text style={styles.scoreValue}>
-                        {formatTime(getTime())}
-                      </Text>
-                    </View>
-                  </View>
-                </Animated.View>
-              </>
-            )}
-          </View>
+        {/* Title container - positioned outside the dialog wrapper */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{'סיכום'}</Text>
         </View>
+        {/* Outer gradient wrapper with border radius */}
+        <LinearGradient
+          colors={[colors.container.a, colors.container.b, colors.container.c]}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
+          style={styles.dialogWrapper}>
+          {/* Inner gradient wrapper with content */}
+          <LinearGradient
+            colors={[colors.secondary.a, colors.secondary.b]}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 1}}
+            style={styles.innerWrapper}>
+            {/* Content container */}
+            <View style={styles.dialog}>
+              <StarRating width={270} height={100} rating={rating} />
+              {isVisible && (
+                <>
+                  {(gameType === 'RANDOM' || isSuccess) && (
+                    <>
+                      <Text style={styles.secretWordWas}>{'מילה סודית:'}</Text>
+                      <Text style={styles.secretWord}>{secretWord}</Text>
+                    </>
+                  )}
+                  <Animated.View
+                    style={[styles.scoreWrapper, scoreWrapperStyle]}>
+                    <View style={styles.scoreContainer}>
+                      <View style={styles.scoreRow}>
+                        <Text style={styles.scoreLabel}>{'ניקוד'}</Text>
+                        <Text style={styles.scoreValue}>{currentScore}</Text>
+                      </View>
+                      <View style={styles.divider} />
+                      <View style={[styles.scoreRow]}>
+                        <Text style={[styles.scoreLabel]}>{'זמן משחק'}</Text>
+                        <Text style={styles.scoreValue}>
+                          {formatTime(getTime())}
+                        </Text>
+                      </View>
+                    </View>
+                  </Animated.View>
+                </>
+              )}
+            </View>
+          </LinearGradient>
+        </LinearGradient>
         <Animated.View style={[styles.buttonContainer, buttonContainerStyle]}>
           <Pressable
             style={[styles.button, styles.homeButton]}
@@ -279,31 +269,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1001,
+    top: -18,
   },
   dialogWrapper: {
     width: 300,
     height: 300,
-    padding: 3,
     elevation: 6,
+    borderRadius: 20,
+    padding: 5,
+    overflow: 'hidden',
   },
-  canvas: {
-    position: 'absolute',
-    width: 300,
-    height: 300,
+  innerWrapper: {
+    flex: 1,
+    borderRadius: 15,
+    overflow: 'hidden',
   },
   dialog: {
-    height: '100%',
-    borderRadius: 17,
+    flex: 1,
     alignItems: 'center',
     paddingTop: 30,
   },
   titleContainer: {
-    position: 'absolute',
-    top: -18,
+    top: 20,
+    alignSelf: 'center',
     backgroundColor: colors.gold,
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,
+    zIndex: 10,
   },
   title: {
     color: 'white',

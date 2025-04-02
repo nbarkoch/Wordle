@@ -10,19 +10,13 @@ import Animated, {
   interpolate,
   runOnJS,
 } from 'react-native-reanimated';
-import {
-  Canvas,
-  RoundedRect,
-  LinearGradient,
-  vec,
-} from '@shopify/react-native-skia';
-
 import {colors} from '~/utils/colors';
 import CloseIcon from './CloseIcon';
 import RowMockUp from './MockUpRow';
 import HintWordButton from '../grid/HintWordsButton';
 import AboutButton from '../grid/AboutButton';
 import GradientOverlayScrollView from '../GridScrollView';
+import LinearGradient from 'react-native-linear-gradient';
 
 const {width, height} = Dimensions.get('window');
 const dialogWidth = width - 60;
@@ -72,7 +66,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
       );
       introductionAnimation.value = withDelay(
         300,
-        withSpring(1, {damping: 12, stiffness: 100}),
+        withSpring(1, {damping: 11, stiffness: 100}),
       );
     } else {
       scale.value = withSpring(0);
@@ -123,126 +117,122 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
 
   return (
     <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
-      <Animated.View style={[animatedStyle]}>
+      <Animated.View style={animatedStyle}>
         <View style={styles.dialogWrapper}>
-          <Canvas style={styles.canvas}>
-            <RoundedRect
-              x={0}
-              y={0}
-              width={dialogWidth}
-              height={dialogHeight}
-              r={20}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(300, 300)}
-                colors={[
-                  colors.container.a,
-                  colors.container.b,
-                  colors.container.c,
-                ]}
-              />
-            </RoundedRect>
-            <RoundedRect
-              x={5}
-              y={5}
-              width={dialogWidth - 10}
-              height={dialogHeight - 10}
-              r={15}>
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(0, 300)}
-                colors={[colors.secondary.a, colors.secondary.b]}
-              />
-            </RoundedRect>
-          </Canvas>
-          <View style={styles.dialog}>
+          <LinearGradient
+            style={styles.canvas}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={[
+              colors.container.a,
+              colors.container.b,
+              colors.container.c,
+            ]}>
             <View style={styles.titleContainer}>
               <CloseIcon onPress={onClose} />
             </View>
-            <Text style={styles.title}>{'איך משחקים'}</Text>
-            <GradientOverlayScrollView
-              upperColor={colors.secondary.a}
-              bottomColor={colors.secondary.b}
-              gradientHeight={30}
-              horizontal={false}
-              style={styles.scrollView}
-              contentContainerStyle={styles.scrollViewContent}>
-              <Animated.View style={[styles.introduction, introductionStyle]}>
-                <Text style={styles.text}>
-                  {'המשחק בוחר מילה סודית עם 5 אותיות'}
-                </Text>
-                <Text style={styles.text}>
-                  {'צריך לנחש את המילה תוך 6 ניסיונות'}
-                </Text>
+            <LinearGradient
+              style={styles.dialog}
+              start={{x: 0, y: 0}}
+              end={{x: 0, y: 1}}
+              colors={[colors.secondary.a, colors.secondary.b]}>
+              <Text style={styles.title}>{'איך משחקים'}</Text>
+              <View style={styles.frame}>
+                <Animated.View
+                  style={[styles.animatedContent, introductionStyle]}>
+                  <GradientOverlayScrollView
+                    upperColor={colors.secondary.a}
+                    bottomColor={colors.secondary.b}
+                    gradientHeight={30}
+                    horizontal={false}
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollViewContent}>
+                    <View style={styles.introduction}>
+                      <Text style={styles.text}>
+                        {'המשחק בוחר מילה סודית עם 5 אותיות'}
+                      </Text>
+                      <Text style={styles.text}>
+                        {'צריך לנחש את המילה תוך 6 ניסיונות'}
+                      </Text>
 
-                <View style={styles.divider} />
-                <Text style={styles.boldTitle}>{'איך זה עובד:'}</Text>
-                <Text style={styles.text}>
-                  {'לדוגמה: כשהמילה הסודית היא "מלכות"'}
-                </Text>
-                <Text style={styles.text}>{'והניחוש שלכם הוא "מילות"'}</Text>
-                <View style={styles.adjustment}>
-                  <RowMockUp
-                    letters={['מ', 'י', 'ל', 'ו', 'ת']}
-                    correctness={[null, null, null, null, null]}
-                  />
-                </View>
-                <Text style={styles.text}>{'המשחק יצבע את האותיות כך:'}</Text>
-                <View style={styles.adjustment}>
-                  <RowMockUp
-                    letters={['מ', 'י', 'ל', 'ו', 'ת']}
-                    correctness={[
-                      'correct',
-                      'notInUse',
-                      'exists',
-                      'correct',
-                      'correct',
-                    ]}
-                  />
-                </View>
-                <Text style={styles.text}>{'משמעות הצבעים:'}</Text>
-                <LineAbout
-                  title={'ירוק'}
-                  color={colors.green}
-                  info={'האות נמצאת במקום הנכון'}
-                />
-                <LineAbout
-                  title={'צהוב'}
-                  color={colors.yellow}
-                  info={'האות נמצאת במילה אבל במקום אחר'}
-                />
-                <LineAbout
-                  title={'אדום'}
-                  color={colors.red}
-                  info={'האות לא נמצאת במילה כלל'}
-                />
-                <View style={styles.divider} />
-                <Text style={styles.boldTitle}>{'אם צריכים עזרה:'}</Text>
-                <View style={styles.row}>
-                  <HintWordButton onHintRequested={() => {}} scoreCost={0} />
-                  <AboutButton onInfoRequested={() => {}} scoreCost={0} />
-                </View>
-                <Text style={styles.text}>
-                  {'אפשר להשתמש ברמזים, אבל זה עולה נקודות'}
-                </Text>
-                <LineAbout
-                  title={'מידע'}
-                  color={colors.blue}
-                  info={'נותן רמז או מילה נרדפת למילה הסודית'}
-                />
-                <LineAbout
-                  title={'נורה'}
-                  color={colors.yellow}
-                  info={'חושפת אותיות מהמילה הסודית'}
-                />
-                <View style={styles.divider} />
-                <Text style={styles.boldTitle}>{'בהצלחה!'}</Text>
-                <Text style={styles.text}>
-                  {'נחשו את המילה הסודית ותזכו בנקודות'}
-                </Text>
-              </Animated.View>
-            </GradientOverlayScrollView>
-          </View>
+                      <View style={styles.divider} />
+                      <Text style={styles.boldTitle}>{'איך זה עובד:'}</Text>
+                      <Text style={styles.text}>
+                        {'לדוגמה: כשהמילה הסודית היא "מלכות"'}
+                      </Text>
+                      <Text style={styles.text}>
+                        {'והניחוש שלכם הוא "מילות"'}
+                      </Text>
+                      <View style={styles.adjustment}>
+                        <RowMockUp
+                          letters={['מ', 'י', 'ל', 'ו', 'ת']}
+                          correctness={[null, null, null, null, null]}
+                        />
+                      </View>
+                      <Text style={styles.text}>
+                        {'המשחק יצבע את האותיות כך:'}
+                      </Text>
+                      <View style={styles.adjustment}>
+                        <RowMockUp
+                          letters={['מ', 'י', 'ל', 'ו', 'ת']}
+                          correctness={[
+                            'correct',
+                            'notInUse',
+                            'exists',
+                            'correct',
+                            'correct',
+                          ]}
+                        />
+                      </View>
+                      <Text style={styles.text}>{'משמעות הצבעים:'}</Text>
+                      <LineAbout
+                        title={'ירוק'}
+                        color={colors.green}
+                        info={'האות נמצאת במקום הנכון'}
+                      />
+                      <LineAbout
+                        title={'צהוב'}
+                        color={colors.yellow}
+                        info={'האות נמצאת במילה אבל במקום אחר'}
+                      />
+                      <LineAbout
+                        title={'אדום'}
+                        color={colors.red}
+                        info={'האות לא נמצאת במילה כלל'}
+                      />
+                      <View style={styles.divider} />
+                      <Text style={styles.boldTitle}>{'אם צריכים עזרה:'}</Text>
+                      <View style={styles.row}>
+                        <HintWordButton
+                          onHintRequested={() => {}}
+                          scoreCost={0}
+                        />
+                        <AboutButton onInfoRequested={() => {}} scoreCost={0} />
+                      </View>
+                      <Text style={styles.text}>
+                        {'אפשר להשתמש ברמזים, אבל זה עולה נקודות'}
+                      </Text>
+                      <LineAbout
+                        title={'מידע'}
+                        color={colors.blue}
+                        info={'נותן רמז או מילה נרדפת למילה הסודית'}
+                      />
+                      <LineAbout
+                        title={'נורה'}
+                        color={colors.yellow}
+                        info={'חושפת אותיות מהמילה הסודית'}
+                      />
+                      <View style={styles.divider} />
+                      <Text style={styles.boldTitle}>{'בהצלחה!'}</Text>
+                      <Text style={styles.text}>
+                        {'נחשו את המילה הסודית ותזכו בנקודות'}
+                      </Text>
+                    </View>
+                  </GradientOverlayScrollView>
+                </Animated.View>
+              </View>
+            </LinearGradient>
+          </LinearGradient>
         </View>
       </Animated.View>
     </Animated.View>
@@ -260,35 +250,28 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   dialogWrapper: {
-    padding: 3,
     elevation: 6,
     width: dialogWidth,
-    height: dialogHeight < 450 ? 450 : dialogHeight, // מינימום גובה לדיאלוג
+    height: dialogHeight < 450 ? 450 : dialogHeight,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  canvas: {
-    position: 'absolute',
-    width: dialogWidth,
-    height: dialogHeight < 450 ? 450 : dialogHeight, // להתאים לגודל החדש של הדיאלוג
-  },
   dialog: {
     alignItems: 'center',
-    paddingTop: 30,
-    paddingBottom: 5,
-    width: dialogWidth,
-    height: dialogHeight < 450 ? 450 : dialogHeight, // להתאים לגודל החדש של הדיאלוג
-    paddingHorizontal: 10, // הגדלתי את הרווח האופקי
+    paddingTop: 25,
+    borderRadius: 15,
+    overflow: 'hidden',
   },
   titleContainer: {
     position: 'absolute',
     top: -20,
-    width: dialogWidth + 35,
+    width: dialogWidth + 17.5,
     alignItems: 'flex-end',
     borderRadius: 15,
+    zIndex: 1,
   },
   introduction: {
-    width: '95%', // הקטנתי מעט את הרוחב
+    width: '95%',
     flex: 1,
     padding: 15,
     marginHorizontal: 5,
@@ -333,9 +316,22 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     alignItems: 'center',
+    paddingBottom: 5,
+    paddingHorizontal: 5,
   },
   row: {flexDirection: 'row', padding: 10, gap: 30},
   adjustment: {transform: [{scale: 0.8}], padding: 5},
+  canvas: {
+    padding: 5,
+    borderRadius: 20,
+  },
+  animatedContent: {
+    flex: 1,
+  },
+  frame: {
+    flex: 1,
+    overflow: 'hidden',
+  },
 });
 
 export default HowToPlayDialog;

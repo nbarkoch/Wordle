@@ -17,12 +17,7 @@ import Animated, {
   interpolate,
   runOnJS,
 } from 'react-native-reanimated';
-import {
-  Canvas,
-  RoundedRect,
-  LinearGradient,
-  vec,
-} from '@shopify/react-native-skia';
+import LinearGradient from 'react-native-linear-gradient';
 
 import {colors} from '~/utils/colors';
 import CloseIcon from './CloseIcon';
@@ -133,36 +128,22 @@ const AboutWordDialog = ({isVisible, onClose, hint}: AboutWordDialogProps) => {
           style={[styles.overlayDialog, animatedStyle]}
           pointerEvents="box-none">
           <View style={styles.dialogWrapper}>
-            <Canvas style={styles.canvas}>
-              <RoundedRect
-                x={0}
-                y={0}
-                width={dialogWidth}
-                height={dialogHeight}
-                r={20}>
-                <LinearGradient
-                  start={vec(0, 0)}
-                  end={vec(dialogWidth, dialogHeight)}
-                  colors={[
-                    colors.container.a,
-                    colors.container.b,
-                    colors.container.c,
-                  ]}
-                />
-              </RoundedRect>
-              <RoundedRect
-                x={5}
-                y={5}
-                width={dialogWidth - 10}
-                height={dialogHeight - 10}
-                r={15}>
-                <LinearGradient
-                  start={vec(0, 0)}
-                  end={vec(0, dialogHeight)}
-                  colors={[colors.secondary.a, colors.secondary.b]}
-                />
-              </RoundedRect>
-            </Canvas>
+            <LinearGradient
+              colors={[
+                colors.container.a,
+                colors.container.b,
+                colors.container.c,
+              ]}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              style={styles.outerGradient}
+            />
+            <LinearGradient
+              colors={[colors.secondary.a, colors.secondary.b]}
+              start={{x: 0, y: 0}}
+              end={{x: 0, y: 1}}
+              style={styles.innerGradient}
+            />
             <View style={styles.dialog} pointerEvents="auto">
               <View style={styles.titleContainer}>
                 <CloseIcon onPress={onClose} />
@@ -236,11 +217,21 @@ const styles = StyleSheet.create({
     height: dialogHeight,
     padding: 3,
     elevation: 6,
+    borderRadius: 20,
   },
-  canvas: {
+  outerGradient: {
     position: 'absolute',
     width: dialogWidth,
     height: dialogHeight,
+    borderRadius: 20,
+  },
+  innerGradient: {
+    position: 'absolute',
+    top: 5,
+    left: 5,
+    width: dialogWidth - 10,
+    height: dialogHeight - 10,
+    borderRadius: 15,
   },
   dialog: {
     height: '100%',
@@ -273,7 +264,6 @@ const styles = StyleSheet.create({
     fontSize: 23,
     fontFamily: 'PloniDL1.1AAA-Bold',
   },
-  scrollView: {},
   scrollViewContent: {
     alignItems: 'center',
     paddingVertical: 20,
