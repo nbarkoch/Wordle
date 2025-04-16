@@ -126,8 +126,12 @@ function updateCorrectness(
       break;
     }
     case 'notInUse': {
-      curLettersCorrectness[originalLetter] = 'notInUse';
-      curLettersCorrectness[suffixLetter] = 'notInUse';
+      if (curLettersCorrectness[originalLetter] !== 'correct') {
+        curLettersCorrectness[originalLetter] = 'notInUse';
+      }
+      if (curLettersCorrectness[suffixLetter] !== 'correct') {
+        curLettersCorrectness[suffixLetter] = 'notInUse';
+      }
       break;
     }
     default: {

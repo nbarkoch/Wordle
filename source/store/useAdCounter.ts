@@ -1,5 +1,11 @@
 import {useRef} from 'react';
 
+function randomRange(num1: number, num2: number): number {
+  const min = Math.ceil(Math.min(num1, num2));
+  const max = Math.floor(Math.max(num1, num2));
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 /**
  * Hook for managing ad display frequency in games
  *
@@ -8,7 +14,7 @@ import {useRef} from 'react';
  */
 export const useAdCounter = () => {
   const gameCountRef = useRef<number>(0);
-  const frequencyRef = useRef<number>(Math.random() < 0.5 ? 2 : 3);
+  const frequencyRef = useRef<number>(randomRange(1, 3));
 
   /**
    * Check if an ad should be shown and update the counter accordingly
@@ -34,7 +40,7 @@ export const useAdCounter = () => {
    */
   const resetCounter = () => {
     gameCountRef.current = 0;
-    frequencyRef.current = Math.random() < 0.5 ? 2 : 3;
+    frequencyRef.current = randomRange(1, 3);
   };
 
   return {
