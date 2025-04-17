@@ -95,9 +95,13 @@ function updateCorrectness(
       ) {
         if (isSuffix) {
           curLettersCorrectness[suffixLetter] = 'notInUse';
-          curLettersCorrectness[originalLetter] = 'exists';
+          if (curLettersCorrectness[originalLetter] !== 'correct') {
+            curLettersCorrectness[originalLetter] = 'exists';
+          }
         } else if (isOriginal) {
-          curLettersCorrectness[originalLetter] = 'exists';
+          if (curLettersCorrectness[originalLetter] !== 'correct') {
+            curLettersCorrectness[originalLetter] = 'exists';
+          }
           if (curLettersCorrectness[suffixLetter] === null) {
             curLettersCorrectness[suffixLetter] = 'exists';
           }
@@ -126,10 +130,10 @@ function updateCorrectness(
       break;
     }
     case 'notInUse': {
-      if (curLettersCorrectness[originalLetter] !== 'correct') {
+      if (!curLettersCorrectness[originalLetter]) {
         curLettersCorrectness[originalLetter] = 'notInUse';
       }
-      if (curLettersCorrectness[suffixLetter] !== 'correct') {
+      if (!curLettersCorrectness[suffixLetter]) {
         curLettersCorrectness[suffixLetter] = 'notInUse';
       }
       break;

@@ -45,7 +45,7 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
 
   const $handleSubmit = () => {
     if (!buttonIsBusy.current) {
-      buttonIsBusy.current = true;
+      buttonIsBusy.current = isValidGuess;
       handleSubmit();
     }
   };
