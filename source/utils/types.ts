@@ -7,6 +7,8 @@ export type GameCategory =
 
 export type Difficulty = 'hard' | 'medium' | 'easy';
 
+export type GameType = 'RANDOM' | 'DAILY';
+
 export type DifficultySections = {
   easy: Record<string, string>;
   medium: Record<string, string>;

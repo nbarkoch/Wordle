@@ -54,7 +54,7 @@ export type GameAction =
   | {type: 'SET_VALID_GUESS'; isValid: boolean | null}
   | {type: 'RESET_GAME'; maxAttempts: number; wordLength: number};
 
-const initialState: GameState = {
+export const initialState: GameState = {
   correctLetters: [],
   currentAttempt: 0,
   selectedLetter: {rowIndex: 0, colIndex: 0},

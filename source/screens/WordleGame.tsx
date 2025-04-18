@@ -64,6 +64,7 @@ import GameTypeIndicator from '~/components/GameTypeIndicator';
 import {saveGame} from '~/store/gameStorageState';
 import {colors} from '~/utils/colors';
 import {useAdCounter} from '~/store/useAdCounter';
+import {useTutorialStore} from '~/store/tutorialStore';
 
 const {width} = Dimensions.get('window');
 
@@ -131,6 +132,8 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {playSound: playSubmit} = useSound('submit.mp3');
   const {playSound: playWrong} = useSound('wrong.mp3');
   const gridScrollViewRef = useRef<ScrollView>(null);
+
+  const triggerEvent = useTutorialStore(state => state.triggerEvent);
 
   const currentWordGuess = useMemo(
     () => gameState.currentGuess.join(''),
@@ -258,18 +261,24 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     }
   }, [removeFromUserScore, gameState.aboutWasShown]);
 
-  const handleKeyPress = useCallback((key: string) => {
-    requestAnimationFrame(() => dispatch({type: 'KEY_PRESS', key}));
-    smallVibration();
-  }, []);
+  const handleKeyPress = useCallback(
+    (key: string) => {
+      requestAnimationFrame(() => dispatch({type: 'KEY_PRESS', key}));
+      smallVibration();
+      triggerEvent(`key-${key}`);
+    },
+    [triggerEvent],
+  );
 
   const handleDelete = useCallback(() => {
     dispatch({type: 'DELETE_LETTER'});
     smallVibration();
-  }, []);
+    triggerEvent('key-DELETE');
+  }, [triggerEvent]);
 
   const handleSubmit = useCallback(() => {
     if (gameState.isValidGuess && currentWordGuess.length === wordLength) {
+      triggerEvent('submit');
       playSubmit();
       const correctness = evaluateGuess(currentWordGuess, secretWord);
       const currentLetters = [...gameState.currentGuess] as string[];
@@ -421,6 +430,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               onLetterSelected={$setSelectedLetter}
               lineHint={finalLineHint}
               recentReveals={recentReveals}
+              spotlightId="grid"
             />
           </Animated.View>
         </GradientOverlayScrollView>
@@ -437,6 +447,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               gameState.selectedLetter.colIndex === 0 &&
               gameState.currentGuess[0] === undefined
             }
+            spotlightId="keyboard"
           />
           <View style={styles.footer}>
             <View style={styles.centerer}>
@@ -445,11 +456,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
                 displayOverlay={!gameState.aboutWasShown}
                 onInfoRequested={onInfoRequested}
                 scoreCost={5}
+                spotlightId="about-button"
               />
             </View>
             <SubmitButton
               handleSubmit={handleSubmit}
               isValidGuess={gameState.isValidGuess}
+              spotlightId="submit"
             />
             <View style={styles.centerer}>
               <HintWordButton

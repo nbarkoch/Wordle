@@ -6,6 +6,7 @@ import {colors} from '~/utils/colors';
 import CoinCostOverlay from './CoinCostOverlay';
 import BasePressable from '../BasePressable';
 import CircleOverlay, {CircleOverlayRef} from '../CircleOverlay';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 interface AboutButtonProps {
   onInfoRequested: () => void;
@@ -74,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AboutButton;
+export default withMeasure(AboutButton);

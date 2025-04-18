@@ -2,6 +2,7 @@ import React, {StyleSheet, View} from 'react-native';
 import KeyboardKey from './KeyboardKey';
 import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
 import {Correctness, keyboardFormat} from '~/utils/words';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 interface KeyboardProps {
   handleKeyPress: (key: string) => void;
@@ -19,7 +20,6 @@ const Keyboard = ({
   disabled,
 }: KeyboardProps) => {
   const keys = Object.entries(keyboardLetters);
-
   // Function to split the keys into the specified chunks
   const formatKeysInChunks = () => {
     const {chunks, deleteAtChunkIndex} = keyboardFormat;
@@ -52,6 +52,7 @@ const Keyboard = ({
               onPress={key === 'DELETE' ? handleDelete : handleKeyPress}
               disabled={disabled || (key === 'DELETE' && disableDelete)}
               correctness={correctness}
+              spotlightId={`key-${key}`}
               style={key === 'DELETE' ? styles.wideKey : undefined}>
               {key === 'DELETE' ? (
                 <DeleteKeyIcon width={30} height={50} />
@@ -81,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Keyboard;
+export default withMeasure(Keyboard);

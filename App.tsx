@@ -11,6 +11,7 @@ import GameBannerAd from '~/components/ads/GameBannerAd';
 import {I18nManager} from 'react-native';
 import UserInfoScreen from '~/screens/UserInfo';
 import {colors} from '~/utils/colors';
+import TutorialScreen from '~/screens/Tutorial';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -63,6 +64,13 @@ const App = () => {
             component={UserInfoScreen}
             options={{
               animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="Tutorial"
+            component={TutorialScreen}
+            options={{
+              animation: 'fade',
             }}
           />
         </Stack.Navigator>

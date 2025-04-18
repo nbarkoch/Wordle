@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import BasePressable from '../BasePressable';
 import {colors} from '~/utils/colors';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 const ANIMATION_DURATION = 300;
 
@@ -45,7 +46,7 @@ function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
 
   const $handleSubmit = () => {
     if (!buttonIsBusy.current) {
-      buttonIsBusy.current = isValidGuess;
+      buttonIsBusy.current = !!isValidGuess;
       handleSubmit();
     }
   };
@@ -139,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(SubmitButton);
+export default React.memo(withMeasure(SubmitButton));

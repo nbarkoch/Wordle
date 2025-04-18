@@ -207,7 +207,11 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
                           onHintRequested={() => {}}
                           scoreCost={0}
                         />
-                        <AboutButton onInfoRequested={() => {}} scoreCost={0} />
+                        <AboutButton
+                          onInfoRequested={() => {}}
+                          scoreCost={0}
+                          spotlightId="about-btn"
+                        />
                       </View>
                       <Text style={styles.text}>
                         {'אפשר להשתמש ברמזים, אבל זה עולה נקודות'}

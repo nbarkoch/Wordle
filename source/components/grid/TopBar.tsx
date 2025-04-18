@@ -15,12 +15,13 @@ import {useTimerStore} from '~/store/useTimerStore';
 import HomeButton from '../HomeButton';
 import HowToPlayButton from '../IconButtons/HowToPlayButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {GameType} from '~/utils/types';
 
 interface TopBarProps {
   displayTimer?: boolean;
   onGoHome: () => void;
   onHowToPlay: () => void;
-  gameType: 'RANDOM' | 'DAILY';
+  gameType: GameType;
 }
 
 const TopBar: React.FC<TopBarProps> = ({

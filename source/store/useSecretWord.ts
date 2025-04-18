@@ -4,7 +4,7 @@ import {Correctness, mapSuffix} from '~/utils/words';
 
 import general5 from '~/database/all_5.json';
 
-import {Difficulty, GameCategory} from '~/utils/types';
+import {Difficulty, GameCategory, GameType} from '~/utils/types';
 import {loadGame} from './gameStorageState';
 import {wordList} from '~/utils/db';
 import {getStoredWords} from './revealsStore';
@@ -130,7 +130,7 @@ const useSecretWord = (
   wordLength: number,
   category: GameCategory,
   difficulty: Difficulty,
-  type: 'DAILY' | 'RANDOM',
+  type: GameType,
 ) => {
   const [wordState, setWordState] = useState<WordHandle | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);

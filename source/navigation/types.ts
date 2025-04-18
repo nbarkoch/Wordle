@@ -3,18 +3,19 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {GameState} from '~/gameReducer';
-import {Difficulty, GameCategory} from '~/utils/types';
+import {Difficulty, GameCategory, GameType} from '~/utils/types';
 
 export type RootStackParamList = {
   Home: undefined;
   NewGame: undefined;
+  Tutorial: undefined;
   WordGame: {
     maxAttempts: number;
     wordLength: number;
     displayTimer?: boolean;
     category: GameCategory;
     difficulty: Difficulty;
-    type: 'RANDOM' | 'DAILY';
+    type: GameType;
     savedGameState?: GameState;
     startTime?: number;
   };
@@ -37,8 +38,11 @@ export type DetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'UserInfo'
 >;
-
 export type WordleGameNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'WordGame'
+>;
+export type TutorialNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Tutorial'
 >;

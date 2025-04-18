@@ -15,12 +15,15 @@ import CoinCostOverlay from '~/components/grid/CoinCostOverlay';
 import {useScoreStore} from '~/store/useScore';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
 import VolumeButton from '~/components/IconButtons/VolumeButton';
-import {GameStorageState, loadGame} from '~/store/gameStorageState';
+import {GameStorageState, loadGame, saveGame} from '~/store/gameStorageState';
 import {useFocusEffect} from '@react-navigation/native';
 import AnimatedLetterCubes from '~/components/AnimatedCubes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTutorialStore} from '~/store/tutorialStore';
+import {GameType} from '~/utils/types';
+import {initialState} from '~/gameReducer';
 
-async function loadTimer(gameType: 'RANDOM' | 'DAILY'): Promise<number> {
+async function loadTimer(gameType: GameType): Promise<number> {
   const timeStr = await AsyncStorage.getItem(`@time_${gameType}`);
   if (timeStr) {
     const time = +timeStr;
@@ -31,6 +34,7 @@ async function loadTimer(gameType: 'RANDOM' | 'DAILY'): Promise<number> {
 
 function HomeScreen({navigation}: HomeScreenProps) {
   const {isDone, checkDaily} = useDailyGameStore();
+  const isTutorialDone = useTutorialStore(state => state.isDone);
 
   const [storageStates, setStorageStates] = useState<{
     random?: GameStorageState;
@@ -50,9 +54,26 @@ function HomeScreen({navigation}: HomeScreenProps) {
         }
       };
 
+      const checkIsTutorialDone = async () => {
+        if (isBusy) {
+          const tutorialWasDone = await isTutorialDone();
+          if (!tutorialWasDone) {
+            await saveGame('RANDOM', {
+              gameState: initialState,
+              category: 'GENERAL',
+              difficulty: 'easy',
+              secretWord: 'מלכות',
+              aboutWord: 'שלטון של מלך או מלכה',
+            });
+            navigation.navigate('Tutorial');
+          }
+        }
+      };
+
       checkDailyStatus();
+      checkIsTutorialDone();
       return () => (isBusy = false);
-    }, [checkDaily]),
+    }, [checkDaily, isTutorialDone, navigation]),
   );
 
   const onNewGame = useCallback(async () => {

@@ -10,6 +10,7 @@ import {LetterCellLocation, LineHint} from '~/utils/words';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 const LoadingFallback = () => (
   <View style={styles.loading}>
@@ -91,6 +92,7 @@ const WordleGrid: React.FC<WordleGridProps> = ({
               lineHint={$lineHint}
               rowIndication={rowIndication}
               reveals={recentReveals}
+              spotlightId={`row-${rowIndex}`}
             />
           );
         })}
@@ -130,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(SuspendedWordleGrid);
+export default memo(withMeasure(SuspendedWordleGrid));

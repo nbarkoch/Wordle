@@ -10,6 +10,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 export interface WordleRowProps {
   rowIndex: number;
@@ -104,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(WordleRow);
+export default memo(withMeasure(WordleRow));

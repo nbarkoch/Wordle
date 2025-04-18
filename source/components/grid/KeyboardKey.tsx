@@ -3,6 +3,7 @@ import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
 import {colors} from '~/utils/colors';
 import {colorMap, colorMediumMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 interface KeyboardKeyProps {
   letter?: string;
@@ -90,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default KeyboardKey;
+export default withMeasure(KeyboardKey);
