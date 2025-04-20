@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react-native';
 
 import {setColorOpacity, lightenColor} from '~/utils/ui';
-import BasePressable from './BasePressable';
+import BasePressable from '~/components/BasePressable';
 
 interface MenuButtonProps {
   onPress: () => void;

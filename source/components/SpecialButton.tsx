@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import {StyleSheet, Text, View, LayoutChangeEvent} from 'react-native';
 import {setColorOpacity, lightenColor} from '~/utils/ui';
-import BasePressable from './BasePressable';
+import BasePressable from '~/components/BasePressable';
 import StripePattern from './StripePattern';
 
 interface SpecialButtonProps {

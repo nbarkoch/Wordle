@@ -1,8 +1,9 @@
 import React, {StyleSheet, Text, View} from 'react-native';
-import BasePressable from './BasePressable';
+
 import {GameCategory} from '~/utils/types';
 import {MAP_CATEGORY_NAME} from '~/utils/consts';
 import {colors} from '~/utils/colors';
+import BasePressable from '~/components/BasePressable';
 
 interface GameCategoryCubeProps {
   category: GameCategory;

@@ -2,7 +2,7 @@ import React from 'react';
 import {Canvas, Path, Group} from '@shopify/react-native-skia';
 import {StyleSheet, View} from 'react-native';
 import {colors} from '~/utils/colors';
-import BasePressable from './BasePressable';
+import BasePressable from '~/components/BasePressable';
 
 interface HomeButtonProps {
   onClick: () => void;
