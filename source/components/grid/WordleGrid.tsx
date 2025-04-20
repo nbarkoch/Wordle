@@ -1,23 +1,11 @@
 import React, {memo, Suspense, useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  I18nManager,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import {View, StyleSheet, I18nManager} from 'react-native';
 import {LetterCellLocation, LineHint} from '~/utils/words';
 import WordleRow from './WordleRow';
 import {ROW_SAVED_DELAY} from '~/utils/consts';
 import {GameState} from '~/gameReducer';
 import {withMeasure} from '../tutorial/withSpotlight';
-
-const LoadingFallback = () => (
-  <View style={styles.loading}>
-    <Text style={styles.loadingText}>{'טוען..'}</Text>
-    <ActivityIndicator size="large" color="#ffffff80" />
-  </View>
-);
+import LoadingFallback from '../LoadingFallback';
 
 interface WordleGridProps {
   gameState: GameState;
@@ -114,21 +102,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',
-  },
-  loading: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{scale: 1.5}],
-    gap: 10,
-    borderRadius: 20,
-    backgroundColor: '#00000025',
-    width: 120,
-    height: 110,
-  },
-  loadingText: {
-    color: '#fffffff0',
-    fontFamily: 'PloniDL1.1AAA-Bold',
-    fontSize: 16,
   },
 });
 

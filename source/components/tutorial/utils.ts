@@ -35,7 +35,6 @@ export const tutorialSteps: TutorialStep[] = [
   },
   {
     text: "במשחק זה, המילה הסודית היא 'מלכות'",
-
     displayButton: true,
     position: 'center',
   },

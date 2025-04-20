@@ -73,6 +73,28 @@ export const initialState: GameState = {
   score: 0,
 };
 
+export const genInitialState = (
+  wordLength: number,
+  maxAttempts: number,
+): GameState => ({
+  correctLetters: Array(wordLength).fill(false),
+  currentAttempt: 0,
+  selectedLetter: {rowIndex: 0, colIndex: 0},
+  currentGuess: [],
+  guesses: guessesInitialGridState(maxAttempts, wordLength),
+  keyboardLetters: keyboardInitialKeysState,
+  isGameEnd: false,
+  aboutShown: false,
+  aboutWasShown: false,
+  specialHintUsed: false,
+  numberOfSavedRows: 0,
+  gameStatus: 'PLAYING',
+  isValidGuess: null,
+  maxAttempts,
+  wordLength,
+  score: 0,
+});
+
 function updateCorrectness(
   curLettersCorrectness: Record<string, Correctness>,
   letterInput: {

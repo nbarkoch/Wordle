@@ -27,8 +27,6 @@ import useSecretWord, {evaluateGuess} from '~/store/useSecretWord';
 import {
   calculateHintForLetter,
   giveHint,
-  guessesInitialGridState,
-  keyboardInitialKeysState,
   LetterCellLocation,
   mergeHints,
 } from '~/utils/words';
@@ -55,7 +53,7 @@ import {useNavigation} from '@react-navigation/native';
 import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
-import gameReducer, {GameState} from '~/gameReducer';
+import gameReducer, {genInitialState} from '~/gameReducer';
 import useSound from '~/useSound';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
 import {useDailyGameStore} from '~/store/dailyGameStatus';
@@ -86,24 +84,11 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     },
   },
 }) => {
-  const initialState: GameState = {
-    correctLetters: Array(wordLength).fill(false),
-    currentAttempt: 0,
-    selectedLetter: {rowIndex: 0, colIndex: 0},
-    currentGuess: [],
-    guesses: guessesInitialGridState(maxAttempts, wordLength),
-    keyboardLetters: keyboardInitialKeysState,
-    isGameEnd: false,
-    aboutShown: false,
-    aboutWasShown: false,
-    specialHintUsed: false,
-    numberOfSavedRows: 0,
-    gameStatus: 'PLAYING',
-    isValidGuess: null,
-    maxAttempts,
-    wordLength,
-    score: 0,
-  };
+  const initialState = useMemo(
+    () => genInitialState(wordLength, maxAttempts),
+    [maxAttempts, wordLength],
+  );
+
   const [recentReveals, setRecentReveals] = useState<boolean[]>(
     Array(wordLength).fill(false),
   );
@@ -320,7 +305,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           addedScore: newRevealLength,
         });
       });
-
+      console.log('gameState.aboutWasShown', gameState.aboutWasShown);
       if (isSecretWordRevealed) {
         if (gameType === 'DAILY') {
           markDone();

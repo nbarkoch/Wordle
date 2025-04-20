@@ -11,6 +11,7 @@ import {useTutorialStore} from '~/store/tutorialStore';
 
 import {tutorialSteps} from '~/components/tutorial/utils';
 import TutorialBubble from '~/components/tutorial/TutorialBubble';
+import {genInitialState} from '~/gameReducer';
 
 const exampleWord = 'מילות';
 
@@ -115,6 +116,11 @@ function Tutorial() {
             category: 'GENERAL',
             difficulty: 'easy',
             type: 'RANDOM',
+            savedGameState: {
+              ...genInitialState(5, 6),
+              aboutWasShown: true,
+              specialHintUsed: true,
+            },
           },
           name: 'WordGame',
           key: 'WordGame',
