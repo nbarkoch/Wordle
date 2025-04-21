@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import {View} from 'react-native';
 import {useSpotlightStore, ComponentPosition} from '~/store/spotlightStore';
 
@@ -15,10 +15,14 @@ export function withMeasure<T extends object>(
 
     const {registerPosition, registeredInEvent} = useSpotlightStore();
 
+    const registered = useMemo(
+      () => registeredInEvent.includes(spotlightId),
+      [registeredInEvent, spotlightId],
+    );
+
     const registerMeasurement = useCallback(() => {
-      if (registeredInEvent.includes(spotlightId) && readyToMeasure.current) {
-        requestAnimationFrame(() => {
-          console.log(spotlightId, registeredInEvent);
+      if (registered && readyToMeasure.current) {
+        const timeout = setTimeout(() => {
           ref.current?.measure((_, __, width, height, pageX, pageY) => {
             const position: ComponentPosition = {
               x: pageX,
@@ -28,10 +32,11 @@ export function withMeasure<T extends object>(
               id: spotlightId,
             };
             registerPosition(spotlightId, position);
+            clearTimeout(timeout);
           });
-        });
+        }, 500);
       }
-    }, [registerPosition, registeredInEvent, spotlightId]);
+    }, [registerPosition, registered, spotlightId]);
 
     useEffect(() => {
       registerMeasurement();

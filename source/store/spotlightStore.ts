@@ -25,7 +25,7 @@ export const useSpotlightStore = create<SpotlightState>(set => ({
         ...state.positions,
         [id]: position,
       },
-      registeredInEvent: state.registeredInEvent.filter(key => key === id),
+      registeredInEvent: state.registeredInEvent.filter(key => key !== id),
     })),
   triggerRegisterEvent: (keys: string[] | undefined) =>
     set(() => ({registeredInEvent: keys})),
