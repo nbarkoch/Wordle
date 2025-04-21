@@ -305,7 +305,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           addedScore: newRevealLength,
         });
       });
-      console.log('gameState.aboutWasShown', gameState.aboutWasShown);
       if (isSecretWordRevealed) {
         if (gameType === 'DAILY') {
           markDone();

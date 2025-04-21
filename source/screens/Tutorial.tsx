@@ -1,17 +1,19 @@
 import {useNavigation} from '@react-navigation/native';
 import {useEffect, useMemo} from 'react';
-
 import {TutorialNavigationProp} from '~/navigation/types';
 import WordleGame from './WordleGame';
-
 import React from 'react';
 import TutorialOverlay from '~/components/tutorial/TutorialOverlay';
 import {useSpotlightStore} from '~/store/spotlightStore';
 import {useTutorialStore} from '~/store/tutorialStore';
-
 import {tutorialSteps} from '~/components/tutorial/utils';
 import TutorialBubble from '~/components/tutorial/TutorialBubble';
 import {genInitialState} from '~/gameReducer';
+import LoadingFallback from '~/components/LoadingFallback';
+import {Dimensions, StyleSheet, View} from 'react-native';
+import CanvasBackground from '~/utils/canvas';
+
+const {width, height} = Dimensions.get('screen');
 
 const exampleWord = 'מילות';
 
@@ -21,7 +23,11 @@ function Tutorial() {
   const {reset, setDone, setStep, nextStep, step, eventTrigger, triggerEvent} =
     useTutorialStore(state => state);
 
-  const componentsPositions = useSpotlightStore(state => state.positions);
+  const {
+    positions: componentsPositions,
+    triggerRegisterEvent,
+    registeredInEvent,
+  } = useSpotlightStore(state => state);
 
   const currentStep = useMemo(() => {
     const cStep = tutorialSteps[step];
@@ -91,8 +97,14 @@ function Tutorial() {
   }, [step, setDone]);
 
   useEffect(() => {
+    const highlights = tutorialSteps
+      .map(s => s.highlight)
+      .filter(hl => hl !== undefined);
+    triggerRegisterEvent(
+      highlights.filter((hl, i) => highlights.indexOf(hl) === i),
+    );
     return reset;
-  }, [reset]);
+  }, [reset, triggerRegisterEvent]);
 
   return (
     <>
@@ -102,11 +114,19 @@ function Tutorial() {
           block={currentStep.displayButton}
         />
       )}
-      <TutorialBubble
-        tutorialSteps={tutorialSteps}
-        stepIndex={step}
-        nextStep={nextStep}
-      />
+      {registeredInEvent.length > 0 ? (
+        <View style={styles.loader}>
+          <CanvasBackground />
+          <LoadingFallback />
+        </View>
+      ) : (
+        <TutorialBubble
+          tutorialSteps={tutorialSteps}
+          stepIndex={step}
+          nextStep={nextStep}
+        />
+      )}
+
       <WordleGame
         navigation={navigation as any}
         route={{
@@ -130,4 +150,14 @@ function Tutorial() {
   );
 }
 
+const styles = StyleSheet.create({
+  loader: {
+    position: 'absolute',
+    zIndex: 10,
+    width,
+    height,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 export default Tutorial;
