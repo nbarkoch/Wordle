@@ -81,6 +81,7 @@ const WordleRow: React.FC<WordleRowProps> = ({
                 lineHint={lineHint}
                 rowIndication={rowIndication}
                 revealed={reveals[colIndex]}
+                spotlightId={`char-${rowIndex}${colIndex}`}
               />
             );
           })}

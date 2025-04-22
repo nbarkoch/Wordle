@@ -1,6 +1,7 @@
 export type TutorialStep = {
   text: string;
   highlight?: string;
+  secondHighlights?: string[];
   displayButton?: boolean;
   position: 'top' | 'center' | 'bottom';
 };
@@ -89,18 +90,21 @@ export const tutorialSteps: TutorialStep[] = [
   {
     text: "ירוק: האות במקום הנכון. 'מ','ו','ת' הם במקום הנכון!",
     highlight: 'row-0',
+    secondHighlights: ['char-00', 'char-03', 'char-04'],
     displayButton: true,
     position: 'center',
   },
   {
     text: "צהוב: האות נמצאת במילה אבל במקום אחר. 'ל' נמצא במילה אבל במקום אחר.",
     highlight: 'row-0',
+    secondHighlights: ['char-02'],
     displayButton: true,
     position: 'center',
   },
   {
     text: "אדום: האות לא נמצאת במילה. 'י' לא נמצא במילה 'מלכות'.",
     highlight: 'row-0',
+    secondHighlights: ['char-01'],
     displayButton: true,
     position: 'center',
   },

@@ -36,7 +36,10 @@ function Tutorial() {
       const highlightedComponent = highlightedComponentName
         ? componentsPositions[highlightedComponentName]
         : undefined;
-      return {...cStep, highlightedComponent};
+      const secondaryHighlightedComponents = cStep?.secondHighlights?.map(
+        name => componentsPositions[name],
+      );
+      return {...cStep, highlightedComponent, secondaryHighlightedComponents};
     }
   }, [componentsPositions, step]);
 
@@ -99,7 +102,9 @@ function Tutorial() {
   useEffect(() => {
     const highlights = tutorialSteps
       .map(s => s.highlight)
+      .concat(tutorialSteps.flatMap(s => s.secondHighlights))
       .filter(hl => hl !== undefined);
+
     triggerRegisterEvent(
       highlights.filter((hl, i) => highlights.indexOf(hl) === i),
     );
@@ -112,6 +117,7 @@ function Tutorial() {
         <TutorialOverlay
           component={currentStep.highlightedComponent}
           block={currentStep.displayButton}
+          components={currentStep.secondaryHighlightedComponents}
         />
       )}
       {registeredInEvent.length > 0 ? (

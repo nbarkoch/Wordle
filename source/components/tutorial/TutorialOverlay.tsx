@@ -20,10 +20,15 @@ const {width, height} = Dimensions.get('screen');
 
 interface TutorialOverlayProps {
   component: ComponentPosition | undefined;
+  components?: ComponentPosition[];
   block?: boolean;
 }
 
-function TutorialOverlay({component, block = false}: TutorialOverlayProps) {
+function TutorialOverlay({
+  component,
+  components,
+  block = false,
+}: TutorialOverlayProps) {
   // Animated values for the spotlight
   const x = useSharedValue(width / 2);
   const y = useSharedValue(height / 2);
@@ -100,8 +105,19 @@ function TutorialOverlay({component, block = false}: TutorialOverlayProps) {
                 width={animatedValues.width}
                 height={animatedValues.height}
                 r={25}
-                color="black"
+                color={components ? '#00000090' : 'black'}
               />
+              {components?.map($component => (
+                <RoundedRect
+                  key={$component.id}
+                  x={$component.x}
+                  y={$component.y}
+                  width={$component.width}
+                  height={$component.height}
+                  r={25}
+                  color="black"
+                />
+              ))}
             </Group>
           }>
           <Rect x={0} y={0} width={width} height={height} color="#000000c1" />

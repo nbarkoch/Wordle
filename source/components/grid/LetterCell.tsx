@@ -22,6 +22,7 @@ import Cell from './Cell';
 import CellOverlay, {CellOverlayRef} from './CellOverlay';
 import {View} from 'react-native';
 import {colors} from '~/utils/colors';
+import {withMeasure} from '../tutorial/withSpotlight';
 
 interface LetterCellProps {
   letter: string | undefined;
@@ -167,4 +168,4 @@ function LetterCell({
   );
 }
 
-export default memo(LetterCell);
+export default memo(withMeasure(LetterCell));
