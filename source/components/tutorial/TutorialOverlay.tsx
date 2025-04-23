@@ -62,7 +62,11 @@ function TutorialOverlay({
   // Update animated values when component changes
   useEffect(() => {
     if (component) {
-      // Animate to new position and size
+      if (rectWidth.value === 0 && rectHeight.value === 0) {
+        x.value = component.x - 10 + (component.width + 20) / 2;
+        y.value = component.y - 5 + (component.height + 10) / 2;
+      }
+
       x.value = withTiming(component.x - 10, {
         duration: 300,
         easing: Easing.bezier(0.25, 0.1, 0.25, 1),
@@ -84,9 +88,14 @@ function TutorialOverlay({
       });
     } else {
       // Default values or off-screen positioning when no component
-      x.value = withTiming(width / 2, {duration: 300});
-      y.value = withTiming(height / 2, {duration: 300});
-      rectWidth.value = withTiming(0, {duration: 300});
+      x.value = withTiming(x.value + rectWidth.value / 2, {duration: 300});
+      y.value = withTiming(y.value + rectHeight.value / 2, {duration: 300});
+      rectWidth.value = withTiming(0, {duration: 300}, finish => {
+        if (finish) {
+          x.value = width / 2;
+          y.value = height / 2;
+        }
+      });
       rectHeight.value = withTiming(0, {duration: 300});
     }
   }, [component, rectHeight, rectWidth, x, y]);
