@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 4},
     shadowRadius: 5,
     elevation: 8,
-    zIndex: 1001,
+    zIndex: 10,
   },
   bubbleText: {
     fontSize: 18,
