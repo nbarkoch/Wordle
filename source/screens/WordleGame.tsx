@@ -30,7 +30,9 @@ import {
   LetterCellLocation,
   mergeHints,
 } from '~/utils/words';
-import GameResultDialog from '~/components/dialogs/GameResultDialog';
+import GameResultDialog, {
+  GameResultDialogRef,
+} from '~/components/dialogs/GameResultDialog';
 import TopBar from '~/components/grid/TopBar';
 import {useTimerStore} from '~/store/useTimerStore';
 import ConfettiOverlay, {
@@ -117,6 +119,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   const {playSound: playSubmit} = useSound('submit.mp3');
   const {playSound: playWrong} = useSound('wrong.mp3');
   const gridScrollViewRef = useRef<ScrollView>(null);
+  const gameDialogRef = useRef<GameResultDialogRef>(null);
 
   const triggerEvent = useTutorialStore(state => state.triggerEvent);
 
@@ -163,6 +166,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
 
   const handleNewGame = useCallback(() => {
+    gameDialogRef.current?.close();
     resetGame();
     if (adCounter.shouldShowAd()) {
       showGameRestartAd(() => {
@@ -365,6 +369,24 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       dispatch({type: 'SET_VALID_GUESS', isValid: null});
     }
   }, [isValidWord, currentWordGuess, wordLength]);
+
+  useEffect(() => {
+    if (gameState.isGameEnd) {
+      gameDialogRef.current?.open({
+        isSuccess: gameState.gameStatus === 'SUCCESS',
+        currentScore: getScore(),
+        secretWord,
+        hint: aboutWord,
+        category,
+        difficulty,
+        gameType,
+        maxAttempts,
+        currentAttempt: gameState.currentAttempt,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState.isGameEnd]);
+
   useEffect(() => {
     if (gameState.gameStatus !== 'PLAYING') {
       const timeout = setTimeout(() => {
@@ -468,18 +490,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           hint={aboutWord}
         />
         <GameResultDialog
-          isVisible={gameState.isGameEnd}
-          isSuccess={gameState.gameStatus === 'SUCCESS'}
-          onNewGame={handleNewGame}
+          ref={gameDialogRef}
           onGoHome={handleGoHome}
-          currentScore={getScore()}
-          secretWord={secretWord}
-          hint={aboutWord}
-          category={category}
-          difficulty={difficulty}
-          gameType={gameType}
-          maxAttempts={maxAttempts}
-          currentAttempt={gameState.currentAttempt}
+          onNewGame={handleNewGame}
         />
       </View>
     </View>

@@ -9,15 +9,34 @@ import Animated, {
   Easing,
   withTiming,
 } from 'react-native-reanimated';
+import {range} from '~/utils/ui';
 
 const starPath =
   'M12 2 L15.09 8.26 L22 9.27 L17 14.14 L18.18 21.02 L12 17.77 L5.82 21.02 L7 14.14 L2 9.27 L8.91 8.26 L12 2 Z';
 
-const StarRating = ({rating = 3, width = 300, height = 100}) => {
+interface StarRatingProps {
+  rating: number;
+  width: number;
+  height: number;
+  numStars: number;
+}
+
+const StarRating = ({
+  rating = 3,
+  width = 300,
+  height = 100,
+  numStars = 3,
+}: StarRatingProps) => {
   const starSize = height * 0.8;
 
-  const stars = [0, 1, 2].map(i => (
-    <StarComponent key={i} i={i} rating={rating} starSize={starSize} />
+  const stars = range(numStars).map(i => (
+    <StarComponent
+      key={i}
+      i={i}
+      rating={rating}
+      starSize={starSize}
+      total={numStars}
+    />
   ));
 
   return <View style={[styles.container, {width, height}]}>{stars}</View>;
@@ -27,20 +46,24 @@ const StarComponent = ({
   i,
   rating,
   starSize,
+  total,
 }: {
   i: number;
   rating: number;
   starSize: number;
+  total: number;
 }) => {
   const scale = useSharedValue(0);
   const fillOpacity = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{scale: scale.value}],
+      transform: [
+        {translateY: Math.abs(Math.floor(total / 2) - i) * 10},
+        {scale: scale.value},
+      ],
     };
   });
-
   useEffect(() => {
     scale.value = withDelay(
       i * 200,
@@ -56,10 +79,22 @@ const StarComponent = ({
     );
   }, [scale, fillOpacity, i, rating]);
 
+  const rotate = (rotation: number) => [
+    {translateX: starSize / 7},
+    {translateY: starSize / 7},
+    {rotate: rotation},
+    {translateX: -starSize / 7},
+    {translateY: -starSize / 7},
+  ];
+
   return (
     <Animated.View style={[styles.starContainer, animatedStyle]}>
       <Canvas style={{width: starSize, height: starSize}}>
-        <Group transform={[{scale: starSize / 24}]}>
+        <Group
+          transform={[
+            {scale: starSize / 24},
+            ...rotate((Math.floor(total / 2) - i) * 0.25),
+          ]}>
           <Path path={starPath} color="#b2925b70" style="fill" />
           <Path
             path={starPath}

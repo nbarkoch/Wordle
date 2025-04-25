@@ -140,3 +140,17 @@ export const colorMap: {[key in Exclude<Correctness, null>]: ThemeColor} = {
   exists: colors.yellow,
   notInUse: colors.red,
 };
+
+export const range = (
+  start: number,
+  end?: number,
+  step: number = 1,
+): number[] => {
+  const _end = end === undefined ? start : end;
+  const _start = end === undefined ? 0 : start;
+
+  return Array.from(
+    {length: Math.ceil(Math.abs(_end - _start) / step)},
+    (_, i) => _start + i * (_start < _end ? step : -step),
+  );
+};
