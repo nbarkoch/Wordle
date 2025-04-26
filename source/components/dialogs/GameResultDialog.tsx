@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+    zIndex: 15,
   },
   overlayDialog: {
     width,
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1001,
+    zIndex: 16,
     top: -18,
   },
   dialogWrapper: {

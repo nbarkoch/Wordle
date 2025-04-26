@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width,
     height,
-    zIndex: 1005,
+    zIndex: 21,
     pointerEvents: 'box-none',
   },
   infoBubble: {

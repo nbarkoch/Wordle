@@ -9,24 +9,54 @@ export interface ComponentPosition {
 }
 
 interface SpotlightState {
-  positions: Record<string, ComponentPosition>;
+  registering: boolean;
   registerPosition: (id: string, position: ComponentPosition) => void;
-  // event
-  triggerRegisterEvent: (keys: string[]) => void;
-  registeredInEvent: string[];
+  waitForRegistrations: (
+    keys: string[],
+  ) => Promise<Record<string, ComponentPosition>>;
 }
 
-export const useSpotlightStore = create<SpotlightState>(set => ({
-  positions: {},
-  registeredInEvent: [],
-  registerPosition: (id, position) =>
-    set(state => ({
-      positions: {
-        ...state.positions,
-        [id]: position,
-      },
-      registeredInEvent: state.registeredInEvent.filter(key => key !== id),
-    })),
-  triggerRegisterEvent: (keys: string[] | undefined) =>
-    set(() => ({registeredInEvent: keys})),
-}));
+const positionsCache: Record<string, ComponentPosition> = {};
+const pendingResolvers: Record<string, (position: ComponentPosition) => void> =
+  {};
+
+export const useSpotlightStore = create<SpotlightState>(set => {
+  // Promise resolution tracking
+
+  return {
+    registering: false,
+
+    registerPosition: (id, position) => {
+      // Store position in external cache
+      positionsCache[id] = position;
+
+      // Resolve pending promise if exists
+      if (pendingResolvers[id]) {
+        pendingResolvers[id](position);
+        delete pendingResolvers[id];
+      }
+    },
+
+    waitForRegistrations: async keys => {
+      // Filter to find which keys are still missing
+      const missingKeys = keys.filter(key => !positionsCache[key]);
+      if (missingKeys.length !== 0) {
+        set(() => ({registering: true}));
+        await Promise.all(
+          missingKeys.map(
+            key =>
+              new Promise<void>(resolve => {
+                if (positionsCache[key]) {
+                  resolve();
+                  return;
+                }
+                pendingResolvers[key] = () => resolve();
+              }),
+          ),
+        );
+        set(() => ({registering: false}));
+      }
+      return {...positionsCache};
+    },
+  };
+});

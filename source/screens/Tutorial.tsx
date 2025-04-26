@@ -1,10 +1,10 @@
 import {useNavigation} from '@react-navigation/native';
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {TutorialNavigationProp} from '~/navigation/types';
 import WordleGame from './WordleGame';
 import React from 'react';
 import TutorialOverlay from '~/components/tutorial/TutorialOverlay';
-import {useSpotlightStore} from '~/store/spotlightStore';
+import {ComponentPosition, useSpotlightStore} from '~/store/spotlightStore';
 import {useTutorialStore} from '~/store/tutorialStore';
 import {tutorialSteps} from '~/components/tutorial/utils';
 import TutorialBubble from '~/components/tutorial/TutorialBubble';
@@ -23,23 +23,27 @@ function Tutorial() {
   const {reset, setDone, setStep, nextStep, step, eventTrigger, triggerEvent} =
     useTutorialStore(state => state);
 
-  const {
-    positions: componentsPositions,
-    triggerRegisterEvent,
-    registeredInEvent,
-  } = useSpotlightStore(state => state);
+  const [componentsPositions, setComponentsPositions] = useState<
+    Record<string, ComponentPosition>
+  >({});
+
+  const waitForRegistrations = useSpotlightStore(
+    state => state.waitForRegistrations,
+  );
+  const {registering} = useSpotlightStore(state => state);
 
   const currentStep = useMemo(() => {
     const cStep = tutorialSteps[step];
     if (cStep) {
-      const highlightedComponentName = cStep?.highlight;
-      const highlightedComponent = highlightedComponentName
-        ? componentsPositions[highlightedComponentName]
-        : undefined;
-      const secondaryHighlightedComponents = cStep?.secondHighlights?.map(
-        name => componentsPositions[name],
-      );
-      return {...cStep, highlightedComponent, secondaryHighlightedComponents};
+      return {
+        ...cStep,
+        highlightedComponent: cStep.highlight
+          ? componentsPositions[cStep.highlight]
+          : undefined,
+        secondaryHighlightedComponents: cStep.secondHighlights?.map(
+          name => componentsPositions[name],
+        ),
+      };
     }
   }, [componentsPositions, step]);
 
@@ -103,13 +107,16 @@ function Tutorial() {
     const highlights = tutorialSteps
       .map(s => s.highlight)
       .concat(tutorialSteps.flatMap(s => s.secondHighlights))
-      .filter(hl => hl !== undefined);
+      .filter(Boolean) as string[];
 
-    triggerRegisterEvent(
-      highlights.filter((hl, i) => highlights.indexOf(hl) === i),
-    );
+    // Remove duplicates
+    const uniqueHighlights = [...new Set(highlights)];
+
+    // Register to components that should be measured
+    waitForRegistrations(uniqueHighlights).then(setComponentsPositions);
+
     return reset;
-  }, [reset, triggerRegisterEvent]);
+  }, [reset, waitForRegistrations]);
 
   return (
     <>
@@ -120,7 +127,7 @@ function Tutorial() {
           components={currentStep.secondaryHighlightedComponents}
         />
       )}
-      {registeredInEvent.length > 0 ? (
+      {registering ? (
         <View style={styles.loader}>
           <CanvasBackground />
           <LoadingFallback />

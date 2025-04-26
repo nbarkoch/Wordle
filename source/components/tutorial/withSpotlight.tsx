@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {View} from 'react-native';
-import {useSpotlightStore, ComponentPosition} from '~/store/spotlightStore';
+import {useSpotlightStore} from '~/store/spotlightStore';
 
 export interface WithMeasureProps {
   spotlightId: string;
@@ -11,43 +11,28 @@ export function withMeasure<T extends object>(
 ) {
   return function WithMeasure({spotlightId, ...props}: T & WithMeasureProps) {
     const ref = useRef<View>(null);
-    const readyToMeasure = useRef<boolean>(false);
 
-    const {registerPosition, registeredInEvent} = useSpotlightStore();
+    // Get the positions and register function from the store
+    const {registering, registerPosition} = useSpotlightStore();
 
-    const registered = useMemo(
-      () => registeredInEvent.includes(spotlightId),
-      [registeredInEvent, spotlightId],
-    );
-
-    const registerMeasurement = useCallback(() => {
-      if (registered && readyToMeasure.current) {
+    const measureAndRegister = useCallback(() => {
+      if (spotlightId && registering && ref.current) {
         const timeout = setTimeout(() => {
           ref.current?.measure((_, __, width, height, pageX, pageY) => {
-            const position: ComponentPosition = {
-              x: pageX,
-              y: pageY,
-              width,
-              height,
-              id: spotlightId,
-            };
-            registerPosition(spotlightId, position);
+            if (width && height) {
+              registerPosition(spotlightId, {
+                x: pageX,
+                y: pageY,
+                width,
+                height,
+                id: spotlightId,
+              });
+            }
             clearTimeout(timeout);
           });
         }, 500);
       }
-    }, [registerPosition, registered, spotlightId]);
-
-    useEffect(() => {
-      registerMeasurement();
-    }, [registerMeasurement]);
-
-    const measureAndRegister = async () => {
-      if (spotlightId.length > 0 && ref.current && !readyToMeasure.current) {
-        readyToMeasure.current = true;
-        registerMeasurement();
-      }
-    };
+    }, [registerPosition, registering, spotlightId]);
 
     return (
       <View ref={ref} onLayout={measureAndRegister} collapsable={false}>
