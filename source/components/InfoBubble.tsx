@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width,
     height,
-    zIndex: 1004,
+    zIndex: 20,
   },
 });
 

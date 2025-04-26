@@ -7,7 +7,7 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
-import {View, Text, StyleSheet, Pressable, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -343,17 +343,17 @@ const GameResultDialog = React.memo(
             </LinearGradient>
             <Animated.View
               style={[styles.buttonContainer, buttonContainerStyle]}>
-              <Pressable
-                style={[styles.button, styles.homeButton]}
-                onPress={onGoHome}>
-                <HomeIcon width={34} height={34} />
-              </Pressable>
+              <BasePressable onPress={onGoHome}>
+                <View style={[styles.button, styles.homeButton]}>
+                  <HomeIcon width={34} height={34} />
+                </View>
+              </BasePressable>
               {gameType === 'RANDOM' && (
-                <Pressable
-                  style={[styles.button, styles.nextButton]}
-                  onPress={onNewGame}>
-                  <ChevronRight width={34} height={34} />
-                </Pressable>
+                <BasePressable onPress={onNewGame}>
+                  <View style={[styles.button, styles.nextButton]}>
+                    <ChevronRight width={34} height={34} />
+                  </View>
+                </BasePressable>
               )}
             </Animated.View>
           </Animated.View>
@@ -457,6 +457,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
     paddingHorizontal: 50,
+    zIndex: 10,
   },
   button: {
     paddingHorizontal: 15,
