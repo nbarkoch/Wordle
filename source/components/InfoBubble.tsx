@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useState} from 'react';
 
 import {useEffect} from 'react';
 import {
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Animated, {
   interpolate,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -37,14 +38,18 @@ const InfoBubble = ({
 }: InfoBubbleProps) => {
   const scaleY = useSharedValue(isVisible ? 1 : 0);
   const opacity = useSharedValue(isVisible ? 1 : 0);
+  const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
     if (isVisible) {
+      setHidden(false);
       scaleY.value = withSpring(1, {damping: 15, stiffness: 120});
       opacity.value = withTiming(1, {duration: 200});
     } else {
       scaleY.value = withSpring(0, {damping: 15, stiffness: 120});
-      opacity.value = withTiming(0, {duration: 150});
+      opacity.value = withTiming(0, {duration: 150}, finish =>
+        runOnJS(setHidden)(!!finish),
+      );
     }
   }, [isVisible, scaleY, opacity]);
 
@@ -56,7 +61,7 @@ const InfoBubble = ({
     opacity: opacity.value,
   }));
 
-  if (!isVisible && opacity.value === 0) {
+  if (!isVisible && hidden) {
     return null;
   }
 
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     padding: 10,
     minWidth: 200,
     maxWidth: width - 110,
-    zIndex: 1005,
+    zIndex: 22,
   },
   bubbleArrow: {
     position: 'absolute',
