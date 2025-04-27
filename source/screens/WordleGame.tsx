@@ -162,8 +162,19 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     setRecentReveals(Array(wordLength).fill(false));
     gridScrollViewRef?.current?.scrollTo({y: 0});
     setScore(0);
+    if (difficulty === 'hard') {
+      dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
+      dispatch({type: 'SET_ABOUT_WAS_SHOWN'});
+    }
     global.gc?.();
-  }, [wordLength, maxAttempts, reset, generateSecretWord, setScore]);
+  }, [
+    wordLength,
+    maxAttempts,
+    reset,
+    generateSecretWord,
+    setScore,
+    difficulty,
+  ]);
 
   const handleNewGame = useCallback(() => {
     gameDialogRef.current?.close();
@@ -192,6 +203,10 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     reset(startTime);
     start();
     setScore(gameState.score);
+    if (difficulty === 'hard') {
+      dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
+      dispatch({type: 'SET_ABOUT_WAS_SHOWN'});
+    }
     return resetGame;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
