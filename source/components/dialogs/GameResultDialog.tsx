@@ -33,6 +33,7 @@ import {Difficulty, GameCategory} from '~/utils/types';
 import {Canvas, Group, Path} from '@shopify/react-native-skia';
 import BasePressable from '../BasePressable';
 import InfoBubble from '../InfoBubble';
+import {LETTER_READ_DURATION} from '~/utils/consts';
 
 const {width, height} = Dimensions.get('window');
 
@@ -217,20 +218,44 @@ const GameResultDialog = React.memo(
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [isSuccess, isVisible, rating]);
 
-      const handleInfoPress = useCallback(() => {
-        setInfoRevealed(prev => {
-          if (infoIconRef.current) {
-            infoIconRef.current.measure((_, __, ___, h, pageX, pageY) => {
-              setBubblePosition({
-                top: pageY + h,
-                left: pageX,
-              });
-            });
+      const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+      useEffect(() => {
+        return () => {
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
           }
-          return !prev;
-        });
+        };
       }, []);
 
+      const handleInfoPress = useCallback(() => {
+        if (timeoutRef.current !== null) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+
+        if (infoRevealed) {
+          setInfoRevealed(false);
+          return;
+        }
+
+        if (infoIconRef.current) {
+          infoIconRef.current.measure((_, __, ___, h, pageX, pageY) => {
+            setBubblePosition({
+              top: pageY + h,
+              left: pageX,
+            });
+          });
+        }
+
+        setInfoRevealed(true);
+        // Set a new timeout to hide it
+        timeoutRef.current = setTimeout(() => {
+          setInfoRevealed(false);
+          timeoutRef.current = null;
+        }, 1000 + LETTER_READ_DURATION * hint.length);
+      }, [infoRevealed, hint.length]);
       const overlayStyle = useAnimatedStyle(() => ({
         opacity: opacity.value,
       }));
