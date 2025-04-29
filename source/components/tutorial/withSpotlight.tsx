@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {View} from 'react-native';
 import {useSpotlightStore} from '~/store/spotlightStore';
 
@@ -33,6 +33,8 @@ export function withMeasure<T extends object>(
         }, 500);
       }
     }, [registerPosition, registering, spotlightId]);
+
+    useEffect(measureAndRegister, [measureAndRegister]);
 
     return (
       <View ref={ref} onLayout={measureAndRegister} collapsable={false}>

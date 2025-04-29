@@ -27,11 +27,10 @@ export const useSpotlightStore = create<SpotlightState>(set => {
     registering: false,
 
     registerPosition: (id, position) => {
-      // Store position in external cache
-      positionsCache[id] = position;
-
       // Resolve pending promise if exists
       if (pendingResolvers[id]) {
+        // Store position in external cache
+        positionsCache[id] = position;
         pendingResolvers[id](position);
         delete pendingResolvers[id];
       }

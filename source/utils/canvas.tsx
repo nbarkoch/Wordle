@@ -5,10 +5,10 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const {width, height} = Dimensions.get('window');
 
-function CanvasBackground() {
+function CanvasBackground({opacity = 1}) {
   return (
     <LinearGradient
-      style={styles.canvas}
+      style={[styles.canvas, {opacity}]}
       colors={[
         colors.primary.a,
         colors.primary.b,

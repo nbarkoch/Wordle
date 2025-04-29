@@ -78,7 +78,7 @@ function Tutorial() {
           triggerEvent(undefined);
           nextStep();
           clearTimeout(timeout);
-        }, 2000);
+        }, 2250);
       } else {
         nextStep();
         triggerEvent(undefined);
@@ -106,7 +106,6 @@ function Tutorial() {
   useEffect(() => {
     const highlights = tutorialSteps
       .map(s => s.highlight)
-      .concat(tutorialSteps.flatMap(s => s.secondHighlights))
       .filter(Boolean) as string[];
 
     // Remove duplicates
@@ -117,6 +116,24 @@ function Tutorial() {
 
     return reset;
   }, [reset, waitForRegistrations]);
+
+  useEffect(() => {
+    if (step === 13) {
+      const secondHighlights = tutorialSteps
+        .flatMap(s => s.secondHighlights)
+        .filter(Boolean) as string[];
+      // Remove duplicates
+      const uniqueHighlights = [...new Set(secondHighlights)];
+      // Register to components that should be measured
+      waitForRegistrations(uniqueHighlights).then(newPositions => {
+        setComponentsPositions(positions => ({...positions, ...newPositions}));
+      });
+    }
+  }, [waitForRegistrations, step]);
+
+  const loaderOpacity = useMemo(() => {
+    return step > 0 ? 0.2 : 1;
+  }, [step]);
 
   return (
     <>
@@ -129,7 +146,7 @@ function Tutorial() {
       )}
       {registering ? (
         <View style={styles.loader}>
-          <CanvasBackground />
+          <CanvasBackground opacity={loaderOpacity} />
           <LoadingFallback />
         </View>
       ) : (
