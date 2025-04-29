@@ -184,6 +184,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         reset();
         start();
       });
+      adCounter.resetCounter();
     } else {
       reset();
       start();
