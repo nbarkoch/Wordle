@@ -1,3 +1,6 @@
+import React, {useEffect} from 'react';
+import {StyleSheet, View, Dimensions} from 'react-native';
+import {ComponentPosition} from '~/store/spotlightStore';
 import {
   Canvas,
   Group,
@@ -5,9 +8,6 @@ import {
   Rect,
   RoundedRect,
 } from '@shopify/react-native-skia';
-import {Dimensions, StyleSheet, View} from 'react-native';
-import React, {useEffect} from 'react';
-import {ComponentPosition} from '~/store/spotlightStore';
 import {
   useSharedValue,
   withTiming,
@@ -17,6 +17,41 @@ import {
 } from 'react-native-reanimated';
 
 const {width, height} = Dimensions.get('screen');
+
+const InteractionBlocker = ({component}: {component: ComponentPosition}) => {
+  const up = {
+    top: 0,
+    left: 0,
+    right: 0,
+    height: component.y,
+  };
+  const down = {
+    top: component.y + component.height,
+    left: 0,
+    right: 0,
+    height: height - component.y,
+  };
+  const left = {
+    top: component.y,
+    left: component.x + component.width,
+    right: 0,
+    height: component.height,
+  };
+  const right = {
+    top: component.y,
+    left: 0,
+    right: width - component.x,
+    height: component.height,
+  };
+  return (
+    <>
+      <View style={[styles.blocker, up]} pointerEvents={'box-only'} />
+      <View style={[styles.blocker, down]} pointerEvents={'box-only'} />
+      <View style={[styles.blocker, left]} pointerEvents={'box-only'} />
+      <View style={[styles.blocker, right]} pointerEvents={'box-only'} />
+    </>
+  );
+};
 
 interface TutorialOverlayProps {
   component: ComponentPosition | undefined;
@@ -101,38 +136,41 @@ function TutorialOverlay({
   }, [component, rectHeight, rectWidth, x, y]);
 
   return (
-    <View style={styles.overlay} pointerEvents={block ? 'box-only' : 'none'}>
-      <Canvas style={styles.overlay}>
-        <Mask
-          mode="luminance"
-          mask={
-            <Group>
-              <Rect x={0} y={0} width={width} height={height} color="white" />
-              <RoundedRect
-                x={animatedValues.x}
-                y={animatedValues.y}
-                width={animatedValues.width}
-                height={animatedValues.height}
-                r={25}
-                color={components ? '#00000090' : 'black'}
-              />
-              {components?.map($component => (
+    <>
+      <View style={styles.overlay} pointerEvents={block ? 'box-only' : 'none'}>
+        <Canvas style={styles.overlay}>
+          <Mask
+            mode="luminance"
+            mask={
+              <Group>
+                <Rect x={0} y={0} width={width} height={height} color="white" />
                 <RoundedRect
-                  key={$component.id}
-                  x={$component.x}
-                  y={$component.y}
-                  width={$component.width}
-                  height={$component.height}
+                  x={animatedValues.x}
+                  y={animatedValues.y}
+                  width={animatedValues.width}
+                  height={animatedValues.height}
                   r={25}
-                  color="black"
+                  color={components ? '#00000090' : 'black'}
                 />
-              ))}
-            </Group>
-          }>
-          <Rect x={0} y={0} width={width} height={height} color="#000000c1" />
-        </Mask>
-      </Canvas>
-    </View>
+                {components?.map($component => (
+                  <RoundedRect
+                    key={$component.id}
+                    x={$component.x}
+                    y={$component.y}
+                    width={$component.width}
+                    height={$component.height}
+                    r={25}
+                    color="black"
+                  />
+                ))}
+              </Group>
+            }>
+            <Rect x={0} y={0} width={width} height={height} color="#000000c1" />
+          </Mask>
+        </Canvas>
+      </View>
+      {component && <InteractionBlocker component={component} />}
+    </>
   );
 }
 
@@ -142,6 +180,10 @@ const styles = StyleSheet.create({
     width,
     height,
     zIndex: 5,
+  },
+  blocker: {
+    position: 'absolute',
+    zIndex: 10,
   },
 });
 
