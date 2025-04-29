@@ -84,7 +84,7 @@ const confettiConfig: {
     texts: string[];
     resource: any;
     color: ThemeColor;
-    fontSize: number;
+    scale: number;
     resizeMode: 'center' | 'cover' | 'contain' | undefined;
   };
 } = {
@@ -92,22 +92,22 @@ const confettiConfig: {
     texts: partyStrings,
     color: colors.blue,
     resource: confettiParty,
-    fontSize: 42,
+    scale: 1,
     resizeMode: 'cover',
   },
   spark: {
     texts: strikeStrings,
     color: colors.blue,
     resource: confettiSpark,
-    fontSize: 42,
+    scale: 1,
     resizeMode: 'center',
   },
   'quick-solver': {
     texts: quickSolverStrings,
     color: colors.mediumRed,
     resource: fireworks,
-    fontSize: 47,
-    resizeMode: 'center',
+    scale: 0.75,
+    resizeMode: 'cover',
   },
 };
 
@@ -238,7 +238,10 @@ const ConfettiOverlay = forwardRef<ConfettiOverlayRef>(({}, ref) => {
         <View style={styles.feedbackContainer} pointerEvents="none">
           {showFeedback && (
             <LottieView
-              style={styles.confetti}
+              style={[
+                styles.confetti,
+                {transform: [{scale: confettiConfig[showFeedback].scale}]},
+              ]}
               source={confettiConfig[showFeedback].resource}
               autoPlay
               loop={false}
@@ -291,7 +294,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   darkOverlay: {
-    backgroundColor: '#00000030',
+    backgroundColor: '#00000040',
     position: 'absolute',
     width,
     height,

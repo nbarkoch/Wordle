@@ -2,7 +2,7 @@ import {Difficulty, GameCategory} from './types';
 
 export const ROW_SAVED_DELAY = 170;
 export const LETTER_CELL_DISPLAY_DELAY = 100;
-export const LETTER_READ_DURATION = 275;
+export const LETTER_READ_DURATION = 200;
 
 export const CATEGORIES: GameCategory[] = [
   'GENERAL',
