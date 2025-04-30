@@ -160,7 +160,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     reset();
     generateSecretWord();
     setRecentReveals(Array(wordLength).fill(false));
-    gridScrollViewRef?.current?.scrollTo({y: 0});
     setScore(0);
     if (difficulty === 'hard') {
       dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
@@ -416,6 +415,13 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
       return () => clearTimeout(timeout);
     }
   }, [gameState.gameStatus, gameState.currentAttempt, maxAttempts]);
+
+  useEffect(() => {
+    gridScrollViewRef?.current?.scrollTo({
+      y: (gameState.currentAttempt - 4) * 60,
+      animated: true,
+    });
+  }, [gameState.currentAttempt]);
 
   return (
     <View style={styles.container}>
