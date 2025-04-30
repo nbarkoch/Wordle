@@ -12,6 +12,7 @@ import {genInitialState} from '~/gameReducer';
 import LoadingFallback from '~/components/LoadingFallback';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import CanvasBackground from '~/utils/canvas';
+import SkipTutorialButton from '~/components/tutorial/SkipTutorialButton';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -131,30 +132,33 @@ function Tutorial() {
     }
   }, [waitForRegistrations, step]);
 
-  const loaderOpacity = useMemo(() => {
-    return step > 0 ? 0.2 : 1;
-  }, [step]);
-
   return (
     <>
-      {currentStep && (
-        <TutorialOverlay
-          component={currentStep.highlightedComponent}
-          block={currentStep.displayButton}
-          components={currentStep.secondaryHighlightedComponents}
-        />
-      )}
       {registering ? (
         <View style={styles.loader}>
-          <CanvasBackground opacity={loaderOpacity} />
+          {step === 0 && <CanvasBackground />}
           <LoadingFallback />
         </View>
       ) : (
-        <TutorialBubble
-          tutorialSteps={tutorialSteps}
-          stepIndex={step}
-          nextStep={nextStep}
-        />
+        <>
+          {currentStep && (
+            <>
+              <SkipTutorialButton
+                onPress={() => setStep(tutorialSteps.length)}
+              />
+              <TutorialOverlay
+                component={currentStep.highlightedComponent}
+                block={currentStep.displayButton}
+                components={currentStep.secondaryHighlightedComponents}
+              />
+            </>
+          )}
+          <TutorialBubble
+            tutorialSteps={tutorialSteps}
+            stepIndex={step}
+            nextStep={nextStep}
+          />
+        </>
       )}
 
       <WordleGame
@@ -188,6 +192,7 @@ const styles = StyleSheet.create({
     height,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#00000071',
   },
 });
 export default Tutorial;
