@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: width,
     height: height,
-    zIndex: 999,
+    zIndex: 14,
     justifyContent: 'center',
     alignItems: 'center',
     transform: [{translateY: -50}],
