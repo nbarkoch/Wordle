@@ -1,12 +1,12 @@
 import {useNavigation} from '@react-navigation/native';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {TutorialNavigationProp} from '~/navigation/types';
 import WordleGame from './WordleGame';
 import React from 'react';
 import TutorialOverlay from '~/components/tutorial/TutorialOverlay';
 import {ComponentPosition, useSpotlightStore} from '~/store/spotlightStore';
 import {useTutorialStore} from '~/store/tutorialStore';
-import {tutorialSteps} from '~/components/tutorial/utils';
+import {TutorialStep, tutorialSteps} from '~/components/tutorial/utils';
 import TutorialBubble from '~/components/tutorial/TutorialBubble';
 import {genInitialState} from '~/gameReducer';
 import LoadingFallback from '~/components/LoadingFallback';
@@ -17,6 +17,7 @@ import SkipTutorialButton from '~/components/tutorial/SkipTutorialButton';
 const {width, height} = Dimensions.get('screen');
 
 const exampleWord = 'מילות';
+const stepSeperateor = 13;
 
 function Tutorial() {
   const navigation = useNavigation<TutorialNavigationProp>();
@@ -104,36 +105,38 @@ function Tutorial() {
     }
   }, [step, setDone]);
 
-  useEffect(() => {
-    const highlights = tutorialSteps
+  const registerStepsPositions = useCallback((steps: TutorialStep[]) => {
+    const highlights = steps
       .map(s => s.highlight)
+      .concat(steps.flatMap(s => s.secondHighlights))
       .filter(Boolean) as string[];
-
     // Remove duplicates
     const uniqueHighlights = [...new Set(highlights)];
-
     // Register to components that should be measured
     waitForRegistrations(uniqueHighlights).then(setComponentsPositions);
-
-    return reset;
-  }, [reset, waitForRegistrations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (step === 13) {
-      const secondHighlights = tutorialSteps
-        .flatMap(s => s.secondHighlights)
-        .filter(Boolean) as string[];
-      // Remove duplicates
-      const uniqueHighlights = [...new Set(secondHighlights)];
-      // Register to components that should be measured
-      waitForRegistrations(uniqueHighlights).then(newPositions => {
-        setComponentsPositions(positions => ({...positions, ...newPositions}));
-      });
+    registerStepsPositions(tutorialSteps.slice(0, stepSeperateor));
+    return reset;
+  }, [registerStepsPositions, reset]);
+
+  useEffect(() => {
+    if (step === stepSeperateor) {
+      registerStepsPositions(tutorialSteps.slice(stepSeperateor));
     }
-  }, [waitForRegistrations, step]);
+  }, [registerStepsPositions, step]);
 
   return (
     <>
+      {currentStep && (
+        <TutorialOverlay
+          component={currentStep.highlightedComponent}
+          block={currentStep.displayButton}
+          components={currentStep.secondaryHighlightedComponents}
+        />
+      )}
       {registering ? (
         <View style={styles.loader}>
           {step === 0 && <CanvasBackground />}
@@ -142,16 +145,7 @@ function Tutorial() {
       ) : (
         <>
           {currentStep && (
-            <>
-              <SkipTutorialButton
-                onPress={() => setStep(tutorialSteps.length)}
-              />
-              <TutorialOverlay
-                component={currentStep.highlightedComponent}
-                block={currentStep.displayButton}
-                components={currentStep.secondaryHighlightedComponents}
-              />
-            </>
+            <SkipTutorialButton onPress={() => setStep(tutorialSteps.length)} />
           )}
           <TutorialBubble
             tutorialSteps={tutorialSteps}
@@ -192,7 +186,6 @@ const styles = StyleSheet.create({
     height,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#00000071',
   },
 });
 export default Tutorial;
