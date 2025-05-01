@@ -2,7 +2,6 @@ import {useCallback, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import React from 'react-native';
 import {HomeScreenProps} from '~/navigation/types';
-import SkiaGradientText from '~/components/TitleParagraph';
 import MenuButton from '~/components/MenuButton';
 import HowToPlayButton from '~/components/IconButtons/HowToPlayButton';
 import ProfileIconButton from '~/components/IconButtons/ProfileButton';
@@ -22,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTutorialStore} from '~/store/tutorialStore';
 import {GameType} from '~/utils/types';
 import {initialState} from '~/gameReducer';
+import SlidingText from '~/components/overview/SlidingText';
 
 async function loadTimer(gameType: GameType): Promise<number> {
   const timeStr = await AsyncStorage.getItem(`@time_${gameType}`);
@@ -136,7 +136,7 @@ function HomeScreen({navigation}: HomeScreenProps) {
 
       <View style={styles.header}>
         <AnimatedLetterCubes />
-        <SkiaGradientText title="משחק ניחוש מילים בעברית" />
+        <SlidingText />
       </View>
       <View style={styles.body}>
         <MenuButton
