@@ -56,7 +56,7 @@ const defaultTitles = [
 ];
 
 const gameTips = [
-  'הרבה מהמילים משתמשות באותיות "ה" "ו" ו-"י"',
+  "הרבה מהמילים משתמשות באותיות 'ה' 'ו' ו-'י'",
   'לחץ על אותיות בצבע צהוב לרמז',
   'השתמש ברמזים לפתרון מילים קשות',
   'נסה מילים מקטגוריות שונות',
@@ -197,13 +197,12 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
     minHeight: 80,
-    paddingHorizontal: 10,
-    marginVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 24,
     fontFamily: 'PloniDL1.1AAA-Bold',
     color: colors.white,
     textAlign: 'center',
