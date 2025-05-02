@@ -131,27 +131,29 @@ function Tutorial() {
   return (
     <>
       {currentStep && (
-        <TutorialOverlay
-          component={currentStep.highlightedComponent}
-          block={currentStep.displayButton}
-          components={currentStep.secondaryHighlightedComponents}
-        />
-      )}
-      {registering ? (
-        <View style={styles.loader}>
-          {step === 0 && <CanvasBackground />}
-          <LoadingFallback />
-        </View>
-      ) : (
         <>
-          {currentStep && (
-            <SkipTutorialButton onPress={() => setStep(tutorialSteps.length)} />
-          )}
-          <TutorialBubble
-            tutorialSteps={tutorialSteps}
-            stepIndex={step}
-            nextStep={nextStep}
+          <TutorialOverlay
+            component={currentStep.highlightedComponent}
+            block={currentStep.displayButton}
+            components={currentStep.secondaryHighlightedComponents}
           />
+          {registering ? (
+            <View style={styles.loader}>
+              {step === 0 && <CanvasBackground />}
+              <LoadingFallback />
+            </View>
+          ) : (
+            <>
+              <SkipTutorialButton
+                onPress={() => setStep(tutorialSteps.length)}
+              />
+              <TutorialBubble
+                tutorialSteps={tutorialSteps}
+                stepIndex={step}
+                nextStep={nextStep}
+              />
+            </>
+          )}
         </>
       )}
 
