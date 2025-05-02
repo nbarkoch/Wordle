@@ -1,22 +1,8 @@
-import React, {Dimensions, StyleSheet, View} from 'react-native';
-
+import React, {StyleSheet, View} from 'react-native';
+import KeyboardKey from './KeyboardKey';
+import DeleteKeyIcon from '~/assets/icons/backspace-delete.svg';
 import {Correctness, keyboardFormat} from '~/utils/words';
 import {withMeasure} from '../tutorial/withSpotlight';
-import KeyboardKey, {KEY_VARIANTS} from './KeyboardKey';
-
-const {width} = Dimensions.get('screen');
-
-const getKeyVariant = (index: number, length: number) => {
-  const isFull = length === 10; // max letters in a row
-
-  if (index === 0 && !isFull) {
-    return KEY_VARIANTS.START;
-  }
-  if (index === length - 1 && !isFull) {
-    return KEY_VARIANTS.END;
-  }
-  return KEY_VARIANTS.NORMAL;
-};
 
 interface KeyboardProps {
   handleKeyPress: (key: string) => void;
@@ -59,18 +45,19 @@ const Keyboard = ({
     <View style={styles.keyboard}>
       {formattedKeys.map((chunk, rowIndex) => (
         <View key={`row-${rowIndex}`} style={styles.keyboardRow}>
-          {chunk.map(([key, correctness], index) => (
+          {chunk.map(([key, correctness]) => (
             <KeyboardKey
               key={key}
-              letter={key}
-              variant={getKeyVariant(index, chunk.length)}
-              onPress={() =>
-                key === 'DELETE' ? handleDelete() : handleKeyPress(key)
-              }
+              letter={key === 'DELETE' ? undefined : key}
+              onPress={key === 'DELETE' ? handleDelete : handleKeyPress}
               disabled={disabled || (key === 'DELETE' && disableDelete)}
               correctness={correctness}
               spotlightId={`key-${key}`}
-            />
+              style={key === 'DELETE' ? styles.wideKey : undefined}>
+              {key === 'DELETE' ? (
+                <DeleteKeyIcon width={30} height={50} />
+              ) : null}
+            </KeyboardKey>
           ))}
         </View>
       ))}
@@ -81,13 +68,18 @@ const Keyboard = ({
 const styles = StyleSheet.create({
   keyboard: {
     flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
     marginHorizontal: 5,
+    width: '100%',
   },
   keyboardRow: {
-    width,
+    width: '100%',
     flexDirection: 'row',
-    justifyContent: 'center',
+  },
+  wideKey: {
+    width: 45,
   },
 });
 
