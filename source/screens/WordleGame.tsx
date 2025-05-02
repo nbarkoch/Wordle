@@ -473,7 +473,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
             keyboardLetters={gameState.keyboardLetters}
             disableDelete={
               gameState.selectedLetter.colIndex === 0 &&
-              gameState.currentGuess[0] === undefined
+              (!gameState.currentGuess[0] || gameState.currentGuess[0] === '')
             }
             spotlightId="keyboard"
           />
