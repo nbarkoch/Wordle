@@ -296,9 +296,6 @@ const GameResultDialog = React.memo(
           style={[styles.overlay, overlayStyle]}
           pointerEvents="auto">
           <Animated.View style={[styles.overlayDialog, animatedStyle]}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{'סיכום'}</Text>
-            </View>
             <LinearGradient
               colors={[
                 colors.container.a,
@@ -313,6 +310,9 @@ const GameResultDialog = React.memo(
                 start={{x: 0, y: 0}}
                 end={{x: 0, y: 1}}
                 style={styles.innerWrapper}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>{'סיכום'}</Text>
+                </View>
                 <View style={styles.dialog}>
                   <StarRating
                     width={270}
@@ -420,25 +420,25 @@ const styles = StyleSheet.create({
     elevation: 6,
     borderRadius: 20,
     padding: 5,
-    overflow: 'hidden',
   },
   innerWrapper: {
     flex: 1,
     borderRadius: 15,
-    overflow: 'hidden',
   },
   dialog: {
     alignItems: 'center',
-    paddingTop: 30,
+    paddingTop: 20,
   },
   titleContainer: {
-    top: 20,
+    top: -20,
+    position: 'absolute',
     alignSelf: 'center',
     backgroundColor: colors.gold,
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 15,
     zIndex: 10,
+    elevation: 6,
   },
   title: {
     color: 'white',
