@@ -37,26 +37,31 @@ const InfoBubble = ({
   close,
 }: InfoBubbleProps) => {
   const scaleY = useSharedValue(isVisible ? 1 : 0);
+  const scaleX = useSharedValue(isVisible ? 1 : 0);
   const opacity = useSharedValue(isVisible ? 1 : 0);
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
     if (isVisible) {
       setHidden(false);
-      scaleY.value = withSpring(1, {damping: 15, stiffness: 120});
+      scaleY.value = withSpring(1, {damping: 13, stiffness: 120});
+      scaleX.value = withTiming(1, {duration: 200});
       opacity.value = withTiming(1, {duration: 200});
     } else {
       scaleY.value = withSpring(0, {damping: 15, stiffness: 120});
+      scaleX.value = withTiming(0, {duration: 500});
+
       opacity.value = withTiming(0, {duration: 150}, finish =>
         runOnJS(setHidden)(!!finish),
       );
     }
-  }, [isVisible, scaleY, opacity]);
+  }, [isVisible, scaleY, scaleX, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       {scaleY: scaleY.value},
-      {translateY: interpolate(scaleY.value, [0, 1], [-5, 1])},
+      {scaleX: scaleX.value},
+      {translateY: interpolate(scaleY.value, [0, 1], [-20, 1])},
     ],
     opacity: opacity.value,
   }));

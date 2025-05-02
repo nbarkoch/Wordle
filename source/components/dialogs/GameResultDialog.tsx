@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   },
   dialog: {
     alignItems: 'center',
-    paddingTop: 20,
+    paddingTop: 22.5,
   },
   titleContainer: {
     top: -20,
