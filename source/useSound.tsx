@@ -3,8 +3,6 @@ import {useEffect, useRef} from 'react';
 import Sound from 'react-native-sound';
 import {create} from 'zustand';
 
-Sound.setCategory('Playback');
-
 // Define the store state type
 interface SoundState {
   isSoundEnabled: boolean;
