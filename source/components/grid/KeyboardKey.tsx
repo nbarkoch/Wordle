@@ -1,5 +1,5 @@
 import React, {useState, useMemo, useCallback} from 'react';
-import {Pressable, StyleSheet, Text, ViewStyle} from 'react-native';
+import {Pressable, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {colors} from '~/utils/colors';
 import {colorMap, colorMediumMap} from '~/utils/ui';
 import {Correctness} from '~/utils/words';
@@ -55,19 +55,20 @@ const KeyboardKey: React.FC<KeyboardKeyProps> = ({
   return (
     <Pressable
       disabled={disabled}
-      style={keyStyle}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       onPress={$onPress}>
-      {children ?? (
-        <Text
-          style={[
-            styles.keyText,
-            {color: correctness ? colorMap[correctness] : colors.lightGrey},
-          ]}>
-          {letter}
-        </Text>
-      )}
+      <View style={keyStyle}>
+        {children ?? (
+          <Text
+            style={[
+              styles.keyText,
+              {color: correctness ? colorMap[correctness] : colors.lightGrey},
+            ]}>
+            {letter}
+          </Text>
+        )}
+      </View>
     </Pressable>
   );
 };
@@ -81,6 +82,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
     marginVertical: 5,
     borderRadius: 5,
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
   },
   keyDisabled: {
     opacity: 0.5,
