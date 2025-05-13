@@ -118,8 +118,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    implementation("com.google.ads.mediation:unity:4.6.1.0")
-    implementation("com.unity3d.ads:unity-ads:4.8.0")
+    implementation("com.google.ads.mediation:unity:4.11.3.0")
+    implementation("com.unity3d.ads:unity-ads:4.11.3")
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
