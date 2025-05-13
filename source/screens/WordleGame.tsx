@@ -203,10 +203,6 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     reset(startTime);
     start();
     setScore(gameState.score);
-    if (difficulty === 'hard') {
-      dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
-      dispatch({type: 'SET_ABOUT_WAS_SHOWN'});
-    }
     return resetGame;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
