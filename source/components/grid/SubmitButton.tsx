@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Platform, StyleSheet} from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -34,29 +34,30 @@ const buttonColors = {
 };
 
 interface SubmitButtonProps {
-  handleSubmit: () => void;
+  handleSubmit: (attempt: number) => void;
   isValidGuess: boolean | null;
+  attempt: number;
 }
 
-function SubmitButton({handleSubmit, isValidGuess}: SubmitButtonProps) {
+function SubmitButton({
+  handleSubmit,
+  isValidGuess,
+  attempt,
+}: SubmitButtonProps) {
   const animationProgress = useSharedValue(0);
   const currentState = useSharedValue<boolean | null>(null);
   const previousState = useSharedValue<boolean | null>(null);
-  const buttonIsBusy = useRef<boolean>(false);
 
-  const $handleSubmit = () => {
-    if (!buttonIsBusy.current) {
-      buttonIsBusy.current = !!isValidGuess;
-      handleSubmit();
-    }
-  };
+  const $handleSubmit = useCallback(() => {
+    handleSubmit(attempt);
+  }, [attempt, handleSubmit]);
 
   useEffect(() => {
     // Reset and start new animation
     const startNewAnimation = () => {
       animationProgress.value = 0;
       currentState.value = isValidGuess;
-      buttonIsBusy.current = false;
+
       animationProgress.value = withTiming(
         1,
         {

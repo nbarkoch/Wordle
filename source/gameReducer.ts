@@ -40,6 +40,7 @@ export type GameAction =
       letters: string[];
       correctLetters: boolean[];
       addedScore: number;
+      attempt: number;
     }
   | {type: 'KEY_PRESS'; key: string}
   | {type: 'DELETE_LETTER'}
@@ -170,7 +171,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SUBMIT_GUESS':
       const newGuesses = [...state.guesses];
-      newGuesses[state.currentAttempt] = {
+      newGuesses[action.attempt] = {
         letters: action.letters,
         correctness: action.correctness,
       };
@@ -189,8 +190,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         correctLetters: action.correctLetters,
-        currentAttempt: state.currentAttempt + 1,
-        selectedLetter: {rowIndex: state.currentAttempt + 1, colIndex: 0},
+        currentAttempt: action.attempt + 1,
+        selectedLetter: {rowIndex: action.attempt + 1, colIndex: 0},
         currentGuess: [],
         guesses: newGuesses,
         keyboardLetters: newKeyboardLetters,

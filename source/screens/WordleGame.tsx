@@ -276,99 +276,107 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     triggerEvent('key-DELETE');
   }, [triggerEvent]);
 
-  const handleSubmit = useCallback(() => {
-    if (gameState.isValidGuess && currentWordGuess.length === wordLength) {
-      triggerEvent('submit');
-      playSubmit();
-      const correctness = evaluateGuess(currentWordGuess, secretWord);
-      const currentLetters = [...gameState.currentGuess] as string[];
-      const correctLetters = [...gameState.correctLetters];
-      const reveal = Array<boolean>(wordLength).fill(false);
+  const handleSubmit = useCallback(
+    (attempt: number) => {
+      if (gameState.isValidGuess && currentWordGuess.length === wordLength) {
+        triggerEvent('submit');
+        playSubmit();
+        const correctness = evaluateGuess(currentWordGuess, secretWord);
+        const currentLetters = [...gameState.currentGuess] as string[];
+        const correctLetters = [...gameState.correctLetters];
+        const reveal = Array<boolean>(wordLength).fill(false);
 
-      currentLetters.forEach((_, index) => {
-        const isNewReveal =
-          correctness[index] === 'correct' && !correctLetters[index];
-        if (isNewReveal) {
-          reveal[index] = true;
-          correctLetters[index] = true;
-        }
-        return isNewReveal;
-      });
-
-      const isSecretWordRevealed = correctness.every(
-        $correctness => $correctness === 'correct',
-      );
-      const newRevealLength = reveal.filter(Boolean).length;
-
-      if (
-        newRevealLength >= 3 &&
-        newRevealLength < wordLength &&
-        !isSecretWordRevealed
-      ) {
-        confettiRef.current?.triggerFeedback('spark');
-      }
-
-      setRecentReveals(reveal);
-      addScore(newRevealLength);
-
-      requestAnimationFrame(() => {
-        dispatch({
-          type: 'SUBMIT_GUESS',
-          correctness,
-          letters: currentLetters,
-          correctLetters: correctLetters,
-          addedScore: newRevealLength,
-        });
-      });
-      if (isSecretWordRevealed) {
-        if (gameType === 'DAILY') {
-          markDone();
-        }
-        dispatch({type: 'END_GAME', status: 'SUCCESS'});
-        stop();
-        const delayConfetti = setTimeout(() => {
-          if (
-            gameState.currentAttempt < 2 &&
-            !gameState.aboutWasShown &&
-            !gameState.specialHintUsed
-          ) {
-            confettiRef.current?.triggerFeedback('quick-solver');
-          } else {
-            confettiRef.current?.triggerFeedback('party');
+        currentLetters.forEach((_, index) => {
+          const isNewReveal =
+            correctness[index] === 'correct' && !correctLetters[index];
+          if (isNewReveal) {
+            reveal[index] = true;
+            correctLetters[index] = true;
           }
-          clearTimeout(delayConfetti);
-        }, 400);
-      } else if (gameState.currentAttempt + 1 === maxAttempts) {
-        dispatch({type: 'END_GAME', status: 'FAILURE'});
-        stop();
+          return isNewReveal;
+        });
+
+        const isSecretWordRevealed = correctness.every(
+          $correctness => $correctness === 'correct',
+        );
+        const newRevealLength = reveal.filter(Boolean).length;
+
+        if (
+          newRevealLength >= 3 &&
+          newRevealLength < wordLength &&
+          !isSecretWordRevealed
+        ) {
+          confettiRef.current?.triggerFeedback('spark');
+        }
+
+        setRecentReveals(reveal);
+        addScore(newRevealLength);
+
+        requestAnimationFrame(() => {
+          dispatch({
+            type: 'SUBMIT_GUESS',
+            correctness,
+            letters: currentLetters,
+            correctLetters: correctLetters,
+            addedScore: newRevealLength,
+            attempt: attempt,
+          });
+        });
+        if (isSecretWordRevealed) {
+          if (gameType === 'DAILY') {
+            markDone();
+          }
+          dispatch({type: 'END_GAME', status: 'SUCCESS'});
+          stop();
+          const delayConfetti = setTimeout(() => {
+            if (
+              gameState.currentAttempt < 2 &&
+              !gameState.aboutWasShown &&
+              !gameState.specialHintUsed
+            ) {
+              confettiRef.current?.triggerFeedback('quick-solver');
+            } else {
+              confettiRef.current?.triggerFeedback('party');
+            }
+            clearTimeout(delayConfetti);
+          }, 400);
+        } else if (gameState.currentAttempt + 1 === maxAttempts) {
+          dispatch({type: 'END_GAME', status: 'FAILURE'});
+          stop();
+        }
+      } else {
+        playWrong();
+        shakeAnimation.value = withSequence(
+          withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
+          withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
+          withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
+          withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
+          withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
+        );
       }
-    } else {
-      playWrong();
-      shakeAnimation.value = withSequence(
-        withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-        withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-        withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-        withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-        withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    gameState.isValidGuess,
-    currentWordGuess,
-    gameState.correctLetters,
-    gameState.currentAttempt,
-    playSubmit,
-    evaluateGuess,
-    wordLength,
-    addScore,
-    maxAttempts,
-    gameType,
-    stop,
-    markDone,
-    playWrong,
-    shakeAnimation,
-  ]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [
+      gameState.currentAttempt,
+      gameState.isValidGuess,
+      gameState.currentGuess,
+      gameState.correctLetters,
+      gameState.aboutWasShown,
+      gameState.specialHintUsed,
+      currentWordGuess,
+      wordLength,
+      triggerEvent,
+      playSubmit,
+      secretWord,
+      addScore,
+      maxAttempts,
+      gameType,
+      stop,
+      markDone,
+      playWrong,
+      shakeAnimation,
+    ],
+  );
 
   useEffect(() => {
     if (currentWordGuess.length === wordLength) {
@@ -484,6 +492,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
               />
             </View>
             <SubmitButton
+              attempt={gameState.currentAttempt}
               handleSubmit={handleSubmit}
               isValidGuess={gameState.isValidGuess}
               spotlightId="submit"
