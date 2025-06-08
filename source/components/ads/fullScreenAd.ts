@@ -42,7 +42,4 @@ export const showGameRestartAd = (onClose?: () => void) => {
     unsubscribeLoaded();
     unsubscribeClosed();
   };
-
-  // Set a timeout to automatically unsubscribe after 10 seconds
-  setTimeout(cleanup, 10000);
 };
