@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useSpotlightStore} from '~/store/spotlightStore';
 
 export interface WithMeasureProps {
@@ -11,7 +12,7 @@ export function withMeasure<T extends object>(
 ) {
   return function WithMeasure({spotlightId, ...props}: T & WithMeasureProps) {
     const ref = useRef<View>(null);
-
+    const insets = useSafeAreaInsets();
     // Get the positions and register function from the store
     const {registering, registerPosition} = useSpotlightStore();
 
@@ -22,7 +23,7 @@ export function withMeasure<T extends object>(
             if (width && height) {
               registerPosition(spotlightId, {
                 x: pageX,
-                y: pageY,
+                y: pageY - insets.top,
                 width,
                 height,
                 id: spotlightId,
@@ -32,7 +33,7 @@ export function withMeasure<T extends object>(
           });
         }, 500);
       }
-    }, [registerPosition, registering, spotlightId]);
+    }, [insets.top, registerPosition, registering, spotlightId]);
 
     useEffect(measureAndRegister, [measureAndRegister]);
 
