@@ -17,6 +17,7 @@ import HintWordButton from '../grid/HintWordsButton';
 import AboutButton from '../grid/AboutButton';
 import GradientOverlayScrollView from '../GridScrollView';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const {width, height} = Dimensions.get('window');
 const dialogWidth = width - 60;
@@ -51,6 +52,7 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
   const buttonContainerAnimation = useSharedValue(0);
   const introductionAnimation = useSharedValue(0);
   const [block, setBlock] = useState<boolean>(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (isVisible) {
@@ -116,7 +118,9 @@ const HowToPlayDialog = ({isVisible, onClose}: HowToPlayDialogProps) => {
   }
 
   return (
-    <Animated.View style={[styles.overlay, overlayStyle]} pointerEvents="auto">
+    <Animated.View
+      style={[styles.overlay, overlayStyle, {paddingTop: insets.top}]}
+      pointerEvents="auto">
       <Animated.View style={animatedStyle}>
         <View style={styles.dialogWrapper}>
           <LinearGradient

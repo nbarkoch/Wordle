@@ -34,6 +34,7 @@ import {Canvas, Group, Path} from '@shopify/react-native-skia';
 import BasePressable from '../BasePressable';
 import InfoBubble from '../InfoBubble';
 import {LETTER_READ_DURATION} from '~/utils/consts';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const {width, height} = Dimensions.get('window');
 
@@ -127,6 +128,8 @@ const GameResultDialog = React.memo(
         secretWord,
         hint,
       } = dialogParams;
+
+      const insets = useSafeAreaInsets();
 
       const rating = useMemo(
         () =>
@@ -243,7 +246,7 @@ const GameResultDialog = React.memo(
         if (infoIconRef.current) {
           infoIconRef.current.measure((_, __, ___, h, pageX, pageY) => {
             setBubblePosition({
-              top: pageY + h,
+              top: pageY + h - insets.top,
               left: pageX,
             });
           });
@@ -255,7 +258,7 @@ const GameResultDialog = React.memo(
           setInfoRevealed(false);
           timeoutRef.current = null;
         }, 1000 + LETTER_READ_DURATION * hint.length);
-      }, [infoRevealed, hint.length]);
+      }, [infoRevealed, hint.length, insets.top]);
       const overlayStyle = useAnimatedStyle(() => ({
         opacity: opacity.value,
       }));
