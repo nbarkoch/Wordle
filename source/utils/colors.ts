@@ -31,14 +31,14 @@ export const colors = {
   mediumGrey: '#898989',
 
   primary: {
-    a: '#343E4F',
-    b: '#343D4E',
-    c: '#3A4F6C',
-    d: '#33556E',
+    a: '#172338',
+    b: '#19263dff',
+    c: '#263b58ff',
+    d: '#344B6C',
   },
   secondary: {
-    a: '#264C64',
-    b: '#3B4457',
+    a: '#2b4872ff',
+    b: '#25334bff',
   },
   container: {
     a: '#BBB6A6',

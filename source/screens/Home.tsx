@@ -22,6 +22,7 @@ import {useTutorialStore} from '~/store/tutorialStore';
 import {GameType} from '~/utils/types';
 import {initialState} from '~/gameReducer';
 import SlidingText from '~/components/overview/SlidingText';
+import CalendarIcon from '~/components/IconButtons/CalendarButton';
 
 async function loadTimer(gameType: GameType): Promise<number> {
   const timeStr = await AsyncStorage.getItem(`@time_${gameType}`);
@@ -128,9 +129,12 @@ function HomeScreen({navigation}: HomeScreenProps) {
           <HowToPlayButton onPress={() => setHowToPlayVisible(true)} />
           <VolumeButton />
         </View>
-        <View>
-          <CoinCostOverlay scoreCost={userScore} />
-          <ProfileIconButton onPress={onUserInfo} />
+        <View style={styles.userContainer}>
+          <CalendarIcon size={32} onPress={() => {}} />
+          <View>
+            <ProfileIconButton onPress={onUserInfo} />
+            <CoinCostOverlay scoreCost={userScore} />
+          </View>
         </View>
       </View>
 
@@ -190,6 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   adjustment: {transform: [{scale: 1}]},
-  controlsContainer: {flexDirection: 'row', gap: 20},
+  controlsContainer: {flexDirection: 'row', alignItems: 'center', gap: 20},
+  userContainer: {flexDirection: 'row', alignItems: 'center', gap: 20},
 });
 export default HomeScreen;

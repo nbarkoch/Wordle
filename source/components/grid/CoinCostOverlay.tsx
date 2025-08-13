@@ -14,7 +14,9 @@ function CoinCostOverlay({scoreCost}: CoinCostOverlayProps) {
         outerRingColor={colors.yellow}
         innerCircleColor={colors.lightYellow}
       />
-      <Text style={styles.text}>{` ${scoreCost} `}</Text>
+      <Text numberOfLines={1} style={styles.text}>
+        {` ${scoreCost.toLocaleString('he-IL')} `}
+      </Text>
     </View>
   );
 }
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
     padding: 2,
     backgroundColor: '#aaaaaaa0',
     bottom: -5,
-    right: 40,
+    right: -5,
     zIndex: 1,
     borderRadius: 10,
     flexDirection: 'row',

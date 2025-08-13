@@ -11,8 +11,8 @@ function CanvasBackground({opacity = 1}) {
       style={[styles.canvas, {opacity}]}
       colors={[
         colors.primary.a,
-        colors.primary.b,
-        colors.primary.c,
+        // colors.primary.b,
+        // colors.primary.c,
         colors.primary.d,
       ]}
     />
