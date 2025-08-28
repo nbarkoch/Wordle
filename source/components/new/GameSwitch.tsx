@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
 import {
   Canvas,
   RoundedRect,
@@ -13,7 +13,7 @@ import Animated, {
   useDerivedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import {colors, ThemeColor} from '~/utils/colors';
+import { colors, ThemeColor } from '~/utils/colors';
 
 interface GameSwitchProps {
   width?: number;
@@ -23,8 +23,6 @@ interface GameSwitchProps {
   ballMargin?: number;
   defaultValue?: boolean;
 }
-
-const AnimatedCanvas = Animated.createAnimatedComponent(Canvas);
 
 const GameSwitch: React.FC<GameSwitchProps> = ({
   width = 110,
@@ -70,7 +68,7 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
         endColor.value = withTiming(colors.grey);
         ballColor.value = withTiming(colors.lightGrey);
         borderColor.value = withTiming(colors.lightGrey);
-        ballPosition.value = withTiming(borderWidth, {duration: 300});
+        ballPosition.value = withTiming(borderWidth, { duration: 300 });
       }
     }
   }, [
@@ -103,7 +101,7 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
       endColor.value = withTiming(colors.grey);
       ballColor.value = withTiming(colors.lightGrey);
       borderColor.value = withTiming(colors.lightGrey);
-      ballPosition.value = withTiming(borderWidth, {duration: 300}); // Move ball to the left
+      ballPosition.value = withTiming(borderWidth, { duration: 300 }); // Move ball to the left
     }
     onToggle(newValue);
   };
@@ -117,13 +115,13 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
   });
 
   const ballStyle = useAnimatedStyle(() => ({
-    transform: [{translateX: ballPosition.value - borderWidth}],
+    transform: [{ translateX: ballPosition.value - borderWidth }],
     backgroundColor: ballColor.value,
   }));
 
   return (
     <Pressable onPress={handlePress}>
-      <AnimatedCanvas style={[{width, height}]}>
+      <Canvas style={[{ width, height }]}>
         <Group>
           <RoundedRect
             x={0}
@@ -138,7 +136,8 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
             y={borderWidth}
             width={width - borderWidth * 2}
             height={height - borderWidth * 2}
-            r={(height - borderWidth * 2) / 2}>
+            r={(height - borderWidth * 2) / 2}
+          >
             <LinearGradient
               start={vec(0, 0)}
               end={vec(width, 0)}
@@ -146,7 +145,7 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
             />
           </RoundedRect>
         </Group>
-      </AnimatedCanvas>
+      </Canvas>
       <Animated.View
         style={[
           ballStyle,
@@ -165,7 +164,7 @@ const GameSwitch: React.FC<GameSwitchProps> = ({
 };
 
 const styles = StyleSheet.create({
-  ball: {position: 'absolute'},
+  ball: { position: 'absolute' },
 });
 
 export default GameSwitch;

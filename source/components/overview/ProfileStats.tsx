@@ -1,16 +1,16 @@
-import React, {useMemo} from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import {WordDisplayHierarchy} from '~/store/revealsStore';
-import {useScoreStore} from '~/store/useScore';
-import {colors} from '~/utils/colors';
+import React, { useMemo } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { WordDisplayHierarchy } from '~/store/revealsStore';
+import { useScoreStore } from '~/store/useScore';
+import { colors } from '~/utils/colors';
 import StarCoin from '../StarCoin';
 
 interface ProfileStatsProps {
   wordsOverview: WordDisplayHierarchy;
   isLoading: boolean;
 }
-const ProfileStats = ({wordsOverview, isLoading}: ProfileStatsProps) => {
-  const {userScore} = useScoreStore();
+const ProfileStats = ({ wordsOverview, isLoading }: ProfileStatsProps) => {
+  const { userScore } = useScoreStore();
 
   const totalReveals = useMemo(() => {
     return Object.values(wordsOverview).reduce((acc, category) => {
@@ -31,7 +31,7 @@ const ProfileStats = ({wordsOverview, isLoading}: ProfileStatsProps) => {
             <ActivityIndicator
               size="large"
               color="#ffffff80"
-              style={{transform: [{scale: 1}]}}
+              style={{ transform: [{ scale: 1 }] }}
             />
           ) : (
             <>
@@ -48,7 +48,7 @@ const ProfileStats = ({wordsOverview, isLoading}: ProfileStatsProps) => {
           <ActivityIndicator
             size="large"
             color="#ffffff80"
-            style={{transform: [{scale: 1}]}}
+            style={{ transform: [{ scale: 1 }] }}
           />
         ) : (
           <Text style={styles.statValue}>{totalReveals}</Text>
@@ -69,11 +69,11 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     alignItems: 'center',
-    justifyContent: 'space-around',
   },
   statBox: {
     alignItems: 'center',
-    width: '50%',
+    flex: 1,
+    justifyContent: 'center',
   },
   statValue: {
     color: colors.gold,
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gold,
     marginHorizontal: 20,
   },
-  coinContainer: {alignItems: 'center', flexDirection: 'row', gap: 5},
+  coinContainer: { alignItems: 'center', flexDirection: 'row', gap: 5 },
 });
 
 export default ProfileStats;

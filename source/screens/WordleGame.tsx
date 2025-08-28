@@ -23,7 +23,7 @@ import Animated, {
 import WordleGrid from '~/components/grid/WordleGrid';
 import useWordValidator from '~/store/useWordValidator';
 import Keyboard from '~/components/grid/Keyboard';
-import useSecretWord, {evaluateGuess} from '~/store/useSecretWord';
+import useSecretWord, { evaluateGuess } from '~/store/useSecretWord';
 import {
   calculateHintForLetter,
   giveHint,
@@ -34,11 +34,11 @@ import GameResultDialog, {
   GameResultDialogRef,
 } from '~/components/dialogs/GameResultDialog';
 import TopBar from '~/components/grid/TopBar';
-import {useTimerStore} from '~/store/useTimerStore';
+import { useTimerStore } from '~/store/useTimerStore';
 import ConfettiOverlay, {
   ConfettiOverlayRef,
 } from '~/components/ConfettiOverlay';
-import {useScoreStore} from '~/store/useScore';
+import { useScoreStore } from '~/store/useScore';
 import {
   MAP_CATEGORY_NAME,
   MAP_DIFFICULTY_NAME,
@@ -51,22 +51,22 @@ import {
   WordGameScreenProps,
   WordleGameNavigationProp,
 } from '~/navigation/types';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import CanvasBackground from '~/utils/canvas';
 import GradientOverlayScrollView from '~/components/GridScrollView';
 import AboutWordDialog from '~/components/dialogs/AboutWordDialog';
-import gameReducer, {genInitialState} from '~/gameReducer';
+import gameReducer, { genInitialState } from '~/gameReducer';
 import useSound from '~/useSound';
 import HowToPlayDialog from '~/components/dialogs/HowToPlayDialog';
-import {useDailyGameStore} from '~/store/dailyGameStatus';
-import {showGameRestartAd} from '~/components/ads/fullScreenAd';
+import { useDailyGameStore } from '~/store/dailyGameStatus';
+import { showGameRestartAd } from '~/components/ads/fullScreenAd';
 import GameTypeIndicator from '~/components/GameTypeIndicator';
-import {saveGame} from '~/store/gameStorageState';
-import {colors} from '~/utils/colors';
-import {useAdCounter} from '~/store/useAdCounter';
-import {useTutorialStore} from '~/store/tutorialStore';
+import { saveGame } from '~/store/gameStorageState';
+import { colors } from '~/utils/colors';
+import { useAdCounter } from '~/store/useAdCounter';
+import { useTutorialStore } from '~/store/tutorialStore';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const smallVibration = () => {
   Vibration.vibrate([2, 2]);
@@ -100,24 +100,24 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     savedGameState ?? initialState,
   );
 
-  const {secretWord, aboutWord, generateSecretWord} = useSecretWord(
+  const { secretWord, aboutWord, generateSecretWord } = useSecretWord(
     wordLength,
     category,
     difficulty,
     gameType,
   );
 
-  const {markDone} = useDailyGameStore();
+  const { markDone } = useDailyGameStore();
   const adCounter = useAdCounter();
-  const {start, stop, reset} = useTimerStore();
-  const {setScore, addScore, getScore, removeFromUserScore} = useScoreStore();
+  const { start, stop, reset } = useTimerStore();
+  const { setScore, addScore, getScore, removeFromUserScore } = useScoreStore();
   const [howToPlayVisible, setHowToPlayVisible] = useState<boolean>(false);
   const confettiRef = useRef<ConfettiOverlayRef>(null);
-  const {isValidWord} = useWordValidator(wordLength);
+  const { isValidWord } = useWordValidator(wordLength);
   const navigation = useNavigation<WordleGameNavigationProp>();
   const shakeAnimation = useSharedValue(0);
-  const {playSound: playSubmit} = useSound('submit.mp3');
-  const {playSound: playWrong} = useSound('wrong.mp3');
+  const { playSound: playSubmit } = useSound('submit.mp3');
+  const { playSound: playWrong } = useSound('wrong.mp3');
   const gridScrollViewRef = useRef<ScrollView>(null);
   const gameDialogRef = useRef<GameResultDialogRef>(null);
 
@@ -156,14 +156,14 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   ]);
 
   const resetGame = useCallback(() => {
-    dispatch({type: 'RESET_GAME', wordLength, maxAttempts});
+    dispatch({ type: 'RESET_GAME', wordLength, maxAttempts });
     reset();
     generateSecretWord();
     setRecentReveals(Array(wordLength).fill(false));
     setScore(0);
     if (difficulty === 'hard') {
-      dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
-      dispatch({type: 'SET_ABOUT_WAS_SHOWN'});
+      dispatch({ type: 'SET_ABOUT_SHOWN', shown: true });
+      dispatch({ type: 'SET_ABOUT_WAS_SHOWN' });
     }
     global.gc?.();
   }, [
@@ -235,9 +235,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
 
   const $setSelectedLetter = useCallback(
     async ($selectedLetter: LetterCellLocation) => {
-      dispatch({type: 'SET_SELECTED_LETTER', location: $selectedLetter});
+      dispatch({ type: 'SET_SELECTED_LETTER', location: $selectedLetter });
       if (gameState.currentAttempt === $selectedLetter?.rowIndex) {
-        dispatch({type: 'SET_LINE_SEARCH', search: undefined});
+        dispatch({ type: 'SET_LINE_SEARCH', search: undefined });
         return;
       }
       if ($selectedLetter) {
@@ -245,25 +245,25 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           gameState.guesses,
           $selectedLetter,
         );
-        dispatch({type: 'SET_LINE_SEARCH', search: $lineSearch});
+        dispatch({ type: 'SET_LINE_SEARCH', search: $lineSearch });
       } else {
-        dispatch({type: 'SET_LINE_SEARCH', search: undefined});
+        dispatch({ type: 'SET_LINE_SEARCH', search: undefined });
       }
     },
     [gameState.currentAttempt, gameState.guesses],
   );
 
   const onInfoRequested = useCallback(async () => {
-    dispatch({type: 'SET_ABOUT_SHOWN', shown: true});
+    dispatch({ type: 'SET_ABOUT_SHOWN', shown: true });
     if (!gameState.aboutWasShown) {
-      dispatch({type: 'SET_ABOUT_WAS_SHOWN'});
+      dispatch({ type: 'SET_ABOUT_WAS_SHOWN' });
       removeFromUserScore(5);
     }
   }, [removeFromUserScore, gameState.aboutWasShown]);
 
   const handleKeyPress = useCallback(
     (key: string) => {
-      requestAnimationFrame(() => dispatch({type: 'KEY_PRESS', key}));
+      requestAnimationFrame(() => dispatch({ type: 'KEY_PRESS', key }));
       smallVibration();
       triggerEvent(`key-${key}`);
     },
@@ -271,7 +271,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
   );
 
   const handleDelete = useCallback(() => {
-    dispatch({type: 'DELETE_LETTER'});
+    dispatch({ type: 'DELETE_LETTER' });
     smallVibration();
     triggerEvent('key-DELETE');
   }, [triggerEvent]);
@@ -326,7 +326,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           if (gameType === 'DAILY') {
             markDone();
           }
-          dispatch({type: 'END_GAME', status: 'SUCCESS'});
+          dispatch({ type: 'END_GAME', status: 'SUCCESS' });
           stop();
           const delayConfetti = setTimeout(() => {
             if (
@@ -341,17 +341,17 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
             clearTimeout(delayConfetti);
           }, 400);
         } else if (gameState.currentAttempt + 1 === maxAttempts) {
-          dispatch({type: 'END_GAME', status: 'FAILURE'});
+          dispatch({ type: 'END_GAME', status: 'FAILURE' });
           stop();
         }
       } else {
         playWrong();
         shakeAnimation.value = withSequence(
-          withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-          withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-          withTiming(-5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-          withTiming(5, {duration: 50, easing: Easing.inOut(Easing.quad)}),
-          withTiming(0, {duration: 50, easing: Easing.inOut(Easing.quad)}),
+          withTiming(-5, { duration: 50, easing: Easing.inOut(Easing.quad) }),
+          withTiming(5, { duration: 50, easing: Easing.inOut(Easing.quad) }),
+          withTiming(-5, { duration: 50, easing: Easing.inOut(Easing.quad) }),
+          withTiming(5, { duration: 50, easing: Easing.inOut(Easing.quad) }),
+          withTiming(0, { duration: 50, easing: Easing.inOut(Easing.quad) }),
         );
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -385,7 +385,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         isValid: isValidWord(currentWordGuess),
       });
     } else {
-      dispatch({type: 'SET_VALID_GUESS', isValid: null});
+      dispatch({ type: 'SET_VALID_GUESS', isValid: null });
     }
   }, [isValidWord, currentWordGuess, wordLength]);
 
@@ -410,9 +410,9 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
     if (gameState.gameStatus !== 'PLAYING') {
       const timeout = setTimeout(() => {
         const savedRows = maxAttempts - gameState.currentAttempt;
-        dispatch({type: 'SET_NUMBER_OF_SAVED_ROWS', number: savedRows});
+        dispatch({ type: 'SET_NUMBER_OF_SAVED_ROWS', number: savedRows });
         const endTimeout = setTimeout(() => {
-          dispatch({type: 'SET_GAME_END', isEnd: true});
+          dispatch({ type: 'SET_GAME_END', isEnd: true });
           clearTimeout(endTimeout);
         }, ROW_SAVED_DELAY * savedRows + 300);
       }, 2000);
@@ -449,14 +449,16 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
           upperColor={colors.primary.b}
           bottomColor={colors.primary.c}
           gradientHeight={20}
-          contentContainerStyle={styles.scrollViewContent}>
+          contentContainerStyle={styles.scrollViewContent}
+        >
           <Animated.View
             style={[
               styles.gridContainer,
               useAnimatedStyle(() => ({
-                transform: [{translateX: shakeAnimation.value}],
+                transform: [{ translateX: shakeAnimation.value }],
               })),
-            ]}>
+            ]}
+          >
             <WordleGrid
               gameState={gameState}
               onLetterSelected={$setSelectedLetter}
@@ -513,7 +515,7 @@ const WordleGame: React.FC<WordGameScreenProps> = ({
         />
         <AboutWordDialog
           isVisible={gameState.aboutShown && !gameState.isGameEnd}
-          onClose={() => dispatch({type: 'SET_ABOUT_SHOWN', shown: false})}
+          onClose={() => dispatch({ type: 'SET_ABOUT_SHOWN', shown: false })}
           hint={aboutWord}
         />
         <GameResultDialog
