@@ -1,6 +1,9 @@
 // prettier-ignore
 {
-  "extends": "@react-native/typescript-config",     /* Recommended React Native TSConfig base */
+  "extends": [
+    /* Recommended React Native TSConfig base */
+    "@react-native/typescript-config", 
+  ], 
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
